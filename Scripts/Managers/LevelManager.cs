@@ -44,12 +44,11 @@ public class LevelManager : MonoBehaviour
             Instantiate(fadeOutPanel, Vector3.zero, Quaternion.identity);
         yield return new WaitForSeconds(fadeWait);
         PlayerController.Instance.transform.position = GameController.Instance.startingPosition.value;
-        CameraMovement.Instance.isBounded = willBeBounded;
-        CameraMovement.Instance.SetInstantPosition();
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
         while (!asyncOperation.isDone)
             yield return null;
-        //ObjectManager.Instance.ResetChests();
+        CameraMovement.Instance.isBounded = willBeBounded;
+        CameraMovement.Instance.SetInstantPosition();
         if (fadeInPanel != null)
         {
             GameObject panel = Instantiate(fadeInPanel, Vector3.zero, Quaternion.identity);

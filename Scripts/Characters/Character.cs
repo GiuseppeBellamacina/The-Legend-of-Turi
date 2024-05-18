@@ -14,10 +14,14 @@ public enum State
 
 public class Character : MonoBehaviour
 {
+    [Header("Character References")]
     public State currentState;
     public Rigidbody2D rb;
     public Animator animator;
     public CharacterData data;
+    public GameObject deathEffect;
+
+    [Header("Character Settings")]
     public string characterName;
 
     protected virtual void Awake()
@@ -55,8 +59,12 @@ public class Character : MonoBehaviour
         rb.velocity = Vector2.zero;
     }
 
-    public virtual void Die()
+    protected virtual void Die()
     {
+        if (deathEffect != null){
+            GameObject effect = Instantiate(deathEffect, transform.position, Quaternion.identity);
+            Destroy(effect, 1f);
+        }
         Destroy(gameObject);
     }
 

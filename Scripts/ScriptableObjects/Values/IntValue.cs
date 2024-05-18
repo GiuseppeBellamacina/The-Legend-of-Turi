@@ -1,10 +1,10 @@
 using UnityEngine;
 
 [CreateAssetMenu]
-public class FloatValue : Manageable
+public class IntValue : Manageable
 {
-    public float value;
-    public float initialValue;
+    public int value;
+    public int initialValue;
 
     public override void Reset()
     {

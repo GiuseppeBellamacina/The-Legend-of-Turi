@@ -35,8 +35,15 @@ public class TreasureChest : Interactable
         }
     }
 
+    public override void ContinueInteraction()
+    {
+        StopInteraction();
+    }
+
     public override void StopInteraction()
     {
+        base.StopInteraction();
+        
         dialogBox.SetActive(false);
         if (isOpen)
         {

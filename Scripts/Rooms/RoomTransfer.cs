@@ -15,11 +15,13 @@ public class RoomTransfer : MonoBehaviour
     // Questi servono per spostare il giocatore nella stanza successiva
     protected GameObject minPosObject, maxPosObject;
     protected Vector2 offset;
+    public float offValue = 1.8f;
     // Questi servono per mostrare il nome della stanza
     protected GameObject canvas, text;
     protected TMP_Text placeText;
-    public FloatValue transferIndex;
+    public IntValue transferIndex;
     protected float myTransferIndex;
+    private int numberOfTransfers;
     // Qua c'è la roba per la stanza successiva
     public GameObject nextRoom;
     public Direction direction;
@@ -38,6 +40,8 @@ public class RoomTransfer : MonoBehaviour
     {
         text.SetActive(false);
         SetDirection(direction);
+        myTransferIndex = 0;
+        numberOfTransfers = 0;
     }
 
     protected void SetDirection(Direction dir)
@@ -45,16 +49,16 @@ public class RoomTransfer : MonoBehaviour
         switch (dir)
         {
             case Direction.up:
-                offset = new Vector2(0, 1.8f);
+                offset = new Vector2(0, offValue);
                 break;
             case Direction.down:
-                offset = new Vector2(0, -1.8f);
+                offset = new Vector2(0, -offValue);
                 break;
             case Direction.left:
-                offset = new Vector2(-1.8f, 0);
+                offset = new Vector2(-offValue, 0);
                 break;
             case Direction.right:
-                offset = new Vector2(1.8f, 0);
+                offset = new Vector2(offValue, 0);
                 break;
             case Direction.none:
                 offset = new Vector2(0, 0);
@@ -66,9 +70,10 @@ public class RoomTransfer : MonoBehaviour
     {
         if (other.CompareTag("Player") && !other.isTrigger)
         {
-            RoomLocator.instance.SetMinMaxPositionObjects(minPosObject, maxPosObject);
+            RoomLocator.Instance.SetMinMaxPositionObjects(minPosObject, maxPosObject);
             other.transform.position = new Vector2(other.transform.position.x + offset.x, other.transform.position.y + offset.y);
             text.SetActive(false); // resetta un'eventuale scritta precedente
+            numberOfTransfers++;
             StartCoroutine(PlaceText());
         }
     }
@@ -77,10 +82,11 @@ public class RoomTransfer : MonoBehaviour
     {
         transferIndex.value++;
         myTransferIndex = transferIndex.value;
+        int currentTransfer = numberOfTransfers;
         text.SetActive(true);
         placeText.text = nextRoomName;
         yield return new WaitForSeconds(4f);
-        if (myTransferIndex == transferIndex.value)
+        if (myTransferIndex == transferIndex.value && currentTransfer == numberOfTransfers)
             text.SetActive(false);
     }
 }

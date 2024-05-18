@@ -9,6 +9,7 @@ public class CameraMovement : MonoBehaviour
     public GameObject minPositionObject, maxPositionObject;
     public bool isBounded;
     Vector2 minPosition, maxPosition;
+    Animator animator;
     bool goToPos;
 
     public static CameraMovement Instance
@@ -39,6 +40,7 @@ public class CameraMovement : MonoBehaviour
     void Start()
     {
         target = PlayerController.Instance.transform;
+        animator = GetComponent<Animator>();
         SetBoundaries();
         SetInstantPosition();
         isBounded = true;
@@ -66,6 +68,7 @@ public class CameraMovement : MonoBehaviour
             transform.position = new (target.position.x, target.position.y, transform.position.z);
         else
         {
+            RoomLocator.Instance.FindPositionObjects();
             Vector3 targetPosition = new (target.position.x, target.position.y, transform.position.z);
             targetPosition.x = Mathf.Clamp(targetPosition.x, minPosition.x, maxPosition.x);
             targetPosition.y = Mathf.Clamp(targetPosition.y, minPosition.y, maxPosition.y);
@@ -110,6 +113,20 @@ public class CameraMovement : MonoBehaviour
     {
         this.minPositionObject = minPositionObject;
         this.maxPositionObject = maxPositionObject;
+        if (this.minPositionObject == null)
+            Debug.LogError("No minPositionObject found.");
         SetBoundaries();
+    }
+
+    public void ScreenKick()
+    {
+        animator.SetBool("kick", true);
+        StartCoroutine(ScreenKickCo());
+    }
+
+    IEnumerator ScreenKickCo()
+    {
+        yield return null;
+        animator.SetBool("kick", false);
     }
 }

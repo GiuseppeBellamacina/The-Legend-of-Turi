@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class Log : Enemy
 {
+    [Header("Log Settings")]
     public Vector3 homePosition;
 
     protected override void Start()
@@ -74,8 +75,9 @@ public class Log : Enemy
         }
     }
 
-    protected virtual void FixedUpdate()
+    protected override void FixedUpdate()
     {
         CheckDistance();
+        FixRenderLayer();
     }
 }

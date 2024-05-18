@@ -1,17 +1,19 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Knockback : MonoBehaviour
 {
+    public bool overTimeDamage;
     public float thrust;
     public float knockTime;
     public string otherTag;
     private float damage;
-    private bool isAttacking;
-    private bool isStaggered;
+    private bool isAttacking; // Stato del personaggio che attacca
+    private bool isStaggered; // Stato del personaggio che subisce il danno
+    private List<GameObject> objectsInContact = new List<GameObject>();
 
-    // Devo prendere il danno dal personaggio che ha attaccato
-    // ovvero chi ha effettuato il knockback
     void SetDamage()
     {
         if (gameObject.CompareTag("PlayerHit"))
@@ -56,34 +58,69 @@ public class Knockback : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    public void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag(otherTag) && other.isTrigger)
-        {
-            GetState();
-            GetOtherState(other.gameObject);
-            if (!isAttacking || isStaggered)
-                return;
-            Rigidbody2D hit = other.gameObject.GetComponent<Rigidbody2D>();
-            RigidbodyType2D oldType = hit.bodyType;
-            // Questa parte gestisce il danno
-            DoDamage(other.gameObject);
-            // Questa parte gestisce il knockback
-            if (hit != null)
-            {
-                hit.bodyType = RigidbodyType2D.Dynamic;
-                other.GetComponent<Character>().SetState(State.stagger);
-                Vector2 difference = hit.transform.position - transform.position;
-                difference = difference.normalized * thrust;
-                hit.AddForce(difference, ForceMode2D.Impulse);
-                other.gameObject.GetComponent<Character>().Knock(knockTime);
-                hit.bodyType = oldType;
-            }
-        }
-        // Questa parte gestisce il danno a oggetti breakable
-        else if (other.gameObject.CompareTag("Breakable"))
+        if (other.gameObject.CompareTag("Breakable"))
         {
             other.GetComponent<Breakable>().Smash();
+            return;
+        }
+
+        if (overTimeDamage)
+        {
+            if (other.gameObject.CompareTag(otherTag) && other.isTrigger && !objectsInContact.Contains(other.gameObject))
+            {
+                objectsInContact.Add(other.gameObject);
+                StartCoroutine(ApplyDamageOverTime(other.gameObject));
+            }
+        }
+        else
+        {
+            if (other.gameObject.CompareTag(otherTag) && other.isTrigger)
+            {
+                HandleKnockback(other.gameObject);
+            }
+        }
+    }
+
+    public void OnTriggerExit2D(Collider2D other)
+    {
+        if (overTimeDamage)
+        {
+            if (objectsInContact.Contains(other.gameObject))
+                objectsInContact.Remove(other.gameObject);
+        }
+    }
+
+    private IEnumerator ApplyDamageOverTime(GameObject other)
+    {
+        while (objectsInContact.Contains(other))
+        {
+            if (isAttacking || isStaggered)
+                yield return new WaitForSeconds(0.5f);
+            HandleKnockback(other);
+            yield return new WaitForSeconds(1f); // Metto 1 secondo, in caso lo cambio
+        }
+    }
+
+    private void HandleKnockback(GameObject other)
+    {
+        GetState();
+        GetOtherState(other);
+        if (!isAttacking || isStaggered)
+            return;
+        Rigidbody2D hit = other.GetComponent<Rigidbody2D>();
+        RigidbodyType2D oldType = hit.bodyType;
+        DoDamage(other);
+        if (hit != null)
+        {
+            hit.bodyType = RigidbodyType2D.Dynamic;
+            other.GetComponent<Character>().SetState(State.stagger);
+            Vector2 difference = hit.transform.position - transform.position;
+            difference = difference.normalized * thrust;
+            hit.AddForce(difference, ForceMode2D.Impulse);
+            other.GetComponent<Character>().Knock(knockTime);
+            hit.bodyType = oldType;
         }
     }
 

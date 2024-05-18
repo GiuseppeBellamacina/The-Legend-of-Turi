@@ -1,16 +1,14 @@
 using UnityEngine;
 
 [CreateAssetMenu]
-public class BoolValue : ScriptableObject, ISerializationCallbackReceiver
+public class BoolValue : Manageable
 {
     public bool value;
 
     public bool initialValue;
 
-    public void OnAfterDeserialize()
+    public override void Reset()
     {
         value = initialValue;
     }
-
-    public void OnBeforeSerialize() { }
 }

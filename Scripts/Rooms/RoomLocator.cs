@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class RoomLocator : MonoBehaviour
 {
-    public GameObject minPositionObject, maxPositionObject;
+    private GameObject minPositionObject, maxPositionObject;
 
     private static RoomLocator _instance;
 
-    public static RoomLocator instance
+    public static RoomLocator Instance
     {
         get
         {
@@ -31,8 +31,48 @@ public class RoomLocator : MonoBehaviour
             Destroy(gameObject);
     }
 
+    public void FindPositionObjects()
+    {
+        GameObject[] minPositionObjects, maxPositionObjects;
+        minPositionObjects = GameObject.FindGameObjectsWithTag("MinPosition");
+        maxPositionObjects = GameObject.FindGameObjectsWithTag("MaxPosition");
+
+        float minDistance = Mathf.Infinity;
+
+        foreach (GameObject minPosObject in minPositionObjects)
+        {
+            float distance = Vector2.Distance(PlayerController.Instance.transform.position, minPosObject.transform.position);
+            if (distance < minDistance)
+            {
+                if (PlayerController.Instance.transform.position.x >= minPosObject.transform.position.x && PlayerController.Instance.transform.position.y >= minPosObject.transform.position.y)
+                {
+                    minDistance = distance;
+                    minPositionObject = minPosObject;
+                }
+            }    
+        }
+
+        minDistance = Mathf.Infinity;
+
+        foreach (GameObject maxPosObject in maxPositionObjects)
+        {
+            float distance = Vector2.Distance(PlayerController.Instance.transform.position, maxPosObject.transform.position);
+            if (distance < minDistance)
+            {
+                if (PlayerController.Instance.transform.position.x <= maxPosObject.transform.position.x && PlayerController.Instance.transform.position.y <= maxPosObject.transform.position.y)
+                {
+                    minDistance = distance;
+                    maxPositionObject = maxPosObject;
+                }
+            }
+        }
+
+        CameraMovement.Instance.SetMinMaxPositionObjects(minPositionObject, maxPositionObject);
+    }
+
     void Start()
     {
+        FindPositionObjects();
         CameraMovement.Instance.SetMinMaxPositionObjects(minPositionObject, maxPositionObject);
     }
 

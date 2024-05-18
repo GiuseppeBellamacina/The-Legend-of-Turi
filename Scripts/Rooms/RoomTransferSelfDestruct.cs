@@ -17,7 +17,7 @@ public class RoomTransferSelfDestruct : RoomTransfer
         if (other.CompareTag("Player") && other.isTrigger && !isPlaced.value)
         {
             isPlaced.value = true;
-            RoomLocator.instance.SetMinMaxPositionObjects(minPosObject, maxPosObject);
+            RoomLocator.Instance.SetMinMaxPositionObjects(minPosObject, maxPosObject);
             other.transform.position = new Vector2(other.transform.position.x + offset.x, other.transform.position.y + offset.y);
             text.SetActive(false);
             StartCoroutine(PlaceText());

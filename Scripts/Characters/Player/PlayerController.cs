@@ -4,11 +4,16 @@ using UnityEngine;
 public class PlayerController : Character
 {
     private static PlayerController _instance;
+    [Header("Player Settings")]
     Vector2 moveDirection;
     public bool attackReady;
+    [Header("Interactions")]
     public GameObject toInteract;
     public Signals playerHealthSignal;
+    [Header("Inventory")]
     public Inventory inventory;
+    [Header("Renderers")]
+    public SpriteRenderer spriteRenderer;
     public SpriteRenderer receivedItemSprite;
 
     public static PlayerController Instance
@@ -44,6 +49,7 @@ public class PlayerController : Character
         InputManager.Instance.inputController.Player.Move.performed += ctx => Move(ctx.ReadValue<Vector2>());
         InputManager.Instance.inputController.Player.Move.canceled += ctx => Move(Vector2.zero);
         InputManager.Instance.inputController.Player.Interact.performed += _ => Interact();
+        InputManager.Instance.inputController.Player.StopInteraction.performed += _ => StopInteraction();
         InputManager.Instance.inputController.Player.Attack.performed += _ => Attack(); // FEATURE: metti lo sblocco
 
         // Setto la direzione di default
@@ -54,6 +60,12 @@ public class PlayerController : Character
         data.health = data.maxHealth;
         attackReady = true; // viene gestito dalle animazioni
         toInteract = null;
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    public int GetRenderLayer()
+    {
+        return spriteRenderer.sortingOrder;
     }
 
     void Move(Vector2 direction)
@@ -121,10 +133,14 @@ public class PlayerController : Character
             toInteract.GetComponent<Interactable>().Interact();
         }
         else
-        {
-            SetState(State.none);
-            toInteract.GetComponent<Interactable>().StopInteraction();
-        }
+            toInteract.GetComponent<Interactable>().ContinueInteraction();
+    }
+
+    void StopInteraction()
+    {
+        if (toInteract == null)
+            return;
+        toInteract.GetComponent<Interactable>().StopInteraction();
     }
 
     public IEnumerator RaiseItemCo()
@@ -143,7 +159,7 @@ public class PlayerController : Character
         StartCoroutine(RaiseItemCo());
     }
 
-    public override void Die()
+    protected override void Die()
     {
         gameObject.SetActive(false);
     }
@@ -151,10 +167,19 @@ public class PlayerController : Character
     public override void TakeDamage(float damage)
     {
         data.health -= damage;
+        CameraMovement.Instance.ScreenKick();
         if (data.health < 0)
             data.health = 0;
         playerHealthSignal.Raise();
         if (data.health <= 0)
             Die();
+    }
+
+    public void Heal(float amount)
+    {
+        data.health += amount;
+        if (data.health > data.maxHealth)
+            data.health = data.maxHealth;
+        playerHealthSignal.Raise();
     }
 }

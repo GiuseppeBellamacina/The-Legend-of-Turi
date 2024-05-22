@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu]
-public class Inventory : Manageable
+public class Inventory : ScriptableObject, IResettable
 {
     public Item currentItem;
     public List<Item> items = new ();
@@ -71,7 +71,7 @@ public class Inventory : Manageable
             numberOfKeys--;
     }
 
-    public override void Reset()
+    public void Reset()
     {
         currentItem = null;
         items.Clear();

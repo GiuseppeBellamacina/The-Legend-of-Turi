@@ -1,13 +1,13 @@
 using UnityEngine;
 
 [CreateAssetMenu]
-public class BoolValue : Manageable
+public class BoolValue : ScriptableObject, IResettable
 {
     public bool value;
 
     public bool initialValue;
 
-    public override void Reset()
+    public void Reset()
     {
         value = initialValue;
     }

@@ -1,12 +1,12 @@
 using UnityEngine;
 
 [CreateAssetMenu]
-public class IntValue : Manageable
+public class IntValue : ScriptableObject, IResettable
 {
     public int value;
     public int initialValue;
 
-    public override void Reset()
+    public void Reset()
     {
         value = initialValue;
     }

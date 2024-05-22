@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : Character
 {
@@ -13,7 +14,6 @@ public class PlayerController : Character
     [Header("Inventory")]
     public Inventory inventory;
     [Header("Renderers")]
-    public SpriteRenderer spriteRenderer;
     public SpriteRenderer receivedItemSprite;
 
     public static PlayerController Instance
@@ -46,8 +46,6 @@ public class PlayerController : Character
     void Start()
     {
         // Abbino i metodi ai controlli
-        InputManager.Instance.inputController.Player.Move.performed += ctx => Move(ctx.ReadValue<Vector2>());
-        InputManager.Instance.inputController.Player.Move.canceled += ctx => Move(Vector2.zero);
         InputManager.Instance.inputController.Player.Interact.performed += _ => Interact();
         InputManager.Instance.inputController.Player.StopInteraction.performed += _ => StopInteraction();
         InputManager.Instance.inputController.Player.Attack.performed += _ => Attack(); // FEATURE: metti lo sblocco
@@ -60,7 +58,16 @@ public class PlayerController : Character
         data.health = data.maxHealth;
         attackReady = true; // viene gestito dalle animazioni
         toInteract = null;
-        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    public void DeactivateInput()
+    {
+        InputManager.Instance.inputController.Player.Disable();
+    }
+
+    public void ActivateInput()
+    {
+        InputManager.Instance.inputController.Player.Enable();
     }
 
     public int GetRenderLayer()
@@ -89,14 +96,12 @@ public class PlayerController : Character
     {
         if (moveDirection != Vector2.zero)
         {
-            SetState(State.walk);
             animator.SetBool("isMoving", true);
             animator.SetFloat("moveX", moveDirection.x);
             animator.SetFloat("moveY", moveDirection.y);
         }
         else
         { // Se non ci si muove, mantengo l'ultima direzione
-            SetState(State.idle);
             animator.SetBool("isMoving", false);
             animator.SetFloat("moveX", lastMoveDirection.x);
             animator.SetFloat("moveY", lastMoveDirection.y);
@@ -105,7 +110,7 @@ public class PlayerController : Character
 
     void Attack()
     {   
-        if (IsState(State.interact) || IsState(State.attack) || !attackReady)
+        if (IsState(State.interact) || !attackReady)
             return;
         StartCoroutine(AttackCo());
     }
@@ -127,10 +132,14 @@ public class PlayerController : Character
     {
         if (toInteract == null)
             return;
+
         if (currentState != State.interact)
         {
             SetState(State.interact);
+            animator.SetBool("isMoving", false);
+            rb.velocity = Vector2.zero;
             toInteract.GetComponent<Interactable>().Interact();
+            rb.velocity = Vector2.zero;
         }
         else
             toInteract.GetComponent<Interactable>().ContinueInteraction();
@@ -152,6 +161,7 @@ public class PlayerController : Character
             yield return null;
         animator.SetBool("isReceiving", false);
         receivedItemSprite.sprite = null;
+        inventory.currentItem = null;
     }
 
     public void RaiseItem()
@@ -181,5 +191,22 @@ public class PlayerController : Character
         if (data.health > data.maxHealth)
             data.health = data.maxHealth;
         playerHealthSignal.Raise();
+    }
+
+    void OnMove(InputValue value) // per risolvere il problema dello stato walk
+    {
+        if (IsState(State.interact))
+            return;
+
+        SetState(State.walk);
+    }
+
+    void FixedUpdate()
+    {
+        if (IsState(State.interact))
+            return;
+
+        moveDirection = InputManager.Instance.inputController.Player.Move.ReadValue<Vector2>();
+        Move(moveDirection);
     }
 }

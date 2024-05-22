@@ -6,15 +6,16 @@ public enum DoorType
     Locked,
     Button,
     Enemies,
-    Special
+    Special,
+    Blocked
 }
 
-public class Door : Interactable
+public class Door : Interactable, IResettable
 {
     public DoorType doorType;
     public BoolValue isOpen;
     public Inventory inventory;
-    public Sprite openSprite;
+    public Sprite openSprite, closedSprite;
     SpriteRenderer spriteRenderer;
     Collider2D[] colliders;
 
@@ -24,6 +25,11 @@ public class Door : Interactable
 
         spriteRenderer = GetComponent<SpriteRenderer>();
         colliders = GetComponents<Collider2D>();
+        Reset();
+    }
+
+    public void Reset()
+    {
         if (isOpen.value)
             Open();
     }
@@ -35,6 +41,15 @@ public class Door : Interactable
         for (int i = 0; i < colliders.Length; i++)
             colliders[i].enabled = false;
         isContextClue = false;
+    }
+
+    public void Close()
+    {
+        isOpen.value = false;
+        spriteRenderer.sprite = closedSprite;
+        for (int i = 0; i < colliders.Length; i++)
+            colliders[i].enabled = true;
+        isContextClue = true;
     }
 
     public override void StopInteraction()
@@ -80,6 +95,17 @@ public class Door : Interactable
             }
             else
                 dialogText.text = "La porta è chiusa a chiave, non hai chiavi per aprirla.";
+        }
+        else if (doorType == DoorType.Button)
+        {
+            if (!isOpen.value)
+            {
+                dialogText.text = "La porta è chiusa, forse c'è un modo per aprirla.";
+            }
+        }
+        else if (doorType == DoorType.Blocked)
+        {
+            dialogText.text = "La porta è bloccata, non puoi aprirla.";
         }
     }
 }

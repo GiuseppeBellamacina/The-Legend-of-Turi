@@ -4,12 +4,13 @@ using UnityEngine;
 
 public enum State
 {
-    none, // lo uso quando il personaggio sta per interagire con un oggetto e all'avvio delle scene
     idle,
     walk,
+    chase,
     attack,
     stagger,
-    interact
+    interact,
+    none
 }
 
 public class Character : MonoBehaviour
@@ -20,6 +21,7 @@ public class Character : MonoBehaviour
     public Animator animator;
     public CharacterData data;
     public GameObject deathEffect;
+    public SpriteRenderer spriteRenderer;
 
     [Header("Character Settings")]
     public string characterName;
@@ -29,16 +31,12 @@ public class Character : MonoBehaviour
         SetState(State.idle);
         rb = gameObject.GetComponent<Rigidbody2D>();
         animator = gameObject.GetComponent<Animator>();
+        spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
     }
 
     public void SetState(State newState)
     {
         currentState = newState;
-    }
-
-    public State GetState()
-    {
-        return currentState;
     }
 
     public bool IsState(State state)
@@ -48,24 +46,28 @@ public class Character : MonoBehaviour
 
     public void Knock(float knockTime)
     {
-        StartCoroutine(KnockCo( knockTime));
+        if (gameObject.activeInHierarchy)
+            StartCoroutine(KnockCo( knockTime));
     }
 
     IEnumerator KnockCo(float knockTime)
     {
+        spriteRenderer.color = Color.red; // Settta lo sprite a rosso
+        GetComponent<Character>().enabled = false; // Disattiva lo script del personaggio
         yield return new WaitForSeconds(knockTime);
         rb.velocity = Vector2.zero;
         SetState(State.idle);
         rb.velocity = Vector2.zero;
+        GetComponent<Character>().enabled = true; // Riattiva lo script del personaggio
+        spriteRenderer.color = Color.white; // Resetta il colore dello sprite
     }
 
     protected virtual void Die()
     {
         if (deathEffect != null){
-            GameObject effect = Instantiate(deathEffect, transform.position, Quaternion.identity);
-            Destroy(effect, 1f);
+            Instantiate(deathEffect, transform.position, Quaternion.identity);
         }
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
     public virtual void TakeDamage(float damage){}

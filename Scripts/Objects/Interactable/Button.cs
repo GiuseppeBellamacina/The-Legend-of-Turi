@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Button : Interactable
+public class Button : Interactable, IResettable
 {
     public BoolValue isPressed;
     public Sprite pressedSprite;
@@ -12,6 +12,11 @@ public class Button : Interactable
         base.Start();
 
         spriteRenderer = GetComponent<SpriteRenderer>();
+        Reset();
+    }
+
+    public void Reset()
+    {
         if (isPressed.value)
             spriteRenderer.sprite = pressedSprite;
     }

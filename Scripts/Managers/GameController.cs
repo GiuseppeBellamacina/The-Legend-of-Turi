@@ -35,10 +35,16 @@ public class GameController : MonoBehaviour
         startingPosition.value = PlayerController.Instance.transform.position;
     }
 
+    public bool PlayerUsingController()
+    {
+        return Input.GetJoystickNames().Length > 0;
+    }
+
     public void LoadScene(string sceneName, bool willBeBounded)
     {
-        StartCoroutine(LevelManager.Instance.FadeCo(sceneName, willBeBounded));
         lastPosition.value = PlayerController.Instance.transform.position;
+        StartCoroutine(LevelManager.Instance.FadeCo(sceneName, willBeBounded));
+        //lastPosition.value = PlayerController.Instance.transform.position;
         PlayerController.Instance.SetState(State.none);
     }
 

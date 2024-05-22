@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 
-public class TreasureChest : Interactable
+public class TreasureChest : Interactable, IResettable
 {
     public Item contents;
     public Inventory inventory;
@@ -26,13 +26,10 @@ public class TreasureChest : Interactable
 
     public override void Interact()
     {
-        if (playerInRange && PlayerController.Instance.IsState(State.interact))
-        {
-            if (!isOpen)
-                OpenChest();
-            else
-                AlreadyOpened();
-        }
+        if (!isOpen)
+            OpenChest();
+        else
+            AlreadyOpened();
     }
 
     public override void ContinueInteraction()

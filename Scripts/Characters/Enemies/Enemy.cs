@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Enemy : Character
+public class Enemy : Character, IResettable
 {
     protected Transform target;
     [Header("Enemy Settings")]
@@ -9,19 +9,57 @@ public class Enemy : Character
     public float health;
     [Header("Loot")]
     public GameObject[] loot;
-    protected SpriteRenderer spriteRenderer;
+    protected Vector2 homePosition;
+    State previousState;
 
     protected override void Awake()
     {
         base.Awake();
         target = GameObject.FindWithTag("Player").transform;
+        homePosition = transform.position;
     }
 
     protected virtual void Start()
     {
         data.health = data.maxHealth;
         health = data.maxHealth;
-        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    public void Reset()
+    {
+        health = data.maxHealth;
+        transform.position = homePosition;
+        SetState(State.idle);
+    }
+
+    protected bool OverVelocity()
+    {
+        return rb.velocity.magnitude > data.speed;
+    }
+
+    protected virtual void EnemyBehaviour()
+    {
+        // Sisetma il layer di render
+        FixRenderLayer();
+
+        // Se il nemico se ne parte lo limito
+        if (OverVelocity())
+            rb.velocity = Vector2.ClampMagnitude(rb.velocity, data.speed);
+    }
+
+    protected bool PlayerInRange(float range)
+    {
+        return Vector2.Distance(transform.position, target.position) <= range;
+    }
+
+    protected float DistanceToPlayer()
+    {
+        return Vector2.Distance(transform.position, target.position);
+    }
+
+    protected float DistanceToHome()
+    {
+        return Vector2.Distance(transform.position, homePosition);
     }
 
     protected virtual void FixRenderLayer()
@@ -36,13 +74,16 @@ public class Enemy : Character
     { // Questa funzione si deve mettere nella funzione di movimento del nemico
         if (PlayerController.Instance.IsState(State.interact))
         {
-            SetState(State.none);
+            Debug.Log("Stop");
+            previousState = currentState;
+            SetState(State.idle);
             animator.enabled = false;
             rb.velocity = Vector2.zero;
             return true;
         }
         else
         {
+            SetState(previousState);
             animator.enabled = true;
             return false;
         }
@@ -70,8 +111,44 @@ public class Enemy : Character
         DropLoot();
     }
 
-    protected virtual void FixedUpdate()
+    protected void SetDirection(Vector2 direction)
     {
-        FixRenderLayer();
+        animator.SetFloat("moveX", direction.x);
+        animator.SetFloat("moveY", direction.y);
+    }
+
+    protected void ChangeAnim(Vector3 direction)
+    {
+        if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+        {
+            if (direction.x > 0)
+                SetDirection(Vector2.right);
+            else if (direction.x < 0)
+                SetDirection(Vector2.left);
+        }
+        else if (Mathf.Abs(direction.x) < Mathf.Abs(direction.y))
+        {
+            if (direction.y > 0)
+                SetDirection(Vector2.up);
+            else if (direction.y < 0)
+                SetDirection(Vector2.down);
+        }
+    }
+
+    protected void MoveTo(Vector2 target)
+    {
+        Vector2 temp = Vector2.MoveTowards(transform.position, target, data.speed * Time.deltaTime);
+        ChangeAnim(temp - (Vector2)transform.position);
+        rb.MovePosition(temp);
+    }
+
+    protected virtual void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Enemy") && other.isTrigger)
+        {
+            Vector2 direction = (transform.position - other.transform.position).normalized;
+            float force = 5f;
+            rb.AddForce(direction * force, ForceMode2D.Impulse);
+        }     
     }
 }

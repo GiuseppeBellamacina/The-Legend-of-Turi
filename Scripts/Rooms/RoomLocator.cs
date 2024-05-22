@@ -3,6 +3,7 @@ using UnityEngine;
 public class RoomLocator : MonoBehaviour
 {
     private GameObject minPositionObject, maxPositionObject;
+    public GameObject currentRoom;
 
     private static RoomLocator _instance;
 
@@ -68,6 +69,9 @@ public class RoomLocator : MonoBehaviour
         }
 
         CameraMovement.Instance.SetMinMaxPositionObjects(minPositionObject, maxPositionObject);
+        currentRoom = minPositionObject.transform.parent.gameObject;
+        if (currentRoom != null)
+            currentRoom.GetComponent<Room>().SpawnObjects();
     }
 
     void Start()

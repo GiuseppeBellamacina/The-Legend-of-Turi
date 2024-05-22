@@ -4,7 +4,7 @@ public class DataManager : MonoBehaviour
 {
     private static DataManager _instance;
     private static bool _isInitialized;
-    public Manageable[] toReset;
+    public ScriptableObject[] toReset;
     // public ScriptableObject[] toSave;
 
     public static DataManager Instance
@@ -31,6 +31,7 @@ public class DataManager : MonoBehaviour
         else
             Destroy(gameObject);
         
+        // sistema sta parte in modo che venga eseguita al caricamento dei dati salvati
         if (!_isInitialized)
         {
             _isInitialized = true;
@@ -40,14 +41,9 @@ public class DataManager : MonoBehaviour
 
     public void Reset()
     {
-        foreach (Manageable script in toReset)
+        foreach (ScriptableObject script in toReset)
         {
-            script.Reset();
+            (script as IResettable)?.Reset();
         }
-    }
-
-    public void Save()
-    {
-        // Save the data
     }
 }

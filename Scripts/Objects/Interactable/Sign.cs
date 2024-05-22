@@ -7,13 +7,10 @@ public class Sign : Interactable
 
     public override void Interact()
     {
-        if (playerInRange && PlayerController.Instance.IsState(State.interact))
-        {
-            suggestionBox.SetActive(false);
-            contextOff.Raise();
-            dialogText.text = dialog;
-            dialogBox.SetActive(true);
-        }
+        suggestionBox.SetActive(false);
+        contextOff.Raise();
+        dialogText.text = dialog;
+        dialogBox.SetActive(true);
     }
 
     public override void ContinueInteraction()

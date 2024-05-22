@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu]
-public class Item : Manageable
+public class Item : ScriptableObject, IResettable
 {
     public Sprite sprite;
     public string itemName;
@@ -10,7 +10,7 @@ public class Item : Manageable
     public int quantity;
     public bool hasBeenPickedUp;
 
-    public override void Reset()
+    public void Reset()
     {
         hasBeenPickedUp = false;
     }

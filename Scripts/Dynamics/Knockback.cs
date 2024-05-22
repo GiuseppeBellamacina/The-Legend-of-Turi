@@ -7,6 +7,7 @@ public class Knockback : MonoBehaviour
 {
     public bool overTimeDamage;
     public float thrust;
+    public float attackRate;
     public float knockTime;
     public string otherTag;
     private float damage;
@@ -42,7 +43,7 @@ public class Knockback : MonoBehaviour
 
     void GetOtherState(GameObject other)
     {
-        if (other.CompareTag("PlayerHit"))
+        if (other.CompareTag("Player"))
         {
             if (PlayerController.Instance.IsState(State.stagger))
                 isStaggered = true;
@@ -71,7 +72,8 @@ public class Knockback : MonoBehaviour
             if (other.gameObject.CompareTag(otherTag) && other.isTrigger && !objectsInContact.Contains(other.gameObject))
             {
                 objectsInContact.Add(other.gameObject);
-                StartCoroutine(ApplyDamageOverTime(other.gameObject));
+                if (gameObject.activeInHierarchy)
+                    StartCoroutine(ApplyDamageOverTime(other.gameObject));
             }
         }
         else
@@ -97,9 +99,9 @@ public class Knockback : MonoBehaviour
         while (objectsInContact.Contains(other))
         {
             if (isAttacking || isStaggered)
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.1f);
             HandleKnockback(other);
-            yield return new WaitForSeconds(1f); // Metto 1 secondo, in caso lo cambio
+            yield return new WaitForSeconds(attackRate);
         }
     }
 
@@ -112,6 +114,7 @@ public class Knockback : MonoBehaviour
         Rigidbody2D hit = other.GetComponent<Rigidbody2D>();
         RigidbodyType2D oldType = hit.bodyType;
         DoDamage(other);
+        Debug.Log("Knockback on " + other.name + " by " + gameObject.name);
         if (hit != null)
         {
             hit.bodyType = RigidbodyType2D.Dynamic;

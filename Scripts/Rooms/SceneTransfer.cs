@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class SceneTransfer : Interactable
@@ -8,21 +9,24 @@ public class SceneTransfer : Interactable
 
     public void TransferScene()
     {
+        suggestionBox.SetActive(false);
         GameController.Instance.startingPosition.value = startingPosition.value;
         GameController.Instance.LoadScene(sceneName, willBeBounded);
     }
 
     public override void Interact()
     {
-        if (playerInRange && PlayerController.Instance.IsState(State.interact))
-        {
-            suggestionBox.SetActive(false);
-            TransferScene();
-        }
+        PlayerController.Instance.DeactivateInput();
+        TransferScene();
+        StartCoroutine(ReactivateInput());
     }
 
-    void FixedUpdate()
+    IEnumerator ReactivateInput()
     {
-        Interact();
+        yield return new WaitForSeconds(1);
+        PlayerController.Instance.ActivateInput();
     }
+
+    public override void ContinueInteraction(){}
+    public override void StopInteraction(){}
 }

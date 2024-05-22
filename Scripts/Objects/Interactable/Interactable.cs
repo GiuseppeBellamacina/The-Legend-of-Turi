@@ -6,7 +6,6 @@ public class Interactable : MonoBehaviour
     public Signals contextOn, contextOff;
     protected GameObject canvas, suggestionBox, dialogBox;
     protected TMP_Text suggestionText, dialogText;
-    protected bool playerInRange;
     public string suggestion;
     public bool isContextClue;
 
@@ -37,7 +36,6 @@ public class Interactable : MonoBehaviour
     {
         if (other.CompareTag("Player") && !other.isTrigger)
         {
-            playerInRange = true;
             PlayerController.Instance.SetState(State.none);
             PlayerController.Instance.toInteract = gameObject;
             suggestionText.text = suggestion;
@@ -51,7 +49,6 @@ public class Interactable : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            playerInRange = false;
             PlayerController.Instance.toInteract = null;
             if (suggestionBox != null)
                 suggestionBox.SetActive(false);

@@ -70,11 +70,6 @@ public class PlayerController : Character
         InputManager.Instance.inputController.Player.Enable();
     }
 
-    public int GetRenderLayer()
-    {
-        return spriteRenderer.sortingOrder;
-    }
-
     void Move(Vector2 direction)
     {
         if (IsState(State.interact))

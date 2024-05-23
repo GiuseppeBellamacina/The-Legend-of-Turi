@@ -70,5 +70,10 @@ public class Character : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    public int GetRenderLayer()
+    {
+        return spriteRenderer.sortingOrder;
+    }
+
     public virtual void TakeDamage(float damage){}
 }

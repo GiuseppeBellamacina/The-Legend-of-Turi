@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Orge : Enemy
+public class Orge : Enemy, IResettable
 {   
     [Header("Orge Settings")]
     public float patrolDuration;
@@ -10,6 +10,17 @@ public class Orge : Enemy
     Vector2 currentTarget;
     bool patrolEnd = true;
     bool startChase = false;
+    bool notSurprised = true;
+
+    public new void Reset()
+    {
+        health = data.maxHealth;
+        transform.position = homePosition;
+        patrolEnd = true;
+        startChase = false;
+        notSurprised = true;
+        SetState(State.idle);
+    }
 
     protected override void EnemyBehaviour()
     {
@@ -38,6 +49,11 @@ public class Orge : Enemy
 
     void ChaseOrAttack()
     {
+        if (notSurprised)
+        {
+            StartCoroutine(Surprise());
+            notSurprised = false;
+        }
         if (PlayerInRange(attackRange))
             Attack();
         else
@@ -83,21 +99,24 @@ public class Orge : Enemy
 
     void Attack()
     {
+        SetState(State.attack);
         if (!attackReady)
             return;
         
-        SetState(State.attack);
         ChangeAnim(target.position - transform.position);
         StartCoroutine(AttackCo());
     }
 
     IEnumerator AttackCo()
     {
+        SetState(State.attack);
         animator.SetBool("attack", true);
         yield return null;
         animator.SetBool("attack", false);
-        yield return new WaitForSeconds(.3f);
-        SetState(State.chase);
+        while (attackReady)
+        {
+            yield return null;
+        }
     }
 
     void FixedUpdate()

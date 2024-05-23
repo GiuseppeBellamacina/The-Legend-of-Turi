@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Enemy : Character, IResettable
@@ -11,6 +12,7 @@ public class Enemy : Character, IResettable
     public GameObject[] loot;
     protected Vector2 homePosition;
     State previousState;
+    public SpriteRenderer surpriseItem;
 
     protected override void Awake()
     {
@@ -101,7 +103,9 @@ public class Enemy : Character, IResettable
         if (loot.Length == 0)
             return;
         int random = Random.Range(0, loot.Length);
-        Instantiate(loot[random], transform.position, Quaternion.identity);
+        GameObject drop = loot[random];
+        drop.GetComponent<Collectable>().SetOwner(gameObject);
+        Instantiate(drop, transform.position, Quaternion.identity);
     }
 
     protected override void Die()
@@ -140,6 +144,13 @@ public class Enemy : Character, IResettable
         Vector2 temp = Vector2.MoveTowards(transform.position, target, data.speed * Time.deltaTime);
         ChangeAnim(temp - (Vector2)transform.position);
         rb.MovePosition(temp);
+    }
+
+    protected IEnumerator Surprise()
+    {
+        surpriseItem.enabled = true;
+        yield return new WaitForSeconds(0.8f);
+        surpriseItem.enabled = false;
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D other)

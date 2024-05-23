@@ -1,8 +1,22 @@
 using System.Collections;
 using UnityEngine;
 
-public class Log : Enemy
+public class Log : Enemy, IResettable
 {
+    public SpriteRenderer confuseItem;
+    public bool isWakingUp;
+    bool notSurprised = true;
+    bool isConfused = true;
+
+    public new void Reset()
+    {
+        health = data.maxHealth;
+        transform.position = homePosition;
+        notSurprised = true;
+        isConfused = true;
+        SetState(State.idle);
+    }
+
     protected override void EnemyBehaviour()
     {
         if (Stop())
@@ -29,6 +43,7 @@ public class Log : Enemy
 
     void Idle()
     {
+        isConfused = true;
         SetState(State.idle);
         rb.velocity = Vector2.zero;
         animator.SetBool("wakeUp", false);
@@ -36,10 +51,22 @@ public class Log : Enemy
 
     void ChaseOrAttack()
     {
+        isConfused = true;
+        if (notSurprised){
+            StartCoroutine(Surprise());
+            notSurprised = false;
+        }
         rb.bodyType = RigidbodyType2D.Dynamic;
         Vector2 temp = Vector2.MoveTowards(transform.position, target.position, data.speed * Time.deltaTime);
         ChangeAnim(temp - (Vector2)transform.position);
         animator.SetBool("wakeUp", true);
+        StartCoroutine(StartMoving(temp));
+    }
+
+    IEnumerator StartMoving(Vector2 temp)
+    {
+        while (isWakingUp)
+            yield return null;
         // Se il nemico è abbastanza vicino attacca
         if (PlayerInRange(attackRange))
             SetState(State.attack);
@@ -51,9 +78,22 @@ public class Log : Enemy
 
     void GoBack()
     {
+        if (isConfused)
+        {
+            StartCoroutine(Confuse());
+            isConfused = false;
+        }
         SetState(State.walk);
         rb.bodyType = RigidbodyType2D.Kinematic;
+        notSurprised = true;
         MoveTo(homePosition);
+    }
+
+    IEnumerator Confuse()
+    {
+        confuseItem.enabled = true;
+        yield return new WaitForSeconds(0.8f);
+        confuseItem.enabled = false;
     }
 
     void FixedUpdate()

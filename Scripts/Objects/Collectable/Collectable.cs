@@ -5,6 +5,7 @@ public class Collectable : MonoBehaviour
     public Item item;
     public Inventory playerInventory;
     SpriteRenderer spriteRenderer;
+    protected GameObject owner;
 
     protected virtual void Awake()
     {
@@ -22,10 +23,17 @@ public class Collectable : MonoBehaviour
 
     protected virtual void FixRenderLayer()
     {
-        if (PlayerController.Instance.transform.position.y > transform.position.y)
+        if (owner != null)
+            spriteRenderer.sortingOrder = owner.GetComponent<SpriteRenderer>().sortingOrder + 1;
+        else if (PlayerController.Instance.transform.position.y > transform.position.y)
             spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() + 1;
         else
             spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() - 1;
+    }
+
+    public void SetOwner(GameObject owner)
+    {
+        this.owner = owner;
     }
 
     protected virtual void FixedUpdate()

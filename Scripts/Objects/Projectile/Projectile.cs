@@ -11,6 +11,8 @@ public class Projectile : MonoBehaviour
     protected float lifeTimeCounter;
     protected Rigidbody2D rb;
     protected GameObject owner;
+    Vector2 currentVelocity;
+    bool isPaused;
 
     protected virtual void Awake()
     {
@@ -20,8 +22,31 @@ public class Projectile : MonoBehaviour
 
     protected virtual void Update()
     {
-        lifeTimeCounter += Time.deltaTime;
+        // Se si era in pausa e il proprietario è attivo, riprendi il movimento
+        if (isPaused && owner.activeInHierarchy)
+        {
+            rb.velocity = currentVelocity;
+            isPaused = false;
+        }
+
+        // Se non è in pausa e il proprietario è attivo, incrementa il tempo di vita
+        if(!isPaused && owner.activeInHierarchy)
+            lifeTimeCounter += Time.deltaTime;
+
+        // Se il tempo di vita è maggiore o uguale al tempo di vita massimo, distruggi l'oggetto
         if (lifeTimeCounter >= lifeTime)
+        {
+            Destroy(gameObject);
+        }
+        // Se il proprietario è disattivato, metti in pausa il movimento
+        else if (owner.GetComponent<Character>().enabled == false)
+        {
+            currentVelocity = rb.velocity;
+            rb.velocity = Vector2.zero;
+            isPaused = true;
+        }
+        // Se il proprietario è disattivato e il gioco non è in pausa, distruggi l'oggetto
+        else if (!owner.activeInHierarchy && !isPaused)
         {
             Destroy(gameObject);
         }

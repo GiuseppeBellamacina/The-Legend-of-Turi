@@ -60,6 +60,7 @@ public class Door : Interactable, IResettable
         if (isOpen.value)
         {
             Open();
+            PlayerController.Instance.UnlockCharacters();
         }
         else
         {

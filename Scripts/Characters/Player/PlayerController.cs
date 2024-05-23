@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -124,11 +123,11 @@ public class PlayerController : Character
             SetState(State.idle);
     }
 
-    void LockCharacters()
+    public void LockCharacters()
     {
         if (RoomLocator.Instance.currentRoom == null)
             return;
-            
+
         GameObject[] obj = RoomLocator.Instance.currentRoom.GetComponent<Room>().objectsToSpawn;
         foreach (GameObject character in obj)
         {
@@ -154,7 +153,7 @@ public class PlayerController : Character
         }
     }
 
-    void UnlockCharacters()
+    public void UnlockCharacters()
     {
         if (RoomLocator.Instance.currentRoom == null)
             return;
@@ -199,7 +198,7 @@ public class PlayerController : Character
         else
         {
             toInteract.GetComponent<Interactable>().ContinueInteraction();
-            if (toInteract.GetComponent<Interactable>().InteractionEnded())
+            if (toInteract && toInteract.GetComponent<Interactable>().InteractionEnded())
                 UnlockCharacters();
         }
     }

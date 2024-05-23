@@ -4,9 +4,10 @@ public class RockProjectile : Projectile
 {
     void OnTriggerEnter2D(Collider2D collision)
     {
-        // if it hitted the enemy who shot it, ignore it
+        // Se collide con il proprietario, non fare nulla
         if (collision.gameObject == owner)
             return;
+
         else if (collision.CompareTag("Player"))
         {
             PlayerController.Instance.TakeDamage(damage);

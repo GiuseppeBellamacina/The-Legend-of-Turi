@@ -24,10 +24,13 @@ public class EnemyDoor : Door
 
         if (doorType == DoorType.Enemies)
         {
-            foreach (GameObject enemy in enemies)
+            if (!hasBeenInteracted.value) // Così non si resetta ogni volta che si interagisce con la porta
             {
-                enemy.SetActive(true);
-                enemy.GetComponent<IResettable>()?.Reset();
+                foreach (GameObject enemy in enemies)
+                {
+                    enemy.SetActive(true);
+                    enemy.GetComponent<IResettable>()?.Reset();
+                }
             }
             hasBeenInteracted.value = true;
 

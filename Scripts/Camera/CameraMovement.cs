@@ -10,7 +10,6 @@ public class CameraMovement : MonoBehaviour
     public bool isBounded;
     Vector2 minPosition, maxPosition;
     Animator animator;
-    bool goToPos;
 
     public static CameraMovement Instance
     {
@@ -44,23 +43,34 @@ public class CameraMovement : MonoBehaviour
         SetBoundaries();
         SetInstantPosition();
         isBounded = true;
-        goToPos = false;
     }
 
-    IEnumerator GoToPositionCo(Vector3 position, float time){
-        goToPos = true;
-        while (transform.position != position)
+    IEnumerator FocusCo(Vector3 position, float zoom, float time)
+    {
+        Instance.enabled = false;
+        Vector3 startPosition = transform.position;
+        float startSize = Camera.main.orthographicSize;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < time)
         {
-            transform.position = Vector3.Lerp(transform.position, position, smoothing);
+            transform.position = Vector3.Lerp(startPosition, position, elapsedTime / time);
+            Camera.main.orthographicSize = Mathf.Lerp(startSize, zoom, elapsedTime / time);
+            elapsedTime += Time.deltaTime;
             yield return null;
         }
+
+        transform.position = position;
+        Camera.main.orthographicSize = zoom;
+
         yield return new WaitForSeconds(time);
-        goToPos = false;
+
+        Camera.main.orthographicSize = startSize;
+        Instance.enabled = true;
     }
 
-    public void GoToPosition(Vector3 position, float time)
-    {
-        StartCoroutine(GoToPositionCo(position, time));
+    public void Focus(Vector3 position, float zoom, float time){
+        StartCoroutine(FocusCo(position, zoom, time));
     }
 
     public void SetInstantPosition(){
@@ -78,18 +88,15 @@ public class CameraMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!goToPos)
+        if (transform.position != target.position)
         {
-            if (transform.position != target.position)
+            Vector3 targetPosition = new Vector3(target.position.x, target.position.y, transform.position.z);
+            if (isBounded)
             {
-                Vector3 targetPosition = new Vector3(target.position.x, target.position.y, transform.position.z);
-                if (isBounded)
-                {
-                    targetPosition.x = Mathf.Clamp(targetPosition.x, minPosition.x, maxPosition.x);
-                    targetPosition.y = Mathf.Clamp(targetPosition.y, minPosition.y, maxPosition.y);
-                }
-                transform.position = Vector3.Lerp(transform.position, targetPosition, smoothing);
+                targetPosition.x = Mathf.Clamp(targetPosition.x, minPosition.x, maxPosition.x);
+                targetPosition.y = Mathf.Clamp(targetPosition.y, minPosition.y, maxPosition.y);
             }
+            transform.position = Vector3.Lerp(transform.position, targetPosition, smoothing);
         }
     }
 

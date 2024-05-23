@@ -76,6 +76,8 @@ public class Door : Interactable, IResettable
 
     public override void Interact()
     {
+        base.Interact();
+        
         suggestionBox.SetActive(false);
         if (isContextClue)
             contextOff.Raise();

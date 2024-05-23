@@ -25,9 +25,6 @@ public class Slime : Enemy
 
     protected override void EnemyBehaviour()
     {
-        if (Stop())
-            return;
-        
         base.EnemyBehaviour();
 
         moveTimerCounter += Time.deltaTime;

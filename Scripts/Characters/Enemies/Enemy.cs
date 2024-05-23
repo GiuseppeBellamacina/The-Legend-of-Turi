@@ -11,7 +11,6 @@ public class Enemy : Character, IResettable
     [Header("Loot")]
     public GameObject[] loot;
     protected Vector2 homePosition;
-    State previousState;
     public SpriteRenderer surpriseItem;
 
     protected override void Awake()
@@ -70,25 +69,6 @@ public class Enemy : Character, IResettable
             spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() + 1;
         else
             spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() - 1;
-    }
-
-    protected virtual bool Stop()
-    { // Questa funzione si deve mettere nella funzione di movimento del nemico
-        if (PlayerController.Instance.IsState(State.interact))
-        {
-            Debug.Log("Stop");
-            previousState = currentState;
-            SetState(State.idle);
-            animator.enabled = false;
-            rb.velocity = Vector2.zero;
-            return true;
-        }
-        else
-        {
-            SetState(previousState);
-            animator.enabled = true;
-            return false;
-        }
     }
 
     public override void TakeDamage(float damage)

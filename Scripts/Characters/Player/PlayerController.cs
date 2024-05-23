@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -123,11 +124,49 @@ public class PlayerController : Character
             SetState(State.idle);
     }
 
+    void LockCharacters()
+    {
+        GameObject[] obj = RoomLocator.Instance.currentRoom.GetComponent<Room>().objectsToSpawn;
+        foreach (GameObject character in obj)
+        {
+            Character c = character.GetComponent<Character>();
+            Npc n = character.GetComponent<Npc>();
+            if (c != null){
+                c.rb.velocity = Vector2.zero;
+                character.GetComponent<Animator>().enabled = false;
+                c.enabled = false;
+            }
+            else if (n != null){
+                if (n.rb.bodyType != RigidbodyType2D.Static)
+                    n.rb.velocity = Vector2.zero;
+                character.GetComponent<Animator>().enabled = false;
+                n.enabled = false;
+            }
+        }
+    }
+
+    void UnlockCharacters()
+    {
+        GameObject[] obj = RoomLocator.Instance.currentRoom.GetComponent<Room>().objectsToSpawn;
+        foreach (GameObject character in obj)
+        {
+            if (character.GetComponent<Character>() != null){
+                character.GetComponent<Character>().enabled = true;
+                character.GetComponent<Animator>().enabled = true;
+            }
+            else if (character.GetComponent<Npc>() != null){
+                character.GetComponent<Npc>().enabled = true;
+                character.GetComponent<Animator>().enabled = true;
+            }
+        }
+    }
+
     void Interact()
     {
         if (toInteract == null)
             return;
-
+        
+        LockCharacters();
         if (currentState != State.interact)
         {
             SetState(State.interact);
@@ -137,13 +176,19 @@ public class PlayerController : Character
             rb.velocity = Vector2.zero;
         }
         else
+        {
             toInteract.GetComponent<Interactable>().ContinueInteraction();
+            if (toInteract.GetComponent<Interactable>().InteractionEnded())
+                UnlockCharacters();
+        }
     }
 
     void StopInteraction()
     {
         if (toInteract == null)
             return;
+        
+        UnlockCharacters();
         toInteract.GetComponent<Interactable>().StopInteraction();
     }
 

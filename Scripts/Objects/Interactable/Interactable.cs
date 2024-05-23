@@ -8,12 +8,22 @@ public class Interactable : MonoBehaviour
     protected TMP_Text suggestionText, dialogText;
     public string suggestion;
     public bool isContextClue;
+    bool interactionEnded = false;
 
-    public virtual void Interact(){}
+    public virtual void Interact()
+    {
+        interactionEnded = false;
+    }
     public virtual void StopInteraction(){
         PlayerController.Instance.SetState(State.none);
+        interactionEnded = true;
     }
     public virtual void ContinueInteraction(){}
+
+    public bool InteractionEnded()
+    {
+        return interactionEnded;
+    }
 
     protected virtual void Awake()
     {

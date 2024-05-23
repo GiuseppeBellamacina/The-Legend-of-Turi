@@ -83,6 +83,7 @@ public class RoomTransfer : MonoBehaviour
             text.SetActive(false); // resetta un'eventuale scritta precedente
             numberOfTransfers++;
             StartCoroutine(PlaceText());
+            RoomLocator.Instance.SetCurrentRoomByPos();
         }
     }
 

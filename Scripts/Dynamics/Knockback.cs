@@ -114,7 +114,6 @@ public class Knockback : MonoBehaviour
         Rigidbody2D hit = other.GetComponent<Rigidbody2D>();
         RigidbodyType2D oldType = hit.bodyType;
         DoDamage(other);
-        Debug.Log("Knockback on " + other.name + " by " + gameObject.name);
         if (hit != null)
         {
             hit.bodyType = RigidbodyType2D.Dynamic;

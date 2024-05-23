@@ -7,6 +7,8 @@ public class Sign : Interactable
 
     public override void Interact()
     {
+        base.Interact();
+        
         suggestionBox.SetActive(false);
         contextOff.Raise();
         dialogText.text = dialog;

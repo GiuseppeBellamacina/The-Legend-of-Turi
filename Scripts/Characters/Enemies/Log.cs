@@ -18,10 +18,7 @@ public class Log : Enemy, IResettable
     }
 
     protected override void EnemyBehaviour()
-    {
-        if (Stop())
-            return;
-            
+    {       
         base.EnemyBehaviour();
 
         // Se il nemico è in range di inseguimento o attacco

@@ -69,9 +69,15 @@ public class RoomLocator : MonoBehaviour
         }
 
         CameraMovement.Instance.SetMinMaxPositionObjects(minPositionObject, maxPositionObject);
-        currentRoom = minPositionObject.transform.parent.gameObject;
+        SetCurrentRoomByPos();
         if (currentRoom != null)
             currentRoom.GetComponent<Room>().SpawnObjects();
+    }
+
+    public void SetCurrentRoomByPos()
+    {
+        // Setta la stanza corrente in base alla posizione del giocatore
+        currentRoom = minPositionObject.transform.parent.gameObject;
     }
 
     void Start()

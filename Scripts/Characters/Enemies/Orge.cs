@@ -24,9 +24,6 @@ public class Orge : Enemy, IResettable
 
     protected override void EnemyBehaviour()
     {
-        if (Stop())
-            return;
-
         base.EnemyBehaviour();
 
         float distance = DistanceToPlayer();

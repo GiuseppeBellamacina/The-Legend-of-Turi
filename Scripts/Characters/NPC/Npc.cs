@@ -3,11 +3,15 @@ using UnityEngine;
 public class Npc : Interactable
 {
     protected SpriteRenderer spriteRenderer;
+    public Animator animator;
+    public Rigidbody2D rb;
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     protected virtual void FixRenderLayer()

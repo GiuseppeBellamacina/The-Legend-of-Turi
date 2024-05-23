@@ -26,6 +26,8 @@ public class TreasureChest : Interactable, IResettable
 
     public override void Interact()
     {
+        base.Interact();
+        
         if (!isOpen)
             OpenChest();
         else
@@ -66,7 +68,7 @@ public class TreasureChest : Interactable, IResettable
         inventory.currentItem = contents;
         raiseItem.Raise();
         contents.hasBeenPickedUp = true;
-        while (PlayerController.Instance.currentState != State.interact)
+        while (!PlayerController.Instance.IsState(State.interact)) // non lo toccare
         {
             yield return null;
         }

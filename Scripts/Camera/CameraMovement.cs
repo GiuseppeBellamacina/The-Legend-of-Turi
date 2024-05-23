@@ -7,9 +7,9 @@ public class CameraMovement : MonoBehaviour
     public Transform target;
     public float smoothing;
     public GameObject minPositionObject, maxPositionObject;
+    public Animator animator;
     public bool isBounded;
     Vector2 minPosition, maxPosition;
-    Animator animator;
 
     public static CameraMovement Instance
     {
@@ -34,12 +34,13 @@ public class CameraMovement : MonoBehaviour
         }
         else
             Destroy(gameObject);
+
+        animator = GetComponent<Animator>();
     }
 
     void Start()
     {
         target = PlayerController.Instance.transform;
-        animator = GetComponent<Animator>();
         SetBoundaries();
         SetInstantPosition();
         isBounded = true;
@@ -48,25 +49,19 @@ public class CameraMovement : MonoBehaviour
     IEnumerator FocusCo(Vector3 position, float zoom, float time)
     {
         Instance.enabled = false;
-        Vector3 startPosition = transform.position;
-        float startSize = Camera.main.orthographicSize;
+        Instance.animator.enabled = false;
         float elapsedTime = 0f;
 
         while (elapsedTime < time)
         {
-            transform.position = Vector3.Lerp(startPosition, position, elapsedTime / time);
-            Camera.main.orthographicSize = Mathf.Lerp(startSize, zoom, elapsedTime / time);
+            transform.position = Vector3.Lerp(Camera.main.transform.position, position, elapsedTime / time);
+            Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, zoom, elapsedTime / time);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
         transform.position = position;
         Camera.main.orthographicSize = zoom;
-
-        yield return new WaitForSeconds(time);
-
-        Camera.main.orthographicSize = startSize;
-        Instance.enabled = true;
     }
 
     public void Focus(Vector3 position, float zoom, float time){

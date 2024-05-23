@@ -13,7 +13,13 @@ public class Squirrel : Character
     {
         base.Awake();
         homePosition = transform.position;
+    }
+
+    void Start()
+    {
         nextAction = Random.Range(0, 3);
+        SetState(State.walk);
+        Idle();
     }
 
     void Behavior()

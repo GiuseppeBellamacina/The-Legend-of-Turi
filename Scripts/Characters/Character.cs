@@ -52,12 +52,12 @@ public class Character : MonoBehaviour
     IEnumerator KnockCo(float knockTime)
     {
         spriteRenderer.color = Color.red; // Settta lo sprite a rosso
-        GetComponent<Character>().enabled = false; // Disattiva lo script del personaggio
+        enabled = false; // Disattiva lo script del personaggio
         yield return new WaitForSeconds(knockTime);
         rb.velocity = Vector2.zero;
         SetState(State.idle);
         rb.velocity = Vector2.zero;
-        GetComponent<Character>().enabled = true; // Riattiva lo script del personaggio
+        enabled = true; // Riattiva lo script del personaggio
         spriteRenderer.color = Color.white; // Resetta il colore dello sprite
     }
 

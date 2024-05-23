@@ -126,11 +126,16 @@ public class PlayerController : Character
 
     void LockCharacters()
     {
+        if (RoomLocator.Instance.currentRoom == null)
+            return;
+            
         GameObject[] obj = RoomLocator.Instance.currentRoom.GetComponent<Room>().objectsToSpawn;
         foreach (GameObject character in obj)
         {
             Character c = character.GetComponent<Character>();
             Npc n = character.GetComponent<Npc>();
+            DamagePlayer d = character.GetComponent<DamagePlayer>();
+
             if (c != null){
                 c.rb.velocity = Vector2.zero;
                 character.GetComponent<Animator>().enabled = false;
@@ -142,20 +147,35 @@ public class PlayerController : Character
                 character.GetComponent<Animator>().enabled = false;
                 n.enabled = false;
             }
+            else if (d != null){
+                character.GetComponent<Animator>().enabled = false;
+                d.enabled = false;
+            }
         }
     }
 
     void UnlockCharacters()
     {
+        if (RoomLocator.Instance.currentRoom == null)
+            return;
+
         GameObject[] obj = RoomLocator.Instance.currentRoom.GetComponent<Room>().objectsToSpawn;
         foreach (GameObject character in obj)
         {
-            if (character.GetComponent<Character>() != null){
-                character.GetComponent<Character>().enabled = true;
+            Character c = character.GetComponent<Character>();
+            Npc n = character.GetComponent<Npc>();
+            DamagePlayer d = character.GetComponent<DamagePlayer>();
+
+            if (c != null){
+                c.enabled = true;
                 character.GetComponent<Animator>().enabled = true;
             }
-            else if (character.GetComponent<Npc>() != null){
-                character.GetComponent<Npc>().enabled = true;
+            else if (n != null){
+                n.enabled = true;
+                character.GetComponent<Animator>().enabled = true;
+            }
+            else if (d != null){
+                d.enabled = true;
                 character.GetComponent<Animator>().enabled = true;
             }
         }
@@ -165,8 +185,9 @@ public class PlayerController : Character
     {
         if (toInteract == null)
             return;
-        
+
         LockCharacters();
+
         if (currentState != State.interact)
         {
             SetState(State.interact);

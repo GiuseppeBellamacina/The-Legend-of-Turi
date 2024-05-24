@@ -4,6 +4,8 @@ public class Collectable : MonoBehaviour
 {
     public Item item;
     public Inventory playerInventory;
+    public float lifeTime = 10f;
+    float timer;
     SpriteRenderer spriteRenderer;
     protected GameObject owner;
 
@@ -39,5 +41,8 @@ public class Collectable : MonoBehaviour
     protected virtual void FixedUpdate()
     {
         FixRenderLayer();
+        timer += Time.deltaTime;
+        if (timer >= lifeTime)
+            Destroy(gameObject);
     }
 }

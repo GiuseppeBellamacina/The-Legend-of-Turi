@@ -18,12 +18,10 @@ public class Inventory : ScriptableObject, IResettable
         {
             numberOfCoins += item.quantity;
             coinSignal.Raise();
-            return;
         }
         else if (item.isHealth)
         {
             PlayerController.Instance.Heal(item.quantity);
-            return;
         }
         else{
             for (int i = 0; i < items.Count; i++)
@@ -43,7 +41,10 @@ public class Inventory : ScriptableObject, IResettable
         if (item.isKey)
             numberOfKeys -= item.quantity;
         else if (item.isCoin)
+        {
             numberOfCoins -= item.quantity;
+            coinSignal.Raise();
+        }
         else
         {
             for (int i = 0; i < items.Count; i++)
@@ -59,10 +60,15 @@ public class Inventory : ScriptableObject, IResettable
         }
     }
 
-    public void Pay(int price)
+    public bool Pay(int price)
     {
         if (numberOfCoins >= price)
-        numberOfCoins -= price;
+        {
+            numberOfCoins -= price;
+            coinSignal.Raise();
+            return true;
+        }
+        return false;
     }
 
     public void UseKey()

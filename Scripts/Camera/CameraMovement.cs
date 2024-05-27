@@ -36,11 +36,11 @@ public class CameraMovement : MonoBehaviour
             Destroy(gameObject);
 
         animator = GetComponent<Animator>();
+        target = PlayerController.Instance.transform;
     }
 
     void Start()
     {
-        target = PlayerController.Instance.transform;
         SetBoundaries();
         SetInstantPosition();
         isBounded = true;

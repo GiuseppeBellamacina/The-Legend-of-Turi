@@ -6,7 +6,7 @@ public class Paper : Interactable
     [Header("Paper Settings")]
     public float zoom;
     public float time;
-    public GameObject bar, coinHolder;
+    public GameObject bar, coinHolder, weapon;
     float startSize;
     Vector3 startPosition;
 
@@ -28,6 +28,7 @@ public class Paper : Interactable
         PlayerController.Instance.spriteRenderer.enabled = false;
         bar.SetActive(false);
         coinHolder.SetActive(false);
+        weapon.SetActive(false);
         CameraMovement.Instance.Focus(position, zoom, time);
     }
 
@@ -51,6 +52,7 @@ public class Paper : Interactable
         suggestionBox.SetActive(true);
         bar.SetActive(true);
         coinHolder.SetActive(true);
+        weapon.SetActive(true);
         contextOn.Raise();
     }
 }

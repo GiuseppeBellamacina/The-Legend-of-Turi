@@ -30,6 +30,14 @@ public class RoomLocator : MonoBehaviour
         }
         else
             Destroy(gameObject);
+        
+        FindPositionObjects();
+        CameraMovement.Instance.SetMinMaxPositionObjects(minPositionObject, maxPositionObject);
+    }
+
+    void Start()
+    {
+        ActivatecurrentRoom();
     }
 
     public void FindPositionObjects()
@@ -70,8 +78,7 @@ public class RoomLocator : MonoBehaviour
 
         CameraMovement.Instance.SetMinMaxPositionObjects(minPositionObject, maxPositionObject);
         SetCurrentRoomByPos();
-        if (currentRoom != null)
-            currentRoom.GetComponent<Room>().SpawnObjects();
+        ActivatecurrentRoom();
     }
 
     public void SetCurrentRoomByPos()
@@ -80,10 +87,10 @@ public class RoomLocator : MonoBehaviour
         currentRoom = minPositionObject.transform.parent.gameObject;
     }
 
-    void Start()
+    void ActivatecurrentRoom()
     {
-        FindPositionObjects();
-        CameraMovement.Instance.SetMinMaxPositionObjects(minPositionObject, maxPositionObject);
+        if (currentRoom != null)
+            currentRoom.GetComponent<Room>().SpawnObjects();
     }
 
     public void SetMinMaxPositionObjects(GameObject minPosObject, GameObject maxPosObject)

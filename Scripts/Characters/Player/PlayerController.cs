@@ -76,6 +76,7 @@ public class PlayerController : Character
         speed = data.speed;
         damage = data.damage * damageMultiplier.value; // ha valore di default 1 che scende con la difficoltà
         attackReady = true; // viene gestito dalle animazioni
+        secondAttackReady = true;
         firstWeapon = true;
         toInteract = null;
         weapon.sprite = sword;

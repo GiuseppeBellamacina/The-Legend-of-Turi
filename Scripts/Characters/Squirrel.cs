@@ -4,10 +4,10 @@ public class Squirrel : Character
 {
     public float range;
     public float timeToMove;
-    float moveTimer = 0f;
-    Vector2 homePosition, currentDestination;
-    bool hasMoved = true;
-    int nextAction;
+    protected float moveTimer = 0f;
+    protected Vector2 homePosition, currentDestination;
+    protected bool hasMoved = true;
+    protected int nextAction;
 
     protected override void Awake()
     {
@@ -15,10 +15,11 @@ public class Squirrel : Character
         homePosition = transform.position;
     }
 
-    void Start()
+    protected virtual void Start()
     {
         nextAction = Random.Range(0, 3);
         SetState(State.walk);
+        animator.SetTrigger("walk");
         Idle();
     }
 
@@ -35,7 +36,8 @@ public class Squirrel : Character
 
     void MoveRandomly()
     {
-        if (!IsState(State.walk)){
+        if (!IsState(State.walk))
+        {
             animator.SetTrigger("walk");
             SetState(State.walk);
         }
@@ -56,7 +58,7 @@ public class Squirrel : Character
         }
     }
 
-    void Idle()
+    protected virtual void Idle()
     {
         rb.velocity = Vector2.zero;
         if (!IsState(State.idle))
@@ -78,13 +80,13 @@ public class Squirrel : Character
         moveTimer += Time.deltaTime;
     }
 
-    void MoveTo(Vector2 target)
+    protected void MoveTo(Vector2 target)
     {
         Vector2 temp = Vector2.MoveTowards(transform.position, target, data.speed * Time.deltaTime);
         rb.MovePosition(temp);
     }
 
-    void FixRenderLayer()
+    protected void FixRenderLayer()
     {
         if (PlayerController.Instance.transform.position.y > transform.position.y)
             spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() + 1;
@@ -92,7 +94,7 @@ public class Squirrel : Character
             spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() - 1;
     }
 
-    void Flip()
+    protected void Flip()
     {
         Vector2 direction = (Vector2)transform.position - currentDestination;
         if (direction.x > 0)

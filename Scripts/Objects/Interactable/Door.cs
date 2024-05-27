@@ -108,7 +108,7 @@ public class Door : Interactable, IResettable
         }
         else if (doorType == DoorType.Blocked)
         {
-            dialogText.text = "La porta è bloccata, non puoi aprirla.";
+            dialogText.text = "La porta è bloccata, non c'è modo d'aprirla.";
         }
     }
 }

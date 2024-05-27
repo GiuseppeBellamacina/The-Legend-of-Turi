@@ -5,6 +5,7 @@ public enum State
 {
     idle,
     walk,
+    run,
     chase,
     attack,
     stagger,
@@ -46,7 +47,7 @@ public class Character : MonoBehaviour
     public void Knock(float knockTime)
     {
         if (gameObject.activeInHierarchy)
-            StartCoroutine(KnockCo( knockTime));
+            StartCoroutine(KnockCo(knockTime));
     }
 
     IEnumerator KnockCo(float knockTime)

@@ -1,20 +1,33 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerController : Character
 {
     private static PlayerController _instance;
     [Header("Player Settings")]
     Vector2 moveDirection;
+    float speed;
+    public float damage;
     public bool attackReady;
     [Header("Interactions")]
     public GameObject toInteract;
     public Signals playerHealthSignal;
+    [Header("Extra Data")]
+    public FloatValue speedMultiplier;
+    public FloatValue damageMultiplier;
+    public FloatValue healthMultiplier;
+    public Sprite sword, bow;
+    public bool firstWeapon;
     [Header("Inventory")]
     public Inventory inventory;
+    public GameObject arrow;
     [Header("Renderers")]
     public SpriteRenderer receivedItemSprite;
+    public Image weapon;
+    public GameObject arrowText;
 
     public static PlayerController Instance
     {
@@ -48,7 +61,10 @@ public class PlayerController : Character
         // Abbino i metodi ai controlli
         InputManager.Instance.inputController.Player.Interact.performed += _ => Interact();
         InputManager.Instance.inputController.Player.StopInteraction.performed += _ => StopInteraction();
-        InputManager.Instance.inputController.Player.Attack.performed += _ => Attack(); // FEATURE: metti lo sblocco
+        InputManager.Instance.inputController.Player.Attack.performed += _ => Attack();
+        InputManager.Instance.inputController.Player.Run.performed += _ => Run();
+        InputManager.Instance.inputController.Player.Run.canceled += _ => StopRun();
+        InputManager.Instance.inputController.Player.ChangeWeapon.performed += _ => ChangeWeapon();
 
         // Setto la direzione di default
         animator.SetFloat("moveX", 0);
@@ -56,8 +72,12 @@ public class PlayerController : Character
 
         // Inizializzo i parametri
         data.health = data.maxHealth;
+        speed = data.speed;
+        damage = data.damage * damageMultiplier.value; // ha valore di default 1 che scende con la difficoltà
         attackReady = true; // viene gestito dalle animazioni
+        firstWeapon = true;
         toInteract = null;
+        weapon.sprite = sword;
     }
 
     public void DeactivateInput()
@@ -68,6 +88,61 @@ public class PlayerController : Character
     public void ActivateInput()
     {
         InputManager.Instance.inputController.Player.Enable();
+    }
+
+    public void DisableAttack()
+    {
+        InputManager.Instance.inputController.Player.Attack.Disable();
+        InputManager.Instance.inputController.Player.ChangeWeapon.Disable();
+    }
+
+    public void EnableAttack()
+    {
+        InputManager.Instance.inputController.Player.Attack.Enable();
+        InputManager.Instance.inputController.Player.ChangeWeapon.Enable();
+    }
+
+    void Run()
+    {
+        animator.speed = speedMultiplier.value;
+        speed = data.speed * speedMultiplier.value;
+        DisableAttack();
+    }
+
+    void StopRun()
+    {
+        animator.speed = 1f;
+        speed = data.speed;
+        EnableAttack();
+    }
+
+    public void SetArrowText()
+    {
+        arrowText.GetComponent<TextMeshProUGUI>().text = inventory.GetQuantity("Frecce").ToString();
+    }
+
+    void ChangeWeapon()
+    {
+        if (inventory.IsAwaible("Bow"))
+        {
+            if (firstWeapon)
+            {
+                inventory.SetCurrentItem(inventory.GetItem("Bow"));
+                weapon.sprite = bow;
+                arrowText.SetActive(true);
+                SetArrowText();
+                firstWeapon = false;
+            }
+            else
+            {
+                inventory.SetCurrentItem(inventory.GetItem("Sword"));
+                weapon.sprite = sword;
+                arrowText.SetActive(false);
+                firstWeapon = true;
+            }
+        }
+        else
+            firstWeapon = true;
     }
 
     void Move(Vector2 direction)
@@ -82,7 +157,7 @@ public class PlayerController : Character
         // Salvo l'ultima direzione di movimento
         Vector2 lastMoveDirection = new Vector2(animator.GetFloat("moveX"), animator.GetFloat("moveY"));
         // Applico la velocità al rigidbody
-        rb.velocity = moveDirection * data.speed;
+        rb.velocity = moveDirection * speed;
         // Aggiorno l'animazione
         MovementAnimation(lastMoveDirection);
     }
@@ -104,10 +179,33 @@ public class PlayerController : Character
     }
 
     void Attack()
+    {
+        if (firstWeapon)
+            MainAttack();
+        else
+            SecondAttack();
+    }
+
+    void MainAttack()
     {   
         if (IsState(State.interact) || !attackReady)
             return;
+        
         StartCoroutine(AttackCo());
+    }
+
+    bool HasArrow()
+    {   
+        return inventory.numberOfArrows > 0;
+    }
+
+    void SecondAttack()
+    {
+        if (IsState(State.interact) || !attackReady || !HasArrow())
+            return;
+        
+        inventory.UseArrow();
+        StartCoroutine(SecondAttackCo());
     }
 
     IEnumerator AttackCo()
@@ -117,6 +215,23 @@ public class PlayerController : Character
         yield return null;
         animator.SetBool("isAttacking", false);
         yield return new WaitForSeconds(.3f);
+        if (rb.velocity != Vector2.zero)
+            SetState(State.walk);
+        else
+            SetState(State.idle);
+    }
+
+    IEnumerator SecondAttackCo()
+    {
+        SetState(State.attack);
+        attackReady = false;
+        Vector2 attackDirection = new Vector2(animator.GetFloat("moveX"), animator.GetFloat("moveY"));
+        GameObject projectile = Instantiate(arrow, transform.position, Quaternion.identity);
+        projectile.GetComponent<Projectile>().SetOwner(gameObject);
+        projectile.GetComponent<Projectile>().Launch(attackDirection);
+        projectile.GetComponent<Arrow>().FixRotation();
+        yield return new WaitForSeconds(.8f);
+        attackReady = true;
         if (rb.velocity != Vector2.zero)
             SetState(State.walk);
         else
@@ -236,7 +351,7 @@ public class PlayerController : Character
 
     public override void TakeDamage(float damage)
     {
-        data.health -= damage;
+        data.health -= damage * healthMultiplier.value; // ha valore di default 1 che sale con la difficoltà
         CameraMovement.Instance.ScreenKick();
         if (data.health < 0)
             data.health = 0;

@@ -18,7 +18,7 @@ public class Knockback : MonoBehaviour
     void SetDamage()
     {
         if (gameObject.CompareTag("PlayerHit"))
-            damage = PlayerController.Instance.data.damage;
+            damage = PlayerController.Instance.damage;
         else if (gameObject.CompareTag("Enemy"))
             damage = GetComponent<Character>().data.damage;
     }

@@ -12,6 +12,7 @@ public class PlayerController : Character
     float speed;
     public float damage;
     public bool attackReady;
+    public bool secondAttackReady;
     [Header("Interactions")]
     public GameObject toInteract;
     public Signals playerHealthSignal;
@@ -78,6 +79,7 @@ public class PlayerController : Character
         firstWeapon = true;
         toInteract = null;
         weapon.sprite = sword;
+        //weapon.color = new Color(1, 1, 1, 0);
     }
 
     public void DeactivateInput()
@@ -94,16 +96,19 @@ public class PlayerController : Character
     {
         InputManager.Instance.inputController.Player.Attack.Disable();
         InputManager.Instance.inputController.Player.ChangeWeapon.Disable();
+        weapon.color = new Color(1, 1, 1, .5f);
     }
 
     public void EnableAttack()
     {
         InputManager.Instance.inputController.Player.Attack.Enable();
         InputManager.Instance.inputController.Player.ChangeWeapon.Enable();
+        weapon.color = new Color(1, 1, 1, 1);
     }
 
     void Run()
     {
+        SetState(State.run);
         animator.speed = speedMultiplier.value;
         speed = data.speed * speedMultiplier.value;
         DisableAttack();
@@ -114,6 +119,10 @@ public class PlayerController : Character
         animator.speed = 1f;
         speed = data.speed;
         EnableAttack();
+        if (rb.velocity != Vector2.zero)
+            SetState(State.walk);
+        else
+            SetState(State.idle);
     }
 
     public void SetArrowText()
@@ -123,11 +132,11 @@ public class PlayerController : Character
 
     void ChangeWeapon()
     {
-        if (inventory.IsAwaible("Bow"))
+        if (inventory.IsAwaible("Arco"))
         {
             if (firstWeapon)
             {
-                inventory.SetCurrentItem(inventory.GetItem("Bow"));
+                inventory.SetCurrentItem(inventory.GetItem("Arco"));
                 weapon.sprite = bow;
                 arrowText.SetActive(true);
                 SetArrowText();
@@ -135,7 +144,7 @@ public class PlayerController : Character
             }
             else
             {
-                inventory.SetCurrentItem(inventory.GetItem("Sword"));
+                inventory.SetCurrentItem(inventory.GetItem("Spada"));
                 weapon.sprite = sword;
                 arrowText.SetActive(false);
                 firstWeapon = true;
@@ -201,7 +210,7 @@ public class PlayerController : Character
 
     void SecondAttack()
     {
-        if (IsState(State.interact) || !attackReady || !HasArrow())
+        if (IsState(State.interact) || !secondAttackReady || !HasArrow())
             return;
         
         inventory.UseArrow();
@@ -224,14 +233,14 @@ public class PlayerController : Character
     IEnumerator SecondAttackCo()
     {
         SetState(State.attack);
-        attackReady = false;
+        secondAttackReady = false;
         Vector2 attackDirection = new Vector2(animator.GetFloat("moveX"), animator.GetFloat("moveY"));
         GameObject projectile = Instantiate(arrow, transform.position, Quaternion.identity);
         projectile.GetComponent<Projectile>().SetOwner(gameObject);
         projectile.GetComponent<Projectile>().Launch(attackDirection);
         projectile.GetComponent<Arrow>().FixRotation();
-        yield return new WaitForSeconds(.8f);
-        attackReady = true;
+        yield return new WaitForSeconds(.5f);
+        secondAttackReady = true;
         if (rb.velocity != Vector2.zero)
             SetState(State.walk);
         else
@@ -246,14 +255,16 @@ public class PlayerController : Character
         GameObject[] obj = RoomLocator.Instance.currentRoom.GetComponent<Room>().objectsToSpawn;
         foreach (GameObject character in obj)
         {
-            Character c = character.GetComponent<Character>();
+            Enemy e = character.GetComponent<Enemy>();
             Npc n = character.GetComponent<Npc>();
             DamagePlayer d = character.GetComponent<DamagePlayer>();
 
-            if (c != null){
-                c.rb.velocity = Vector2.zero;
+            if (character == toInteract)
+                continue;
+            else if (e != null){
+                e.rb.velocity = Vector2.zero;
                 character.GetComponent<Animator>().enabled = false;
-                c.enabled = false;
+                e.enabled = false;
             }
             else if (n != null){
                 if (n.rb.bodyType != RigidbodyType2D.Static)
@@ -276,12 +287,12 @@ public class PlayerController : Character
         GameObject[] obj = RoomLocator.Instance.currentRoom.GetComponent<Room>().objectsToSpawn;
         foreach (GameObject character in obj)
         {
-            Character c = character.GetComponent<Character>();
+            Enemy e = character.GetComponent<Enemy>();
             Npc n = character.GetComponent<Npc>();
             DamagePlayer d = character.GetComponent<DamagePlayer>();
 
-            if (c != null){
-                c.enabled = true;
+            if (e != null){
+                e.enabled = true;
                 character.GetComponent<Animator>().enabled = true;
             }
             else if (n != null){
@@ -365,6 +376,16 @@ public class PlayerController : Character
         data.health += amount;
         if (data.health > data.maxHealth)
             data.health = data.maxHealth;
+        playerHealthSignal.Raise();
+    }
+
+    public void IncreaseMaxHealth(float amount)
+    {
+        if (data.maxHealth + amount > data.absoluteMaxHealth)
+            data.maxHealth = data.absoluteMaxHealth;
+        else
+            data.maxHealth += amount;
+        data.health = data.maxHealth;
         playerHealthSignal.Raise();
     }
 

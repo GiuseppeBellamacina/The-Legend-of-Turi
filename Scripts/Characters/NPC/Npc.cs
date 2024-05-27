@@ -5,6 +5,8 @@ public class Npc : Interactable
     protected SpriteRenderer spriteRenderer;
     public Animator animator;
     public Rigidbody2D rb;
+    [Header("Dialog")]
+    public Dialog dialog;
 
     protected override void Awake()
     {
@@ -12,6 +14,38 @@ public class Npc : Interactable
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+    }
+
+    public override void Interact()
+    {
+        base.Interact();
+        
+        suggestionBox.SetActive(false);
+        contextOff.Raise();
+        dialogBox.SetActive(true);
+        dialogText.text = dialog.GetFirstSentence();
+    }
+
+    public override void ContinueInteraction()
+    {
+        string sentence = dialog.GetNextSentence();
+        if (sentence != null)
+        {
+            dialogText.text = sentence;
+        }
+        else
+        {
+            StopInteraction();
+        }
+    }
+
+    public override void StopInteraction()
+    {
+        base.StopInteraction();
+        
+        dialogBox.SetActive(false);
+        suggestionBox.SetActive(true);
+        contextOn.Raise();
     }
 
     protected virtual void FixRenderLayer()

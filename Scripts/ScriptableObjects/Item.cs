@@ -6,7 +6,7 @@ public class Item : ScriptableObject, IResettable
     public Sprite sprite;
     public string itemName;
     [TextArea] public string description;
-    public bool isKey, isCoin, isHealth, isArrow;
+    public bool isKey, isCoin, isHealth, isArrow, isContainer;
     public int quantity;
     public bool hasBeenPickedUp;
 

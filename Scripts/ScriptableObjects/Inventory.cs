@@ -56,7 +56,6 @@ public class Inventory : ScriptableObject, IResettable
     public void AddArrow(int quantity)
     {
         if (numberOfArrows == 0){
-            Debug.Log("Arrow added");
             AddItem(Arrow);
         }
         
@@ -104,6 +103,10 @@ public class Inventory : ScriptableObject, IResettable
         else if (item.isHealth)
         {
             PlayerController.Instance.Heal(item.quantity);
+        }
+        else if (item.isContainer)
+        {
+            PlayerController.Instance.IncreaseMaxHealth(item.quantity);
         }
         else{
             for (int i = 0; i < items.Count; i++)

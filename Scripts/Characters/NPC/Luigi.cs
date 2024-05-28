@@ -5,11 +5,15 @@ public class Luigi : Npc
 {
     public FirstQuest quest;
     public Item sword;
+    public GameObject house;
+    public BoolValue houseStatus;
 
     protected override void Awake()
     {
         base.Awake();
         quest = GetComponent<FirstQuest>();
+        if (!houseStatus.value)
+            house.SetActive(false);
     }
 
     public override void Interact()
@@ -24,6 +28,8 @@ public class Luigi : Npc
         {
             quest.UpdateQuest(2);
             quest.CompleteQuest();
+            house.SetActive(true);
+            houseStatus.value = true;
         }
         // Se ho già parlato con Luigi e non ho completato la quest
         else if (quest.status.isActive && !quest.status.condition)

@@ -80,7 +80,8 @@ public class PlayerController : Character
         firstWeapon = true;
         toInteract = null;
         weapon.sprite = sword;
-        //weapon.color = new Color(1, 1, 1, 0);
+        DisableAttack();
+        weapon.color = new Color(1, 1, 1, 0);
     }
 
     public void DeactivateInput()
@@ -112,14 +113,16 @@ public class PlayerController : Character
         SetState(State.run);
         animator.speed = speedMultiplier.value;
         speed = data.speed * speedMultiplier.value;
-        DisableAttack();
+        if (inventory.IsAwaible("Spada"))
+            DisableAttack();
     }
 
     void StopRun()
     {
         animator.speed = 1f;
         speed = data.speed;
-        EnableAttack();
+        if (inventory.IsAwaible("Spada"))
+            EnableAttack();
         if (rb.velocity != Vector2.zero)
             SetState(State.walk);
         else
@@ -354,6 +357,13 @@ public class PlayerController : Character
     public void RaiseItem()
     {
         StartCoroutine(RaiseItemCo());
+    }
+
+    public void ObtainItem(Item item)
+    {
+        inventory.AddItem(item);
+        inventory.currentItem = item;
+        RaiseItem();
     }
 
     protected override void Die()

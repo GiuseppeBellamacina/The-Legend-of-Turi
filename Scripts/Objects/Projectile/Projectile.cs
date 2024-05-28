@@ -20,7 +20,7 @@ public class Projectile : MonoBehaviour
         lifeTimeCounter = 0;
     }
 
-    protected virtual void Update()
+    protected virtual void FixedUpdate()
     {
         // Se si era in pausa e il proprietario è attivo, riprendi il movimento
         if (isPaused && owner.activeInHierarchy)

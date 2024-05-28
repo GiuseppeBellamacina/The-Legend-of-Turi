@@ -14,6 +14,9 @@ public class Paper : Interactable
     {
         base.Start();
         startSize = Camera.main.orthographicSize;
+        bar = canvas.transform.Find("Bar").gameObject;
+        coinHolder = canvas.transform.Find("CoinHolder").gameObject;
+        weapon = canvas.transform.Find("Weapon").gameObject;
     }
 
     public override void Interact()

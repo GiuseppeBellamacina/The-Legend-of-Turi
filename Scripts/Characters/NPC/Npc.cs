@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class Npc : Interactable
 {
@@ -7,6 +8,9 @@ public class Npc : Interactable
     public Rigidbody2D rb;
     [Header("Dialog")]
     public Dialog dialog;
+    public TMP_Text npcTitle;
+    public TMP_Text npcDialog;
+    public Color titleColor;
 
     protected override void Awake()
     {
@@ -14,6 +18,20 @@ public class Npc : Interactable
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        npcTitle = dialogBox.transform.Find("NPC Title").GetComponent<TMP_Text>();
+        npcDialog = dialogBox.transform.Find("NPC Dialog").GetComponent<TMP_Text>();
+    }
+
+    protected void TextFormatter(string text)
+    {
+        string title = text.Split(':')[0];
+        if (title == "Turi")
+            npcTitle.color = new Color(0, 85, 153, 255) / 255f;
+        else
+            npcTitle.color = titleColor;
+        string dialog = text.Split(':')[1];
+        npcTitle.text = title;
+        npcDialog.text = dialog;
     }
 
     public override void Interact()
@@ -23,7 +41,8 @@ public class Npc : Interactable
         suggestionBox.SetActive(false);
         contextOff.Raise();
         dialogBox.SetActive(true);
-        dialogText.text = dialog.GetFirstSentence();
+        dialogText.text = "";
+        TextFormatter(dialog.GetFirstSentence());
     }
 
     public override void ContinueInteraction()
@@ -31,7 +50,7 @@ public class Npc : Interactable
         string sentence = dialog.GetNextSentence();
         if (sentence != null)
         {
-            dialogText.text = sentence;
+            TextFormatter(sentence);
         }
         else
         {
@@ -43,6 +62,8 @@ public class Npc : Interactable
     {
         base.StopInteraction();
         
+        npcTitle.text = "";
+        npcDialog.text = "";
         dialogBox.SetActive(false);
         suggestionBox.SetActive(true);
         contextOn.Raise();
@@ -56,7 +77,7 @@ public class Npc : Interactable
             spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() - 1;
     }
 
-    protected virtual void Update()
+    protected virtual void FixedUpdate()
     {
         FixRenderLayer();
     }

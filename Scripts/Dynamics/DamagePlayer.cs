@@ -14,7 +14,7 @@ public class DamagePlayer : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         FixRenderLayer();
         timeSinceLastDamage += Time.deltaTime;

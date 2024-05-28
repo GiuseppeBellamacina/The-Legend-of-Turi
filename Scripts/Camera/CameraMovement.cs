@@ -5,8 +5,8 @@ public class CameraMovement : MonoBehaviour
 {
     private static CameraMovement _instance;
     public Transform target;
-    public float smoothing;
-    public GameObject minPositionObject, maxPositionObject;
+    public float smoothing; // da inspector
+    public GameObject minPositionObject, maxPositionObject; // assegnati in RoomLocator
     public Animator animator;
     public bool isBounded;
     Vector2 minPosition, maxPosition;

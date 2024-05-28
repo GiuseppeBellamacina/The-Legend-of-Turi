@@ -4,10 +4,10 @@ using UnityEngine;
 [CreateAssetMenu]
 public class Dialog : ScriptableObject, IResettable
 {
-    public int dialogIndex;
-    public int currentCheckpoint;
-    public int[] dialogCheckpoints;
-    int checkPointIndex;
+    public int dialogIndex; // indice di lettura del dialogo
+    public int currentCheckpoint; // attuale indice da cui iniziare a leggere il dialogo
+    public int[] dialogCheckpoints; // indici da cui iniziare a leggere il dialogo
+    public int checkPointIndex; // indice di dialogCheckpoints
     [TextArea(3, 10)]
     public string[] sentences;
 
@@ -32,6 +32,20 @@ public class Dialog : ScriptableObject, IResettable
         if (checkPointIndex < dialogCheckpoints.Length)
         {
             currentCheckpoint = dialogCheckpoints[checkPointIndex++];
+        }
+    }
+
+    public void SetCheckpoint(int index)
+    {
+        if (index < dialogCheckpoints.Length)
+        {
+            currentCheckpoint = dialogCheckpoints[index];
+            checkPointIndex = index;
+        }
+        else
+        {
+            currentCheckpoint = dialogCheckpoints[dialogCheckpoints.Length - 1];
+            checkPointIndex = dialogCheckpoints.Length - 1;
         }
     }
 

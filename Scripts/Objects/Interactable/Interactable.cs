@@ -31,7 +31,7 @@ public class Interactable : MonoBehaviour
         suggestionBox = canvas.transform.Find("Suggestion Box").gameObject;
         suggestionText = suggestionBox.GetComponent<TMP_Text>();
         dialogBox = canvas.transform.Find("Dialog Box").gameObject;
-        dialogText = dialogBox.GetComponentInChildren<TMP_Text>();
+        dialogText = dialogBox.transform.Find("Dialog Text").GetComponent<TMP_Text>();
     }
 
     protected virtual void Start()

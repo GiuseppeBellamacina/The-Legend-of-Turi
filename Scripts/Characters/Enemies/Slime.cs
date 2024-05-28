@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Slime : Enemy
+public class Slime : Enemy, IResettable
 {
     [Header("Projectile Settings")]
     public GameObject projectile;
@@ -16,6 +16,14 @@ public class Slime : Enemy
     {
         base.Start();
         chaseRange = attackRange;
+    }
+
+    public new void Reset()
+    {
+        health = data.maxHealth;
+        transform.position = homePosition;
+        hasAttacked = false;
+        SetState(State.idle);
     }
 
     void FixedUpdate()

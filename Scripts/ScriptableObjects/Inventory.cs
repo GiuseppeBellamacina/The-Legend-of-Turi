@@ -12,6 +12,7 @@ public class Inventory : ScriptableObject, IResettable
     public int numberOfKeys;
     public int numberOfCoins;
     public int numberOfArrows;
+    public bool hasSword;
 
     public bool IsAwaible(string itemName)
     {
@@ -175,5 +176,6 @@ public class Inventory : ScriptableObject, IResettable
         numberOfCoins = 0;
         numberOfArrows = 0;
         Arrow.quantity = 0;
+        hasSword = false;
     }
 }

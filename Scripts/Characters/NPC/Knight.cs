@@ -3,12 +3,15 @@ using UnityEngine;
 
 public class Knight : Npc
 {
+    public bool randomDialog;
     [Header("Patrol Elements")]
     public GameObject iter;
+    public bool circularPatrol;
     GameObject[] iterList;
     int iterIndex;
     int offset;
     bool playerInRange;
+    bool flipped;
     bool canAttack;
     Vector2 direction;
     public bool patrolTroop, isPatrolling;
@@ -28,6 +31,7 @@ public class Knight : Npc
             }
         }
         canAttack = true;
+        flipped = spriteRenderer.flipX;
     }
 
     void Patrol()
@@ -39,17 +43,27 @@ public class Knight : Npc
 
         if (Vector2.Distance(transform.position, iterList[iterIndex].transform.position) < 0.1f)
         {
-            if (iterIndex == iterList.Length - 1)
+            if (circularPatrol)
             {
-                StartCoroutine(WaitAndPatrol());
-                offset = -1;
+                if (iterIndex == iterList.Length - 1)
+                    iterIndex = 0;
+                else
+                    iterIndex++;
             }
-            else if (iterIndex == 0)
+            else
             {
-                StartCoroutine(WaitAndPatrol());
-                offset = 1;
+                if (iterIndex == iterList.Length - 1)
+                {
+                    StartCoroutine(WaitAndPatrol());
+                    offset = -1;
+                }
+                else if (iterIndex == 0)
+                {
+                    StartCoroutine(WaitAndPatrol());
+                    offset = 1;
+                }
+                iterIndex += offset;
             }
-            iterIndex += offset;
         }
 
         direction = (iterList[iterIndex].transform.position - transform.position).normalized;
@@ -74,7 +88,7 @@ public class Knight : Npc
 
     public override void Interact()
     {
-        if (patrolTroop)
+        if (randomDialog)
         {
             suggestionBox.SetActive(false);
             contextOff.Raise();
@@ -88,7 +102,7 @@ public class Knight : Npc
 
     public override void ContinueInteraction()
     {
-        if (patrolTroop)
+        if (randomDialog)
         {
             base.StopInteraction();
         }
@@ -185,8 +199,10 @@ public class Knight : Npc
             LookAtPlayer();
             IsBeingAttacked();
         }
-        else
+        else if (patrolTroop)
             FixDirection();
+        else
+            spriteRenderer.flipX = flipped;
 
         if (patrolTroop && isPatrolling)
         {

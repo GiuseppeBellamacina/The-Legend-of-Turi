@@ -44,6 +44,7 @@ public class Luigi : Npc
                 npcTitle.text = "";
                 npcDialog.text = "";
                 PlayerController.Instance.ObtainItem(sword);
+                PlayerController.Instance.inventory.hasSword = true;
                 PlayerController.Instance.EnableAttack();
             }
             else

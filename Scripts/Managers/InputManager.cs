@@ -4,6 +4,7 @@ public class InputManager : MonoBehaviour
 {
     private static InputManager _instance;
     public InputController inputController;
+    private static bool _isInitialized;
 
     public static InputManager Instance
     {
@@ -13,7 +14,9 @@ public class InputManager : MonoBehaviour
             {
                 _instance = FindObjectOfType<InputManager>();
                 if (_instance == null)
-                    Debug.LogError("No InputManager found in the scene.");
+                {
+                    Debug.LogError("No InputManager found in the scene. Please ensure there is one InputManager in the initial scene.");
+                }
             }
             return _instance;
         }
@@ -25,11 +28,21 @@ public class InputManager : MonoBehaviour
         {
             _instance = this;
             DontDestroyOnLoad(gameObject);
+            InitializeInputController();
         }
-        else
+        else if (_instance != this)
+        {
             Destroy(gameObject);
+        }
+    }
 
-        inputController = new InputController();
-        inputController.Enable();
+    private void InitializeInputController()
+    {
+        if (!_isInitialized)
+        {
+            inputController = new InputController();
+            inputController.Enable();
+            _isInitialized = true;
+        }
     }
 }

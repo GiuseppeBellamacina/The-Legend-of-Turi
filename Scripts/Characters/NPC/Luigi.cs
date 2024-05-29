@@ -23,6 +23,7 @@ public class Luigi : Npc
         {
             quest.StartQuest();
         }
+        // Se non ho completato il dialogo con Luigi e non ho ancora la spada
         else if (quest.status.isActive && !quest.status.condition && !PlayerController.Instance.inventory.hasSword)
         {
             quest.UpdateQuest(0);
@@ -39,6 +40,12 @@ public class Luigi : Npc
         else if (quest.status.isActive && !quest.status.condition)
         {
             quest.UpdateQuest(1);
+        }
+        // Se non vado subito al castello
+        else if (quest.status.isCompleted && quest.status.dialog.dialogIndex == quest.status.dialog.dialogCheckpoints[3])
+        {
+            Debug.Log("Vado al castello");
+            quest.UpdateQuest(3);
         }
 
         base.Interact();

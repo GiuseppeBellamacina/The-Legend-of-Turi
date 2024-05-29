@@ -12,7 +12,7 @@ public abstract class Quest : MonoBehaviour
 
     public virtual void UpdateQuest()
     {
-        if (status.isActive)
+        if (status.isActive || status.isCompleted)
         {
             status.GoToNextStatus();
         }
@@ -20,7 +20,7 @@ public abstract class Quest : MonoBehaviour
 
     public virtual void UpdateQuest(int index)
     {
-        if (status.isActive)
+        if (status.isActive || status.isCompleted)
         {
             status.GoToStatus(index);
         }

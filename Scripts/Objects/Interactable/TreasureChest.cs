@@ -96,7 +96,7 @@ public class TreasureChest : Interactable, IResettable
     {
         isContextClue = false;
         suggestion = "Guarda dentro";
-        dialogText.text = "Questo forziere è stato già aperto.";
+        dialogText.text = "Questo forziere è stato <b><color=#800000FF>già aperto</color></b>.";
         suggestionBox.SetActive(false);
         dialogBox.SetActive(true);
         if (isContextClue)

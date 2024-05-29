@@ -12,13 +12,13 @@ public class Well : Interactable
 
         if (PlayerController.Instance.inventory.Pay(1))
         {
-            dialogText.text = "Hai lanciato una moneta nel pozzo, speriamo che porti fortuna.";
+            dialogText.text = "Hai lanciato una <b><color=#CF6B08FF>moneta</color></b> nel pozzo, speriamo che porti <b><color=#26663BFF>fortuna</color></b>.";
             dialogBox.SetActive(true);
             Luck();
         }
         else
         {
-            dialogText.text = "Sei povero, è meglio se neanche ci provi a lanciare una moneta.";
+            dialogText.text = "Sei <b><color=#FF0000FF>povero</color></b>, è meglio se neanche ci provi a lanciare una <b><color=#CF6B08FF>moneta</color></b>.";
             dialogBox.SetActive(true);
         }
     }

@@ -86,29 +86,29 @@ public class Door : Interactable, IResettable
         if (doorType == DoorType.Normal)
         {
             isOpen.value = true;
-            dialogText.text = "La porta non era chiusa a chiave, quindi l'hai aperta.";
+            dialogText.text = "La porta <b>non era chiusa a chiave</b>, quindi l'hai <b><color=#26663BFF>aperta</color></b>.";
         }
         else if (doorType == DoorType.Locked)
         {
             if (inventory.numberOfKeys > 0)
             {
                 isOpen.value = true;
-                dialogText.text = "Hai usato una chiave per aprire la porta.";
+                dialogText.text = "Hai usato una <b><color=#26663BFF>chiave</color></b> per aprire la porta.";
                 inventory.UseKey();
             }
             else
-                dialogText.text = "La porta è chiusa a chiave, non hai chiavi per aprirla.";
+                dialogText.text = "La porta è <b><color=#FF0000FF>chiusa</color></b> a chiave, <b>non hai chiavi per aprirla</b>.";
         }
         else if (doorType == DoorType.Button)
         {
             if (!isOpen.value)
             {
-                dialogText.text = "La porta è chiusa, forse c'è un modo per aprirla.";
+                dialogText.text = "La porta è <b><color=#FF0000FF>chiusa</color></b>, forse <b>c'è un modo per aprirla</b>.";
             }
         }
         else if (doorType == DoorType.Blocked)
         {
-            dialogText.text = "La porta è bloccata, non c'è modo d'aprirla.";
+            dialogText.text = "La porta è <b><color=#FF0000FF>bloccata</color></b>, <b>non c'è modo d'aprirla</b>.";
         }
     }
 }

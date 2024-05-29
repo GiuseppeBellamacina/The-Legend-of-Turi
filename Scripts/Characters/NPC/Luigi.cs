@@ -23,6 +23,10 @@ public class Luigi : Npc
         {
             quest.StartQuest();
         }
+        else if (quest.status.isActive && !quest.status.condition && !PlayerController.Instance.inventory.hasSword)
+        {
+            quest.UpdateQuest(0);
+        }
         // Se ho già parlato con Luigi ho completato la quest
         else if (quest.status.isActive && quest.status.condition)
         {
@@ -47,11 +51,9 @@ public class Luigi : Npc
             if (quest.status.dialog.dialogIndex == quest.status.dialog.dialogCheckpoints[1])
             {
                 dialogText.text = sword.description;
-                npcTitle.text = "";
-                npcDialog.text = "";
                 PlayerController.Instance.ObtainItem(sword);
                 PlayerController.Instance.inventory.hasSword = true;
-                PlayerController.Instance.EnableAttack();
+                PlayerController.Instance.CreateAttack();
             }
             else
                 base.ContinueInteraction();

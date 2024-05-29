@@ -9,6 +9,7 @@ public class Interactable : MonoBehaviour
     public string suggestion;
     public bool isContextClue;
     bool interactionEnded = false;
+    protected bool playerInRange;
 
     public virtual void Interact()
     {
@@ -50,6 +51,7 @@ public class Interactable : MonoBehaviour
             PlayerController.Instance.toInteract = gameObject;
             suggestionText.text = suggestion;
             suggestionBox.SetActive(true);
+            playerInRange = true;
             if (isContextClue)
                 contextOn.Raise();
         }
@@ -62,6 +64,7 @@ public class Interactable : MonoBehaviour
             PlayerController.Instance.toInteract = null;
             if (suggestionBox != null)
                 suggestionBox.SetActive(false);
+            playerInRange = false;
             contextOff.Raise();
         }
     }

@@ -20,7 +20,7 @@ public class EnemyDoor : Door
     public override void Interact()
     {
         base.Interact();
-        dialogText.text = "La porta non si muove, ma...\nCos'è questo rumore?";
+        dialogText.text = "La porta <b><color=#FF0000FF>non si muove</color></b>, ma...\n<size=70>Cos'è questo rumore</size>?";
 
         if (doorType == DoorType.Enemies)
         {

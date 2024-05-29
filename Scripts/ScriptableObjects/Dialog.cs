@@ -20,6 +20,7 @@ public class Dialog : ScriptableObject, IResettable
     public string GetNextSentence()
     {
         int nextCheckpoint = checkPointIndex + 1 < dialogCheckpoints.Length ? dialogCheckpoints[checkPointIndex + 1] : sentences.Length;
+        Debug.Log("GetNextSentence" + dialogIndex + " " + nextCheckpoint);
         if (dialogIndex < nextCheckpoint)
         {
             return sentences[dialogIndex++];
@@ -44,7 +45,7 @@ public class Dialog : ScriptableObject, IResettable
         }
         else
         {
-            currentCheckpoint = dialogCheckpoints[dialogCheckpoints.Length - 1];
+            currentCheckpoint = dialogCheckpoints[^1]; // dialogCheckpoints.Length - 1
             checkPointIndex = dialogCheckpoints.Length - 1;
         }
     }

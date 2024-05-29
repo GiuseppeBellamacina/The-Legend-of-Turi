@@ -1,15 +1,13 @@
 using UnityEngine;
-using TMPro;
 
 public class Npc : Interactable
 {
     protected SpriteRenderer spriteRenderer;
     public Animator animator;
     public Rigidbody2D rb;
+    protected bool flipped;
     [Header("Dialog")]
     public Dialog dialog;
-    public TMP_Text npcTitle;
-    public TMP_Text npcDialog;
     public Color titleColor;
 
     protected override void Awake()
@@ -18,20 +16,21 @@ public class Npc : Interactable
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        npcTitle = dialogBox.transform.Find("NPC Title").GetComponent<TMP_Text>();
-        npcDialog = dialogBox.transform.Find("NPC Dialog").GetComponent<TMP_Text>();
+        flipped = spriteRenderer.flipX;
     }
 
     protected void TextFormatter(string text)
     {
+        if (text == null)
+            return;
+        
         string title = text.Split(':')[0];
         if (title == "Turi")
-            npcTitle.color = new Color(0, 85, 153, 255) / 255f;
+            title = "<b><color=#0059FDFF>" + title + "</color></b>";
         else
-            npcTitle.color = titleColor;
+            title = "<b><color=#" + ColorUtility.ToHtmlStringRGBA(titleColor) + ">" + title + "</color></b>";
         string dialog = text.Split(':')[1];
-        npcTitle.text = title;
-        npcDialog.text = dialog;
+        dialogText.text = title + ": " + dialog;
     }
 
     public override void Interact()
@@ -41,7 +40,6 @@ public class Npc : Interactable
         suggestionBox.SetActive(false);
         contextOff.Raise();
         dialogBox.SetActive(true);
-        dialogText.text = "";
         TextFormatter(dialog.GetFirstSentence());
     }
 
@@ -62,8 +60,6 @@ public class Npc : Interactable
     {
         base.StopInteraction();
         
-        npcTitle.text = "";
-        npcDialog.text = "";
         dialogBox.SetActive(false);
         suggestionBox.SetActive(true);
         contextOn.Raise();
@@ -77,8 +73,21 @@ public class Npc : Interactable
             spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() - 1;
     }
 
+    protected void LookAtPlayer()
+    {
+        if (PlayerController.Instance.transform.position.x > transform.position.x)
+            spriteRenderer.flipX = false;
+        else
+            spriteRenderer.flipX = true;
+    }
+
     protected virtual void FixedUpdate()
     {
         FixRenderLayer();
+
+        if (playerInRange)
+            LookAtPlayer();
+        else
+            spriteRenderer.flipX = flipped;
     }
 }

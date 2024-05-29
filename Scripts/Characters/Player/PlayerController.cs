@@ -62,7 +62,6 @@ public class PlayerController : Character
         // Abbino i metodi ai controlli
         InputManager.Instance.inputController.Player.Interact.performed += _ => Interact();
         InputManager.Instance.inputController.Player.StopInteraction.performed += _ => StopInteraction();
-        InputManager.Instance.inputController.Player.Attack.performed += _ => Attack();
         InputManager.Instance.inputController.Player.Run.performed += _ => Run();
         InputManager.Instance.inputController.Player.Run.canceled += _ => StopRun();
         InputManager.Instance.inputController.Player.ChangeWeapon.performed += _ => ChangeWeapon();
@@ -80,6 +79,7 @@ public class PlayerController : Character
         firstWeapon = true;
         toInteract = null;
         weapon.sprite = sword;
+        weapon.color = new Color(1, 1, 1, 0);
     }
 
     public void DeactivateInput()
@@ -90,6 +90,12 @@ public class PlayerController : Character
     public void ActivateInput()
     {
         InputManager.Instance.inputController.Player.Enable();
+    }
+
+    public void CreateAttack()
+    {
+        InputManager.Instance.inputController.Player.Attack.performed += _ => Attack();
+        EnableAttack();
     }
 
     public void DisableAttack()

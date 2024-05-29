@@ -10,8 +10,6 @@ public class Knight : Npc
     GameObject[] iterList;
     int iterIndex;
     int offset;
-    bool playerInRange;
-    bool flipped;
     bool canAttack;
     Vector2 direction;
     public bool patrolTroop, isPatrolling;
@@ -20,7 +18,7 @@ public class Knight : Npc
     protected override void Awake()
     {
         base.Awake();
-        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.bodyType = RigidbodyType2D.Static;
         if (patrolTroop){
             isPatrolling = true;
             rb.bodyType = RigidbodyType2D.Dynamic;
@@ -31,7 +29,6 @@ public class Knight : Npc
             }
         }
         canAttack = true;
-        flipped = spriteRenderer.flipX;
     }
 
     void Patrol()
@@ -73,7 +70,7 @@ public class Knight : Npc
     IEnumerator WaitAndPatrol()
     {
         rb.velocity = Vector2.zero;
-        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.bodyType = RigidbodyType2D.Static;
         isPatrolling = false;
         spriteRenderer.flipX = !spriteRenderer.flipX;
         yield return new WaitForSeconds(1f);
@@ -115,7 +112,7 @@ public class Knight : Npc
         if (other.CompareTag("Player") && !other.isTrigger)
         {
             rb.velocity = Vector2.zero;
-            rb.bodyType = RigidbodyType2D.Kinematic;
+            rb.bodyType = RigidbodyType2D.Static;
             PlayerController.Instance.SetState(State.none);
             PlayerController.Instance.toInteract = gameObject;
             suggestionText.text = suggestion;
@@ -148,14 +145,6 @@ public class Knight : Npc
         if (direction.x > 0)
             spriteRenderer.flipX = false;
         else if (direction.x < 0)
-            spriteRenderer.flipX = true;
-    }
-
-    void LookAtPlayer()
-    {
-        if (PlayerController.Instance.transform.position.x > transform.position.x)
-            spriteRenderer.flipX = false;
-        else
             spriteRenderer.flipX = true;
     }
 

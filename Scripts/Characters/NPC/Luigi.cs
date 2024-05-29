@@ -44,7 +44,6 @@ public class Luigi : Npc
         // Se non vado subito al castello
         else if (quest.status.isCompleted && quest.status.dialog.dialogIndex == quest.status.dialog.dialogCheckpoints[3])
         {
-            Debug.Log("Vado al castello");
             quest.UpdateQuest(3);
         }
 

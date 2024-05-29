@@ -3,10 +3,15 @@ using UnityEngine;
 [CreateAssetMenu]
 public class Dialog : ScriptableObject, IResettable
 {
+    [Tooltip("Indice di lettura del dialogo")]
     public int dialogIndex; // indice di lettura del dialogo
+    [Tooltip("Indice da cui iniziare a leggere il dialogo")]
     public int currentCheckpoint; // attuale indice da cui iniziare a leggere il dialogo
+    [Tooltip("Indici da cui iniziare a leggere il dialogo")]
     public int[] dialogCheckpoints; // indici da cui iniziare a leggere il dialogo
+    [Tooltip("Indice di dialogCheckpoints")]
     public int checkPointIndex; // indice di dialogCheckpoints
+    [Tooltip("Frasi del dialogo")]
     [TextArea(3, 10)]
     public string[] sentences;
 

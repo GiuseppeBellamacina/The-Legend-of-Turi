@@ -52,6 +52,7 @@ public class Npc : Interactable
             contextOff.Raise();
             dialogBox.SetActive(true);
             TextFormatter(sentence);
+            dialogBox.SetActive(true);
         }
         else
         {

@@ -48,6 +48,9 @@ public class Npc : Interactable
         string sentence = dialog.GetNextSentence();
         if (sentence != null)
         {
+            suggestionBox.SetActive(false);
+            contextOff.Raise();
+            dialogBox.SetActive(true);
             TextFormatter(sentence);
         }
         else

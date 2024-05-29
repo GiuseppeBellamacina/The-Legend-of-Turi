@@ -20,7 +20,7 @@ public class DeathEffect : MonoBehaviour
         if (PlayerController.Instance.transform.position.y > transform.position.y)
             spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() + 1;
         else
-            spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() - 1;
+            spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() - 2;
     }
 
     void FixedUpdate()

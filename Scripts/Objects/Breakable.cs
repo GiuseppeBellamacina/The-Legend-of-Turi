@@ -33,7 +33,9 @@ public class Breakable : MonoBehaviour
             return;
 
         int random = Random.Range(0, loot.Length);
-        Instantiate(loot[random], transform.position, Quaternion.identity);
+        GameObject drop = loot[random];
+        drop.GetComponent<Collectable>().SetOwner(gameObject);
+        Instantiate(drop, transform.position, Quaternion.identity);
     }
 
     void FixRenderLayer()

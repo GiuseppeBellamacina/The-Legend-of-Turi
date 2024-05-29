@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Collectable : MonoBehaviour
@@ -7,11 +8,21 @@ public class Collectable : MonoBehaviour
     public float lifeTime = 10f;
     float timer;
     SpriteRenderer spriteRenderer;
-    protected GameObject owner;
+    public GameObject owner;
 
     protected virtual void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        StartCoroutine(RemoveOwner());
+    }
+
+    IEnumerator RemoveOwner()
+    {
+        if (owner.GetComponent<DeathEffect>())
+            yield return new WaitForSeconds(owner.GetComponent<DeathEffect>().duration);
+        else
+            yield return new WaitForSeconds(0.1f);
+        owner = null;
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D other)
@@ -26,11 +37,13 @@ public class Collectable : MonoBehaviour
     protected virtual void FixRenderLayer()
     {
         if (owner != null)
+        {
             spriteRenderer.sortingOrder = owner.GetComponent<SpriteRenderer>().sortingOrder + 1;
+        }
+        else if (PlayerController.Instance.transform.position.y < transform.position.y)
+            spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() - 1;
         else if (PlayerController.Instance.transform.position.y > transform.position.y)
             spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() + 1;
-        else
-            spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() - 1;
     }
 
     public void SetOwner(GameObject owner)

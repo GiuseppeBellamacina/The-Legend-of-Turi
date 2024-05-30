@@ -14,6 +14,7 @@ public class IntroManager : MonoBehaviour
             o.SetActive(false);
         ActivateObj();
         StartCoroutine(EndOfSound());
+        Cursor.visible = false;
     }
 
     public void ActivateObj()

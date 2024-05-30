@@ -7,7 +7,10 @@ public abstract class Quest : MonoBehaviour
 
     public virtual void StartQuest()
     {
-        status.isActive = true;
+        if (!status.isActive && !status.isCompleted)
+        {
+            status.isActive = true;
+        }
     }
 
     public virtual void UpdateQuest()

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Npc : Interactable
 {
@@ -19,7 +20,7 @@ public class Npc : Interactable
         flipped = spriteRenderer.flipX;
     }
 
-    protected void TextFormatter(string text)
+    protected void TextDisplacer(string text)
     {
         if (text == null)
             return;
@@ -31,6 +32,7 @@ public class Npc : Interactable
             title = "<b><color=#" + ColorUtility.ToHtmlStringRGBA(titleColor) + ">" + title + "</color></b>";
         string dialog = text.Split(':')[1];
         dialogText.text = title + ": " + dialog;
+        dialogBox.SetActive(true);
     }
 
     public override void Interact()
@@ -39,8 +41,7 @@ public class Npc : Interactable
         
         suggestionBox.SetActive(false);
         contextOff.Raise();
-        dialogBox.SetActive(true);
-        TextFormatter(dialog.GetFirstSentence());
+        TextDisplacer(dialog.GetFirstSentence());
     }
 
     public override void ContinueInteraction()
@@ -51,8 +52,7 @@ public class Npc : Interactable
             suggestionBox.SetActive(false);
             contextOff.Raise();
             dialogBox.SetActive(true);
-            TextFormatter(sentence);
-            dialogBox.SetActive(true);
+            TextDisplacer(sentence);
         }
         else
         {

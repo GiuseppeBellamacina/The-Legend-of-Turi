@@ -35,7 +35,7 @@ public class Dialog : ScriptableObject, IResettable
     {
         if (checkPointIndex + 1 < dialogCheckpoints.Length)
         {
-            currentCheckpoint = dialogCheckpoints[checkPointIndex++];
+            currentCheckpoint = dialogCheckpoints[++checkPointIndex];
         }
     }
 

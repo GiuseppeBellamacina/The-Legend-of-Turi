@@ -7,6 +7,13 @@ public class SceneTransfer : Interactable
     public VectorValue startingPosition;
     public bool willBeBounded;
 
+    protected override void Start()
+    {
+        suggestionBox.SetActive(false);
+        if (isContextClue)
+            contextOff.Raise();
+    }
+
     public void TransferScene()
     {
         suggestionBox.SetActive(false);

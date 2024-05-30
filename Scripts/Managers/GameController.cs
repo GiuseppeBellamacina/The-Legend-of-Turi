@@ -27,6 +27,8 @@ public class GameController : MonoBehaviour
         }
         else
             Destroy(gameObject);
+        
+        Cursor.visible = false;
     }
 
     void Start()

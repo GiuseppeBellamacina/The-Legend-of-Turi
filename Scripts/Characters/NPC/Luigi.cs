@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Luigi : Npc
@@ -28,18 +27,19 @@ public class Luigi : Npc
         {
             quest.UpdateQuest(0);
         }
-        // Se ho già parlato con Luigi ho completato la quest
-        else if (quest.status.isActive && quest.status.condition)
-        {
-            quest.UpdateQuest(2);
-            quest.CompleteQuest();
-            house.SetActive(true);
-            houseStatus.value = true;
-        }
         // Se ho già parlato con Luigi e non ho completato la quest
         else if (quest.status.isActive && !quest.status.condition)
         {
             quest.UpdateQuest(1);
+        }
+        // Se ho già parlato con Luigi ho completato la quest
+        else if (quest.status.isActive && quest.status.condition)
+        {
+            quest.UpdateQuest(2);
+            // Sblocco la casa di Luigi
+            house.SetActive(true);
+            houseStatus.value = true;
+            quest.CompleteQuest();
         }
         // Se non vado subito al castello
         else if (quest.status.isCompleted && quest.status.dialog.dialogIndex == quest.status.dialog.dialogCheckpoints[3])
@@ -52,7 +52,7 @@ public class Luigi : Npc
 
     public override void ContinueInteraction()
     {
-        if (!PlayerController.Instance.inventory.items.Contains(sword) && !quest.status.isCompleted)
+        if (!PlayerController.Instance.inventory.hasSword && !quest.status.isCompleted)
         {
             if (quest.status.dialog.dialogIndex == quest.status.dialog.dialogCheckpoints[1])
             {

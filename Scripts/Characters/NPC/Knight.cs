@@ -64,18 +64,19 @@ public class Knight : Npc
         }
 
         direction = (iterList[iterIndex].transform.position - transform.position).normalized;
+        rb.bodyType = RigidbodyType2D.Dynamic;
         rb.MovePosition((Vector2)transform.position + speed * Time.fixedDeltaTime * direction);
     }
 
     IEnumerator WaitAndPatrol()
     {
         rb.velocity = Vector2.zero;
-        rb.bodyType = RigidbodyType2D.Static;
         isPatrolling = false;
+        rb.bodyType = RigidbodyType2D.Static;
         spriteRenderer.flipX = !spriteRenderer.flipX;
         yield return new WaitForSeconds(1f);
-        isPatrolling = true;
         rb.bodyType = RigidbodyType2D.Dynamic;
+        isPatrolling = true;
     }
 
     string RandomDialog()
@@ -89,8 +90,7 @@ public class Knight : Npc
         {
             suggestionBox.SetActive(false);
             contextOff.Raise();
-            dialogBox.SetActive(true);
-            TextFormatter(RandomDialog());
+            TextDisplacer(RandomDialog());
         }
         else
             base.Interact();
@@ -111,7 +111,8 @@ public class Knight : Npc
     {
         if (other.CompareTag("Player") && !other.isTrigger)
         {
-            rb.velocity = Vector2.zero;
+            if (rb.bodyType == RigidbodyType2D.Dynamic)
+                rb.velocity = Vector2.zero;
             rb.bodyType = RigidbodyType2D.Static;
             PlayerController.Instance.SetState(State.none);
             PlayerController.Instance.toInteract = gameObject;

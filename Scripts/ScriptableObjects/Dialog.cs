@@ -53,6 +53,11 @@ public class Dialog : ScriptableObject, IResettable
         }
     }
 
+    public bool HasReadDialogUntilCheckPoint(int index)
+    {
+        return dialogIndex == dialogCheckpoints[index];
+    }
+
     public void Reset()
     {
         dialogIndex = 0;

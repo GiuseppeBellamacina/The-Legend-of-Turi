@@ -6,6 +6,7 @@ public class Luigi : Npc
     public Item sword;
     public GameObject house;
     public BoolValue houseStatus;
+    public Status queenStatus;
 
     protected override void Awake()
     {
@@ -41,8 +42,13 @@ public class Luigi : Npc
             houseStatus.value = true;
             quest.CompleteQuest();
         }
+        // Se ho già parlato con la regina
+        else if (queenStatus.isActive || queenStatus.isCompleted)
+        {
+            quest.UpdateQuest(4);
+        }
         // Se non vado subito al castello
-        else if (quest.status.isCompleted && quest.status.dialog.dialogIndex == quest.status.dialog.dialogCheckpoints[3])
+        else if (quest.status.isCompleted && quest.status.dialog.HasReadDialogUntilCheckPoint(3))
         {
             quest.UpdateQuest(3);
         }

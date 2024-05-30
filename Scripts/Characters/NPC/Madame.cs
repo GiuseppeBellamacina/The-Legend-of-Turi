@@ -20,7 +20,6 @@ public class Madame : Npc
         {
             quest.StartQuest();
             quest.knightDialog.SetNextCheckpoint();
-            quest.luigiDialog.SetCheckpoint(4);
         }
         // Se non ho completato il dialogo con la regina e non ho ancora sbloccato il dungeon
         else if (quest.status.isActive && !quest.CheckCondition() && !dungeonUnlocked.value)
@@ -48,7 +47,7 @@ public class Madame : Npc
     {
         if (!dungeonUnlocked.value)
         {
-            if (quest.status.dialog.dialogIndex == quest.status.dialog.dialogCheckpoints[1])
+            if (quest.status.dialog.HasReadDialogUntilCheckPoint(1))
             {
                 dungeonUnlocked.value = true;
                 base.ContinueInteraction();

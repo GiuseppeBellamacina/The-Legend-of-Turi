@@ -22,11 +22,6 @@ public class Status : ScriptableObject, IResettable
         statusCheckpoint = dialog.currentCheckpoint;
     }
 
-    public bool InStatus(int index)
-    {
-        return statusCheckpoint == index;
-    }
-
     public void Reset()
     {
         isActive = false;

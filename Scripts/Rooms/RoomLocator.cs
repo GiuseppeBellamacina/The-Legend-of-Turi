@@ -30,14 +30,6 @@ public class RoomLocator : MonoBehaviour
         }
         else
             Destroy(gameObject);
-        
-        FindPositionObjects();
-        CameraMovement.Instance.SetMinMaxPositionObjects(minPositionObject, maxPositionObject);
-    }
-
-    void Start()
-    {
-        ActivatecurrentRoom();
     }
 
     public void FindPositionObjects()
@@ -74,6 +66,13 @@ public class RoomLocator : MonoBehaviour
                     maxPositionObject = maxPosObject;
                 }
             }
+        }
+
+        if ((minPositionObject == null || maxPositionObject == null) && CameraMovement.Instance.isBounded)
+        {
+            Debug.LogError("No min or max position object found.");
+            Debug.LogError(CameraMovement.Instance.isBounded);
+            return;
         }
 
         CameraMovement.Instance.SetMinMaxPositionObjects(minPositionObject, maxPositionObject);

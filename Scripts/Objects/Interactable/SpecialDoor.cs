@@ -16,7 +16,7 @@ public class SpecialDoor : Door
             }
             else
             {
-                dialogText.text = "La porta ha si è <b><color=#26663BFF>aperta magicamente</color></b>.\nMentre si apriva hai sentivo una voce dire:\n<i>\"<b><color=#FF0000FF>Vieni a cercarmi</color></b>\"</i>";
+                dialogText.text = "La porta si è <b><color=#26663BFF>aperta magicamente</color></b>.\nMentre si apriva hai sentivo una voce dire:\n<i>\"<b><color=#FF0000FF>Vieni a cercarmi</color></b>\"</i>";
                 isOpen.value = true;
             }
         }

@@ -13,13 +13,18 @@ public class Status : ScriptableObject, IResettable
     public void GoToNextStatus()
     {
         dialog.SetNextCheckpoint();
-        statusCheckpoint = dialog.currentCheckpoint;
+        statusCheckpoint = dialog.checkPointIndex;
     }
 
     public void GoToStatus(int index)
     {
         dialog.SetCheckpoint(index);
-        statusCheckpoint = dialog.currentCheckpoint;
+        statusCheckpoint = dialog.checkPointIndex;
+    }
+
+    public bool IsStatus(int index)
+    {
+        return statusCheckpoint == index;
     }
 
     public void Reset()

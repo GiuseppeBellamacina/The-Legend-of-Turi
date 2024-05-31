@@ -33,16 +33,12 @@ public class Luigi : Npc
         {
             quest.UpdateQuest(1);
         }
-        // Se ho già parlato con Luigi ho completato la quest
+        // Se ho già parlato con Luigi e ho completato la quest
         else if (quest.status.isActive && quest.status.condition)
         {
             quest.UpdateQuest(2);
-            // Sblocco la casa di Luigi
-            house.SetActive(true);
-            houseStatus.value = true;
-            quest.CompleteQuest();
         }
-        // Se ho già parlato con la regina
+        // Se ho già parlato con la regina -> ha priorità sullo stato 3
         else if (queenStatus.isActive || queenStatus.isCompleted)
         {
             quest.UpdateQuest(4);
@@ -60,7 +56,7 @@ public class Luigi : Npc
     {
         if (!PlayerController.Instance.inventory.hasSword && !quest.status.isCompleted)
         {
-            if (quest.status.dialog.dialogIndex == quest.status.dialog.dialogCheckpoints[1])
+            if (quest.status.dialog.HasReadDialogUntilCheckPoint(1))
             {
                 dialogText.text = sword.description;
                 PlayerController.Instance.ObtainItem(sword);
@@ -69,6 +65,14 @@ public class Luigi : Npc
             }
             else
                 base.ContinueInteraction();
+        }
+        else if (quest.status.dialog.HasReadDialogUntilCheckPoint(3))
+        {
+            // Sblocco la casa di Luigi
+            house.SetActive(true);
+            houseStatus.value = true;
+            quest.CompleteQuest();
+            base.ContinueInteraction();
         }
         else
             base.ContinueInteraction();

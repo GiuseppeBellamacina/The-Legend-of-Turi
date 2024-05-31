@@ -41,9 +41,9 @@ public class CameraMovement : MonoBehaviour
 
     void Start()
     {
-        SetBoundaries();
+        if (minPositionObject != null && maxPositionObject != null)
+            SetBoundaries();
         SetInstantPosition();
-        isBounded = true;
     }
 
     IEnumerator FocusCo(Vector3 position, float zoom, float time)
@@ -115,8 +115,6 @@ public class CameraMovement : MonoBehaviour
     {
         this.minPositionObject = minPositionObject;
         this.maxPositionObject = maxPositionObject;
-        if (this.minPositionObject == null)
-            Debug.LogError("No minPositionObject found.");
         SetBoundaries();
     }
 

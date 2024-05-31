@@ -46,7 +46,6 @@ public class GameController : MonoBehaviour
     {
         lastPosition.value = PlayerController.Instance.transform.position;
         StartCoroutine(LevelManager.Instance.FadeCo(sceneName, willBeBounded));
-        //lastPosition.value = PlayerController.Instance.transform.position;
         PlayerController.Instance.SetState(State.none);
     }
 

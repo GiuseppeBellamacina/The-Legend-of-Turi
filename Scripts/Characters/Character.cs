@@ -50,7 +50,7 @@ public class Character : MonoBehaviour
             StartCoroutine(KnockCo(knockTime));
     }
 
-    IEnumerator KnockCo(float knockTime)
+    protected virtual IEnumerator KnockCo(float knockTime)
     {
         spriteRenderer.color = Color.red; // Settta lo sprite a rosso
         enabled = false; // Disattiva lo script del personaggio

@@ -10,7 +10,7 @@ public class Knockback : MonoBehaviour
     public float attackRate;
     public float knockTime;
     public string otherTag;
-    private float damage;
+    protected float damage;
     private bool isAttacking; // Stato del personaggio che attacca
     private bool isStaggered; // Stato del personaggio che subisce il danno
     private List<GameObject> objectsInContact = new List<GameObject>();
@@ -21,6 +21,8 @@ public class Knockback : MonoBehaviour
             damage = PlayerController.Instance.damage;
         else if (gameObject.CompareTag("Enemy"))
             damage = GetComponent<Character>().data.damage;
+        else if (gameObject.CompareTag("EnemyHit"))
+            damage = gameObject.GetComponentInParent<Character>().data.damage;
     }
 
     void GetState()
@@ -35,6 +37,13 @@ public class Knockback : MonoBehaviour
         else if (gameObject.CompareTag("Enemy"))
         {
             if (GetComponent<Character>().IsState(State.attack))
+                isAttacking = true;
+            else
+                isAttacking = false;
+        }
+        else if (gameObject.CompareTag("EnemyHit"))
+        {
+            if (gameObject.GetComponentInParent<Character>().IsState(State.attack))
                 isAttacking = true;
             else
                 isAttacking = false;

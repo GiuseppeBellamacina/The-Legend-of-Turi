@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Enemy : Character, IResettable
 {
-    protected Transform target;
+    public Transform target;
     [Header("Enemy Settings")]
     public float chaseRange;
     public float attackRange;
@@ -48,7 +48,7 @@ public class Enemy : Character, IResettable
             rb.velocity = Vector2.ClampMagnitude(rb.velocity, data.speed);
     }
 
-    protected bool PlayerInRange(float range)
+    public bool PlayerInRange(float range)
     {
         return Vector2.Distance(transform.position, target.position) <= range;
     }
@@ -119,7 +119,7 @@ public class Enemy : Character, IResettable
         }
     }
 
-    protected void MoveTo(Vector2 target)
+    public virtual void MoveTo(Vector2 target)
     {
         Vector2 temp = Vector2.MoveTowards(transform.position, target, data.speed * Time.deltaTime);
         ChangeAnim(temp - (Vector2)transform.position);

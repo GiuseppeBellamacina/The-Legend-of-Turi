@@ -1,7 +1,8 @@
 using UnityEngine;
 
 [CreateAssetMenu]
-public class Status : ScriptableObject, IResettable
+[System.Serializable]
+public class Status : Data
 {
     public bool isActive;
     public bool condition;
@@ -27,10 +28,34 @@ public class Status : ScriptableObject, IResettable
         return statusCheckpoint == index;
     }
 
-    public void Reset()
+    public new void Reset()
     {
         isActive = false;
         isCompleted = false;
         condition = false;
+        statusCheckpoint = 0;
+    }
+
+    public new void Save()
+    {
+        string relPath = SaveSystem.path + "/Status/";
+        string path = relPath + dataIndex.ToString() + ".save";
+        StatusData data = new StatusData(this);
+        SaveSystem.Save(data, path);
+    }
+
+    public new void Load()
+    {
+        string relPath = SaveSystem.path + "/Status/";
+        string path = relPath + dataIndex.ToString() + ".save";
+        StatusData data = SaveSystem.Load<StatusData>(path);
+        if (data != null)
+        {
+            dataIndex = data.dataIndex;
+            isActive = data.isActive;
+            condition = data.condition;
+            isCompleted = data.isCompleted;
+            statusCheckpoint = data.statusCheckpoint;
+        }
     }
 }

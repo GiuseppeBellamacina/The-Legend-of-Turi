@@ -1,13 +1,35 @@
 using UnityEngine;
 
 [CreateAssetMenu]
-public class IntValue : ScriptableObject, IResettable
+[System.Serializable]
+public class IntValue : Data
 {
     public int value;
     public int initialValue;
 
-    public void Reset()
+    public new void Reset()
     {
         value = initialValue;
+    }
+
+    public new void Save()
+    {
+        string relPath = SaveSystem.path + "/IntValues/";
+        string path = relPath + dataIndex.ToString() + ".save";
+        IntData data = new IntData(this);
+        SaveSystem.Save(data, path);
+    }
+
+    public new void Load()
+    {
+        string relPath = SaveSystem.path + "/IntValues/";
+        string path = relPath + dataIndex.ToString() + ".save";
+        IntData data = SaveSystem.Load<IntData>(path);
+        if (data != null)
+        {
+            dataIndex = data.dataIndex;
+            value = data.value;
+            initialValue = data.initialValue;
+        }
     }
 }

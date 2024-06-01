@@ -1,7 +1,8 @@
 using UnityEngine;
 
 [CreateAssetMenu]
-public class Dialog : ScriptableObject, IResettable
+[System.Serializable]
+public class Dialog : Data
 {
     [Tooltip("Indice di lettura del dialogo")]
     public int dialogIndex; // indice di lettura del dialogo
@@ -58,10 +59,34 @@ public class Dialog : ScriptableObject, IResettable
         return dialogIndex == dialogCheckpoints[index];
     }
 
-    public void Reset()
+    public new void Reset()
     {
         dialogIndex = 0;
         currentCheckpoint = 0;
         checkPointIndex = 0;
+    }
+
+    public new void Save()
+    {
+        string relPath = SaveSystem.path + "/Dialogs/";
+        string path = relPath + dataIndex.ToString() + ".save";
+        DialogData data = new DialogData(this);
+        SaveSystem.Save(data, path);
+    }
+
+    public new void Load()
+    {
+        string relPath = SaveSystem.path + "/Dialogs/";
+        string path = relPath + dataIndex.ToString() + ".save";
+        DialogData data = SaveSystem.Load<DialogData>(path);
+        if (data != null)
+        {
+            dataIndex = data.dataIndex;
+            dialogIndex = data.dialogIndex;
+            currentCheckpoint = data.currentCheckpoint;
+            dialogCheckpoints = data.dialogCheckpoints;
+            checkPointIndex = data.checkPointIndex;
+            sentences = data.sentences;
+        }
     }
 }

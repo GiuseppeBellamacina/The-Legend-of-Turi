@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu]
-public class Inventory : ScriptableObject, IResettable
+[System.Serializable]
+public class Inventory : Data
 {
     public Item currentItem;
     public List<Item> items = new ();
@@ -168,14 +169,36 @@ public class Inventory : ScriptableObject, IResettable
             numberOfKeys--;
     }
 
-    public void Reset()
+    public new void Reset()
     {
-        currentItem = null;
-        items.Clear();
         numberOfKeys = 0;
         numberOfCoins = 0;
         numberOfArrows = 0;
-        Arrow.quantity = 0;
+        Arrow.quantity = numberOfArrows;
         hasSword = false;
+    }
+
+    public new void Save()
+    {
+        string relPath = SaveSystem.path + "/Inventory/";
+        string path = relPath + dataIndex.ToString() + ".save";
+        InventoryData data = new InventoryData(this);
+        SaveSystem.Save(data, path);
+    }
+
+    public new void Load()
+    {
+        string relPath = SaveSystem.path + "/Inventory/";
+        string path = relPath + dataIndex.ToString() + ".save";
+        InventoryData data = SaveSystem.Load<InventoryData>(path);
+        if (data != null)
+        {
+            dataIndex = data.dataIndex;
+            numberOfKeys = data.numberOfKeys;
+            numberOfCoins = data.numberOfCoins;
+            numberOfArrows = data.numberOfArrows;
+            Arrow.quantity = numberOfArrows;
+            hasSword = data.hasSword;
+        }
     }
 }

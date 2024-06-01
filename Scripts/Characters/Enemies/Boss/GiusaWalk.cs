@@ -32,7 +32,22 @@ public class GiusaWalk : StateMachineBehaviour
 
     void ChooseAttack(Animator animator)
     {
-        if (boss.health < boss.data.maxHealth * (2.0f / 3.0f)) // Se la vita è inferiore a 2/3
+        if (boss.health < boss.data.maxHealth * (1.0f / 3.0f)) // Se la vita è inferiore a 1/3
+        {
+            switch (Random.Range(0, 3))
+            {
+                case 0:
+                    animator.SetTrigger("attack");
+                    break;
+                case 1:
+                    animator.SetTrigger("charge");
+                    break;
+                case 2:
+                    animator.SetTrigger("angry");
+                    break;
+            }
+        }
+        else if (boss.health < boss.data.maxHealth / 2)
         {
             switch (Random.Range(0,2))
             {
@@ -40,7 +55,7 @@ public class GiusaWalk : StateMachineBehaviour
                     animator.SetTrigger("attack");
                     break;
                 case 1:
-                    animator.SetTrigger("angry");
+                    animator.SetTrigger("charge");
                     break;
             }
         }

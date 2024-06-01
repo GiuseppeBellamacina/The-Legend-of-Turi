@@ -11,11 +11,11 @@ public class Knockback : MonoBehaviour
     public float knockTime;
     public string otherTag;
     protected float damage;
-    private bool isAttacking; // Stato del personaggio che attacca
-    private bool isStaggered; // Stato del personaggio che subisce il danno
-    private List<GameObject> objectsInContact = new List<GameObject>();
+    protected bool isAttacking; // Stato del personaggio che attacca
+    protected bool isStaggered; // Stato del personaggio che subisce il danno
+    protected List<GameObject> objectsInContact = new List<GameObject>();
 
-    void SetDamage()
+    protected virtual void SetDamage()
     {
         if (gameObject.CompareTag("PlayerHit"))
             damage = PlayerController.Instance.damage;

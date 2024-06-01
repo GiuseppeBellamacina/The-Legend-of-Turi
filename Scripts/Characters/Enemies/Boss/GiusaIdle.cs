@@ -12,6 +12,9 @@ public class GiusaIdle : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         boss = animator.gameObject.GetComponent<Giusa>();
+        if (boss.isDead.value)
+            return;
+
         boss.SetState(State.idle);
         if (boss.rb.bodyType != RigidbodyType2D.Static)
             boss.rb.velocity = Vector2.zero;
@@ -21,6 +24,9 @@ public class GiusaIdle : StateMachineBehaviour
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (boss.isDead.value)
+            return;
+
         elapsedTime += Time.deltaTime;
         if (elapsedTime >= time)
         {
@@ -30,6 +36,9 @@ public class GiusaIdle : StateMachineBehaviour
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (boss.isDead.value)
+            return;
+            
         boss.hasPresented = true;
         boss.rb.bodyType = RigidbodyType2D.Dynamic;
     }

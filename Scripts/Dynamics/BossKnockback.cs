@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class BossKnockback : Knockback
 {
-    protected void SetDamage(float offset)
+    public float offset;
+    protected override void SetDamage()
     {
         if (gameObject.CompareTag("PlayerHit"))
             damage = PlayerController.Instance.damage;
@@ -12,11 +13,5 @@ public class BossKnockback : Knockback
             damage = gameObject.GetComponentInParent<Character>().data.damage;
         
         damage *= offset;
-    }
-
-    protected void DoDamage(GameObject other, float offset)
-    {
-        SetDamage(offset);
-        other.GetComponent<Character>().TakeDamage(damage);
     }
 }

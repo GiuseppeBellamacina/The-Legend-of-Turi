@@ -13,6 +13,7 @@ public class GiusaVeryStagger : StateMachineBehaviour
             boss.rb.velocity = Vector2.zero;
         boss.rb.bodyType = RigidbodyType2D.Static;
         boss.isInvulnerable = true;
+        boss.TalkToPlayer();
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

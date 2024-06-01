@@ -20,12 +20,21 @@ public class GiusaAngry : StateMachineBehaviour
     {
         if (stateInfo.normalizedTime >= 1)
         {
-            animator.SetTrigger("charge");
+            switch (Random.Range(0, 2))
+            {
+                case 0:
+                    animator.SetTrigger("heavy");
+                    break;
+                case 1:
+                    animator.SetTrigger("rotate");
+                    break;
+            }
         }
     }
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-
+        boss.rb.bodyType = RigidbodyType2D.Dynamic;
+        boss.isInvulnerable = false;
     }
 }

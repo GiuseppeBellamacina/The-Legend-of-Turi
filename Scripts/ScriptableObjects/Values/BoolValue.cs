@@ -14,16 +14,14 @@ public class BoolValue : Data
 
     public new void Save()
     {
-        string relPath = SaveSystem.path + "/BoolValues/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         BoolData data = new BoolData(this);
         SaveSystem.Save(data, path);
     }
 
     public new void Load()
     {
-        string relPath = SaveSystem.path + "/BoolValues/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         BoolData data = SaveSystem.Load<BoolData>(path);
         if (data != null)
         {

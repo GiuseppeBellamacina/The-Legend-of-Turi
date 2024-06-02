@@ -68,16 +68,14 @@ public class Dialog : Data
 
     public new void Save()
     {
-        string relPath = SaveSystem.path + "/Dialogs/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         DialogData data = new DialogData(this);
         SaveSystem.Save(data, path);
     }
 
     public new void Load()
     {
-        string relPath = SaveSystem.path + "/Dialogs/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         DialogData data = SaveSystem.Load<DialogData>(path);
         if (data != null)
         {

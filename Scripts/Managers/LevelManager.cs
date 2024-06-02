@@ -34,11 +34,6 @@ public class LevelManager : MonoBehaviour
             Destroy(gameObject);
     }
 
-    public void NextLevel()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-    }
-
     public IEnumerator FadeCo(string sceneName, bool willBeBounded){
         if (fadeOutPanel != null)
             Instantiate(fadeOutPanel, Vector3.zero, Quaternion.identity);
@@ -56,13 +51,41 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public void RestartLevel()
+    public IEnumerator MenuFadeCo(string sceneName, bool willBeBounded, Vector2 position, bool load){
+        if (fadeOutPanel != null)
+            Instantiate(fadeOutPanel, Vector3.zero, Quaternion.identity);
+        yield return new WaitForSeconds(fadeWait);
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
+        while (!asyncOperation.isDone)
+            yield return null;
+        if (load)
+        {
+            PlayerController.Instance.transform.position = position;
+            CameraMovement.Instance.isBounded = willBeBounded;
+            CameraMovement.Instance.SetInstantPosition();
+        }
+        if (fadeInPanel != null)
+        {
+            GameObject panel = Instantiate(fadeInPanel, Vector3.zero, Quaternion.identity);
+            Destroy(panel, 1);
+        }
+    }
+
+    public void MenuStart()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        StartCoroutine(MenuFadeCo("Regno di Librino", true, Vector2.zero, false));
+    }
+
+    public void MenuStart(GameStatus gameStatus)
+    {
+        string sceneName = gameStatus.currentScene;
+        bool willBeBounded = gameStatus.isBounded;
+        Vector2 position = new Vector2(gameStatus.playerPosition[0], gameStatus.playerPosition[1]);
+        StartCoroutine(MenuFadeCo(sceneName, willBeBounded, position, true));
     }
 
     public void LoadMainMenu()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 }

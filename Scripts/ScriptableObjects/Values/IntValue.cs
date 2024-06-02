@@ -14,16 +14,14 @@ public class IntValue : Data
 
     public new void Save()
     {
-        string relPath = SaveSystem.path + "/IntValues/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         IntData data = new IntData(this);
         SaveSystem.Save(data, path);
     }
 
     public new void Load()
     {
-        string relPath = SaveSystem.path + "/IntValues/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         IntData data = SaveSystem.Load<IntData>(path);
         if (data != null)
         {

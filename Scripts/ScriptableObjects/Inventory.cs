@@ -102,11 +102,11 @@ public class Inventory : Data
             numberOfArrows += item.quantity;
             arrowSignal.Raise();
         }
-        else if (item.isHealth)
+        else if (item.isHearth)
         {
             PlayerController.Instance.Heal(item.quantity);
         }
-        else if (item.isContainer)
+        else if (item.isHeartContainer)
         {
             PlayerController.Instance.IncreaseMaxHealth(item.quantity);
         }
@@ -180,16 +180,14 @@ public class Inventory : Data
 
     public new void Save()
     {
-        string relPath = SaveSystem.path + "/Inventory/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         InventoryData data = new InventoryData(this);
         SaveSystem.Save(data, path);
     }
 
     public new void Load()
     {
-        string relPath = SaveSystem.path + "/Inventory/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         InventoryData data = SaveSystem.Load<InventoryData>(path);
         if (data != null)
         {

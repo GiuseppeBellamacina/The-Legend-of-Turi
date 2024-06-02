@@ -4,6 +4,8 @@ public class GameController : MonoBehaviour
 {
     private static GameController _instance;
     public VectorValue startingPosition, lastPosition;
+    public FloatValue healthMultiplier, damageMultiplier;
+    public GameStatus gameStatus;
 
     public static GameController Instance
     {
@@ -35,6 +37,26 @@ public class GameController : MonoBehaviour
     {
         PlayerController.Instance.SetState(State.none);
         startingPosition.value = PlayerController.Instance.transform.position;
+        SetMultipliers();
+    }
+
+    void SetMultipliers()
+    {
+        switch (gameStatus.difficulty)
+        {
+            case 0:
+                healthMultiplier.value = 0.75f;
+                damageMultiplier.value = 1.25f;
+                break;
+            case 1:
+                healthMultiplier.value = 1f;
+                damageMultiplier.value = 1f;
+                break;
+            case 2:
+                healthMultiplier.value = 1.5f;
+                damageMultiplier.value = 0.75f;
+                break;
+        }
     }
 
     public bool PlayerUsingController()

@@ -14,16 +14,14 @@ public class FloatValue : Data
 
     public new void Save()
     {
-        string relPath = SaveSystem.path + "/FloatValues/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         FloatData data = new FloatData(this);
         SaveSystem.Save(data, path);
     }
 
     public new void Load()
     {
-        string relPath = SaveSystem.path + "/FloatValues/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         FloatData data = SaveSystem.Load<FloatData>(path);
         if (data != null)
         {

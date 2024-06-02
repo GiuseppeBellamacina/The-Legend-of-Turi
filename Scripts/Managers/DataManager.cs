@@ -16,6 +16,7 @@ public class DataManager : MonoBehaviour
     public Status[] statuses;
     public Item[] items;
     public Inventory inventory;
+    public GameStatus gameStatus;
 
     public static DataManager Instance
     {
@@ -41,17 +42,11 @@ public class DataManager : MonoBehaviour
         else
             Destroy(gameObject);
         
-        ResetIndexes();
-        //InitializeIndexes();
         if (!_isInitialized)
         {
             _isInitialized = true;
             Reset();
         }
-
-        //SaveData();
-        //LoadData();
-        DeleteData();
     }
 
     public void ResetIndexes()
@@ -75,9 +70,10 @@ public class DataManager : MonoBehaviour
         foreach (Item item in items)
             item.dataIndex = _index;
         inventory.dataIndex = _index;
+        gameStatus.dataIndex = _index;
     }
 
-    void InitializeIndexes()
+    public void InitializeIndexes()
     {
         if (bools[0].dataIndex != 0)
             return;
@@ -100,7 +96,8 @@ public class DataManager : MonoBehaviour
             s.dataIndex = _index++;
         foreach (Item item in items)
             item.dataIndex = _index++;
-        inventory.dataIndex = _index;
+        inventory.dataIndex = _index++;
+        gameStatus.dataIndex = _index;
     }
 
     public void Reset()
@@ -122,6 +119,7 @@ public class DataManager : MonoBehaviour
         foreach (Item item in items)
             item.Reset();
         inventory.Reset();
+        gameStatus.Reset();
     }
 
     public void SaveData()
@@ -143,15 +141,13 @@ public class DataManager : MonoBehaviour
         foreach (Item item in items)
             item.Save();
         inventory.Save();
+        gameStatus.Save();
     }
 
-    public void LoadData()
+    public bool LoadData()
     {
         if (!IsDataSaved())
-        {
-            Debug.Log("No data saved.");
-            return;
-        }
+            return false;
         
         foreach (BoolValue b in bools)
             b.Load();
@@ -170,6 +166,9 @@ public class DataManager : MonoBehaviour
         foreach (Item item in items)
             item.Load();
         inventory.Load();
+        gameStatus.Load();
+
+        return true;
     }
 
     public void DeleteData()

@@ -37,19 +37,19 @@ public class Door : Interactable, IResettable
     public void Open()
     {
         isOpen.value = true;
-        spriteRenderer.sprite = openSprite;
+        if (spriteRenderer != null)
+            spriteRenderer.sprite = openSprite;
         for (int i = 0; i < colliders.Length; i++)
             colliders[i].enabled = false;
-        isContextClue = false;
     }
 
     public void Close()
     {
         isOpen.value = false;
-        spriteRenderer.sprite = closedSprite;
+        if (spriteRenderer != null)
+            spriteRenderer.sprite = closedSprite;
         for (int i = 0; i < colliders.Length; i++)
             colliders[i].enabled = true;
-        isContextClue = true;
     }
 
     public override void StopInteraction()

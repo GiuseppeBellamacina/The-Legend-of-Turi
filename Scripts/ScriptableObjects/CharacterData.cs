@@ -19,16 +19,14 @@ public class CharacterData : Data
 
     public new void Save()
     {
-        string relPath = SaveSystem.path + "/CharacterData/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         CharacterDataData data = new CharacterDataData(this);
         SaveSystem.Save(data, path);
     }
 
     public new void Load()
     {
-        string relPath = SaveSystem.path + "/CharacterData/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         CharacterDataData data = SaveSystem.Load<CharacterDataData>(path);
         if (data != null)
         {

@@ -38,16 +38,14 @@ public class Status : Data
 
     public new void Save()
     {
-        string relPath = SaveSystem.path + "/Status/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         StatusData data = new StatusData(this);
         SaveSystem.Save(data, path);
     }
 
     public new void Load()
     {
-        string relPath = SaveSystem.path + "/Status/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         StatusData data = SaveSystem.Load<StatusData>(path);
         if (data != null)
         {

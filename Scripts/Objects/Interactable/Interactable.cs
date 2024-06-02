@@ -8,7 +8,7 @@ public class Interactable : MonoBehaviour
     protected TMP_Text suggestionText, dialogText;
     public string suggestion;
     public bool isContextClue;
-    bool interactionEnded = false;
+    protected bool interactionEnded = false;
     protected bool playerInRange;
 
     public virtual void Interact()

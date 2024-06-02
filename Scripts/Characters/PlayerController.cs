@@ -79,7 +79,10 @@ public class PlayerController : Character
         firstWeapon = true;
         toInteract = null;
         weapon.sprite = sword;
-        weapon.color = new Color(1, 1, 1, 0);
+        if (!GameController.Instance.gameStatus.swordUnlocked)
+            weapon.color = new Color(1, 1, 1, 0);
+        else
+            CreateAttack();
     }
 
     public void DeactivateInput()
@@ -277,7 +280,8 @@ public class PlayerController : Character
             else if (n != null){
                 if (n.rb.bodyType != RigidbodyType2D.Static)
                     n.rb.velocity = Vector2.zero;
-                character.GetComponent<Animator>().enabled = false;
+                if (character.GetComponent<Animator>() != null)
+                    character.GetComponent<Animator>().enabled = false;
                 n.enabled = false;
             }
             else if (d != null){
@@ -305,7 +309,8 @@ public class PlayerController : Character
             }
             else if (n != null){
                 n.enabled = true;
-                character.GetComponent<Animator>().enabled = true;
+                if (character.GetComponent<Animator>() != null)
+                    character.GetComponent<Animator>().enabled = true;
             }
             else if (d != null){
                 d.enabled = true;

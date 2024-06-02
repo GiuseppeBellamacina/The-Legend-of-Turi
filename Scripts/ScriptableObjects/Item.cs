@@ -7,7 +7,7 @@ public class Item : Data
     public Sprite sprite;
     public string itemName;
     [TextArea] public string description;
-    public bool isKey, isCoin, isHealth, isArrow, isContainer;
+    public bool isKey, isCoin, isHearth, isArrow, isHeartContainer;
     public int quantity;
     public bool hasBeenPickedUp;
 
@@ -18,16 +18,14 @@ public class Item : Data
 
     public new void Save()
     {
-        string relPath = SaveSystem.path + "/Items/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         ItemData data = new ItemData(this);
         SaveSystem.Save(data, path);
     }
 
     public new void Load()
     {
-        string relPath = SaveSystem.path + "/Items/";
-        string path = relPath + dataIndex.ToString() + ".save";
+        string path = dataIndex.ToString() + ".save";
         ItemData data = SaveSystem.Load<ItemData>(path);
         if (data != null)
         {

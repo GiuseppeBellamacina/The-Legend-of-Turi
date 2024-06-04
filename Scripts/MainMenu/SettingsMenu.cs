@@ -12,15 +12,6 @@ public class SettingsMenu : MonoBehaviour
     public TMP_Text volumeLabel, musicLabel, sfxLabel;
     public Slider volumeSlider, musicSlider, sfxSlider;
     int selectedResIndex;
-    List<ResItem> resolutions = new List<ResItem>
-    {
-        new ResItem { width = 800, height = 600 },
-        new ResItem { width = 1024, height = 768 },
-        new ResItem { width = 1280, height = 720 },
-        new ResItem { width = 1920, height = 1080 },
-        new ResItem { width = 2560, height = 1440 },
-        new ResItem { width = 3840, height = 2160 }
-    };
 
     void Start(){
         fullscreenToggle.isOn = Screen.fullScreen;
@@ -28,6 +19,7 @@ public class SettingsMenu : MonoBehaviour
 
         bool foundRes = false;
 
+        List<ResItem> resolutions = ScreenManager.Instance.resolutions;
         for (int i = 0; i < resolutions.Count; i++){
             if (Screen.width == resolutions[i].width && Screen.height == resolutions[i].height){   
                 foundRes = true;
@@ -42,6 +34,7 @@ public class SettingsMenu : MonoBehaviour
             ResItem customRes = new ResItem { width = Screen.width, height = Screen.height };
             resolutions.Add(customRes);
             resolutions.Sort((a, b) => a.width * a.height - b.width * b.height);
+            ScreenManager.Instance.resolutions = resolutions;
             selectedResIndex = resolutions.IndexOf(customRes);
             UpdateResLabel();
         }
@@ -64,7 +57,7 @@ public class SettingsMenu : MonoBehaviour
         sfxLabel.text = InterpolateVolume(vol);
 
         EventSystem.current.SetSelectedGameObject(null);
-        EventSystem.current.SetSelectedGameObject(GameObject.Find("Fullscreen Toggle"));
+        EventSystem.current.SetSelectedGameObject(fullscreenToggle.gameObject);
     }
 
     string InterpolateVolume(float value){
@@ -75,12 +68,8 @@ public class SettingsMenu : MonoBehaviour
         return (tmp * 100).ToString("0");
     }
 
-    public void SetResolution(){
-        ResItem res = resolutions[selectedResIndex];
-        Screen.SetResolution(res.width, res.height, fullscreenToggle.isOn);
-    }
-
     public void UpdateResLabel(){
+        List<ResItem> resolutions = ScreenManager.Instance.resolutions;
         resLabel.text = resolutions[selectedResIndex].width.ToString() + " x " + resolutions[selectedResIndex].height.ToString();
     }
 
@@ -92,6 +81,7 @@ public class SettingsMenu : MonoBehaviour
     }
 
     public void ResRight(){
+        List<ResItem> resolutions = ScreenManager.Instance.resolutions;
         if (selectedResIndex < resolutions.Count - 1){
             selectedResIndex++;
         }
@@ -99,9 +89,9 @@ public class SettingsMenu : MonoBehaviour
     }
 
     public void ApplySettings(){
-        Screen.fullScreen = fullscreenToggle.isOn;
-        QualitySettings.vSyncCount = vsyncToggle.isOn ? 1 : 0;
-        SetResolution();
+        bool fullScreen = fullscreenToggle.isOn;
+        bool vsync = vsyncToggle.isOn;
+        ScreenManager.Instance.SetResolution(selectedResIndex, fullScreen, vsync);
     }
 
     public void SetMasterVolume(){   
@@ -124,10 +114,4 @@ public class SettingsMenu : MonoBehaviour
         AudioManager.Instance.audioMixer.SetFloat("SFX", to_set);
         PlayerPrefs.SetFloat("SFX", to_set);
     }
-}
-
-[System.Serializable]
-public class ResItem
-{
-    public int width, height;
 }

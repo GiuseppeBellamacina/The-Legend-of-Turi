@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -6,7 +7,7 @@ public class LevelManager : MonoBehaviour
 {
     private static LevelManager _instance;
     [SerializeField]
-    GameObject fadeInPanel, fadeOutPanel;
+    GameObject fadeInPanel, fadeOutPanel, startFade;
     public float fadeWait;
 
     public static LevelManager Instance
@@ -35,6 +36,7 @@ public class LevelManager : MonoBehaviour
     }
 
     public IEnumerator FadeCo(string sceneName, bool willBeBounded){
+        InputManager.Instance.inputController.Disable();
         if (fadeOutPanel != null)
             Instantiate(fadeOutPanel, Vector3.zero, Quaternion.identity);
         yield return new WaitForSeconds(fadeWait);
@@ -49,9 +51,11 @@ public class LevelManager : MonoBehaviour
             GameObject panel = Instantiate(fadeInPanel, Vector3.zero, Quaternion.identity);
             Destroy(panel, 1);
         }
+        InputManager.Instance.inputController.Enable();
     }
 
-    public IEnumerator MenuFadeCo(string sceneName, bool willBeBounded, Vector2 position, bool load){
+    public IEnumerator InitialFadeCo(string sceneName, bool willBeBounded, bool load = false, Vector2 position = default(Vector2), GameObject fadeInPanel = null, GameObject fadeOutPanel = null)
+    {
         if (fadeOutPanel != null)
             Instantiate(fadeOutPanel, Vector3.zero, Quaternion.identity);
         yield return new WaitForSeconds(fadeWait);
@@ -71,21 +75,33 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public void MenuStart()
+    public void MenuStart(GameObject fadeOutPanel)
     {
-        StartCoroutine(MenuFadeCo("Regno di Librino", true, Vector2.zero, false));
+        // Questa serve ad avviare il gioco da zero dal menu principale
+        StartCoroutine(InitialFadeCo("Intro", true, false, Vector2.zero, null, fadeOutPanel));
     }
 
     public void MenuStart(GameStatus gameStatus)
     {
+        // Questa serva a caricare il gioco da un salvataggio
         string sceneName = gameStatus.currentScene;
         bool willBeBounded = gameStatus.isBounded;
         Vector2 position = new Vector2(gameStatus.playerPosition[0], gameStatus.playerPosition[1]);
-        StartCoroutine(MenuFadeCo(sceneName, willBeBounded, position, true));
+        StartCoroutine(InitialFadeCo(sceneName, willBeBounded, true, position));
     }
 
-    public void LoadMainMenu()
+    public void MainMenuScene()
     {
-        SceneManager.LoadScene(1);
+        StartCoroutine(InitialFadeCo("MainMenu", false, false, Vector2.zero, startFade, null));
+    }
+
+    public void StartGameScene()
+    {
+        StartCoroutine(InitialFadeCo("Regno di Librino", true, false, Vector2.zero, startFade, null));
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }

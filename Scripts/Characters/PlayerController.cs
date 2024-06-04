@@ -87,12 +87,12 @@ public class PlayerController : Character
 
     public void DeactivateInput()
     {
-        InputManager.Instance.inputController.Player.Disable();
+        InputManager.Instance.inputController.Disable();
     }
 
     public void ActivateInput()
     {
-        InputManager.Instance.inputController.Player.Enable();
+        InputManager.Instance.inputController.Disable();
     }
 
     public void CreateAttack()

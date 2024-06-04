@@ -70,9 +70,4 @@ public class GameController : MonoBehaviour
         StartCoroutine(LevelManager.Instance.FadeCo(sceneName, willBeBounded));
         PlayerController.Instance.SetState(State.none);
     }
-
-    public void QuitGame()
-    {
-        Application.Quit();
-    }
 }

@@ -85,16 +85,6 @@ public class PlayerController : Character
             CreateAttack();
     }
 
-    public void DeactivateInput()
-    {
-        InputManager.Instance.inputController.Disable();
-    }
-
-    public void ActivateInput()
-    {
-        InputManager.Instance.inputController.Disable();
-    }
-
     public void CreateAttack()
     {
         InputManager.Instance.inputController.Player.Attack.performed += _ => Attack();
@@ -103,16 +93,22 @@ public class PlayerController : Character
 
     public void DisableAttack()
     {
-        InputManager.Instance.inputController.Player.Attack.Disable();
-        InputManager.Instance.inputController.Player.ChangeWeapon.Disable();
-        weapon.color = new Color(1, 1, 1, .5f);
+        if (inventory.hasSword)
+        {
+            InputManager.Instance.inputController.Player.Attack.Disable();
+            InputManager.Instance.inputController.Player.ChangeWeapon.Disable();
+            weapon.color = new Color(1, 1, 1, .5f);
+        }
     }
 
     public void EnableAttack()
     {
-        InputManager.Instance.inputController.Player.Attack.Enable();
-        InputManager.Instance.inputController.Player.ChangeWeapon.Enable();
-        weapon.color = new Color(1, 1, 1, 1);
+        if (inventory.hasSword)
+        {
+            InputManager.Instance.inputController.Player.Attack.Enable();
+            InputManager.Instance.inputController.Player.ChangeWeapon.Enable();
+            weapon.color = new Color(1, 1, 1, 1);
+        }
     }
 
     void Run()
@@ -120,16 +116,14 @@ public class PlayerController : Character
         SetState(State.run);
         animator.speed = speedMultiplier.value;
         speed = data.speed * speedMultiplier.value;
-        if (inventory.hasSword)
-            DisableAttack();
+        DisableAttack();
     }
 
     void StopRun()
     {
         animator.speed = 1f;
         speed = data.speed;
-        if (inventory.hasSword)
-            EnableAttack();
+        EnableAttack();
         if (rb.velocity != Vector2.zero)
             SetState(State.walk);
         else

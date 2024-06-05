@@ -3,11 +3,12 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum FadeType { NullFade, FromColor, ToColor, FromBlack, ToBlack , NeroVerde}
+
 public class LevelManager : MonoBehaviour
 {
     private static LevelManager _instance;
-    [SerializeField]
-    GameObject fadeInPanel, fadeOutPanel, startFade;
+    public GameObject[] fadePanels;
     public float fadeWait;
 
     public static LevelManager Instance
@@ -35,69 +36,97 @@ public class LevelManager : MonoBehaviour
             Destroy(gameObject);
     }
 
-    public IEnumerator FadeCo(string sceneName, bool willBeBounded){
-        InputManager.Instance.inputController.Disable();
-        if (fadeOutPanel != null)
-            Instantiate(fadeOutPanel, Vector3.zero, Quaternion.identity);
+    public IEnumerator FadeCo(string sceneName, bool willBeBounded)
+    {
+        // Disabilito l'input così il giocatore non può muoversi durante il cambio di scena
+        InputManager.Instance.DisableInput();
+        // Avvio il fade out
+        AudioManager.Instance.FadeVolume(0.5f);
+        Instantiate(fadePanels[(int)FadeType.ToColor], Vector3.zero, Quaternion.identity);
         yield return new WaitForSeconds(fadeWait);
+        // Setto la posizione del giocatore
         PlayerController.Instance.transform.position = GameController.Instance.startingPosition.value;
+        // Carico la scena
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
         while (!asyncOperation.isDone)
             yield return null;
+        // Setto la posizione della camera
         CameraMovement.Instance.isBounded = willBeBounded;
         CameraMovement.Instance.SetInstantPosition();
-        if (fadeInPanel != null)
-        {
-            GameObject panel = Instantiate(fadeInPanel, Vector3.zero, Quaternion.identity);
-            Destroy(panel, 1);
-        }
-        InputManager.Instance.inputController.Enable();
+        // Avvio il fade in
+        AudioManager.Instance.FadeVolume(0.5f, AudioManager.Instance.data.currentMasterVolume);
+        GameObject panel = Instantiate(fadePanels[(int)FadeType.FromColor], Vector3.zero, Quaternion.identity);
+        Destroy(panel, 1);
+        // Riabilito l'input
+        InputManager.Instance.EnableInput();
     }
 
-    public IEnumerator InitialFadeCo(string sceneName, bool willBeBounded, bool load = false, Vector2 position = default(Vector2), GameObject fadeInPanel = null, GameObject fadeOutPanel = null)
+    public IEnumerator InitialFadeCo(string sceneName, bool willBeBounded, FadeType fadeIn, FadeType fadeOut, bool load = false, Vector2 position = default(Vector2))
     {
-        if (fadeOutPanel != null)
-            Instantiate(fadeOutPanel, Vector3.zero, Quaternion.identity);
+        InputManager.Instance.DisableInput();
+        AudioManager.Instance.FadeVolume(0.5f);
+        if (fadeOut != FadeType.NullFade)
+            Instantiate(fadePanels[(int)fadeOut], Vector3.zero, Quaternion.identity);
         yield return new WaitForSeconds(fadeWait);
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
+        asyncOperation.allowSceneActivation = false; // Impedisce l'attivazione della scena fino a quando non è esplicitamente permesso
+
         while (!asyncOperation.isDone)
+        {
+            if (asyncOperation.progress >= 0.9f) // Controllo il progresso del caricamento
+            {
+                yield return null;
+                asyncOperation.allowSceneActivation = true;
+                yield return null;
+
+                if (load)
+                {
+                    PlayerController.Instance.transform.position = position;
+                    CameraMovement.Instance.isBounded = willBeBounded;
+                    CameraMovement.Instance.SetInstantPosition();
+                }
+
+                AudioManager.Instance.FadeVolume(0.5f, AudioManager.Instance.data.currentMasterVolume);
+                if (fadeIn != FadeType.NullFade)
+                {
+                    GameObject panel = Instantiate(fadePanels[(int)fadeIn], Vector3.zero, Quaternion.identity);
+                    Destroy(panel, 1);
+                }
+
+                InputManager.Instance.EnableInput();
+
+                break;
+            }
             yield return null;
-        if (load)
-        {
-            PlayerController.Instance.transform.position = position;
-            CameraMovement.Instance.isBounded = willBeBounded;
-            CameraMovement.Instance.SetInstantPosition();
-        }
-        if (fadeInPanel != null)
-        {
-            GameObject panel = Instantiate(fadeInPanel, Vector3.zero, Quaternion.identity);
-            Destroy(panel, 1);
         }
     }
 
-    public void MenuStart(GameObject fadeOutPanel)
+
+    public void MenuStart()
     {
         // Questa serve ad avviare il gioco da zero dal menu principale
-        StartCoroutine(InitialFadeCo("Intro", true, false, Vector2.zero, null, fadeOutPanel));
+        StartCoroutine(InitialFadeCo("Intro", false, FadeType.NullFade, FadeType.ToBlack));
     }
 
-    public void MenuStart(GameStatus gameStatus)
+    public void MenuLoad(GameStatus gameStatus)
     {
         // Questa serva a caricare il gioco da un salvataggio
         string sceneName = gameStatus.currentScene;
         bool willBeBounded = gameStatus.isBounded;
         Vector2 position = new Vector2(gameStatus.playerPosition[0], gameStatus.playerPosition[1]);
-        StartCoroutine(InitialFadeCo(sceneName, willBeBounded, true, position));
+        StartCoroutine(InitialFadeCo(sceneName, willBeBounded, FadeType.FromColor, FadeType.ToColor, true, position));
     }
 
     public void MainMenuScene()
     {
-        StartCoroutine(InitialFadeCo("MainMenu", false, false, Vector2.zero, startFade, null));
+        // Questa serve a tornare al menu principale
+        StartCoroutine(InitialFadeCo("MainMenu", false, FadeType.FromColor, FadeType.ToColor));
     }
 
     public void StartGameScene()
     {
-        StartCoroutine(InitialFadeCo("Regno di Librino", true, false, Vector2.zero, startFade, null));
+        // Questa serve a iniziare il gioco dal video introduttivo
+        StartCoroutine(InitialFadeCo("Regno di Librino", true, FadeType.FromColor, FadeType.NeroVerde));
     }
 
     public void QuitGame()

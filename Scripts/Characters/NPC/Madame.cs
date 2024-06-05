@@ -76,7 +76,7 @@ public class Madame : Npc
             suggestionBox.SetActive(false);
             contextOff.Raise();
             TextDisplacer(sentence);
-            PlayerController.Instance.DeactivateInput();
+            InputManager.Instance.DisableInput();
             StartCoroutine(WaitAndTransfer());
         }
     }

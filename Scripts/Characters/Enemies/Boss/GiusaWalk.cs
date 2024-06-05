@@ -47,7 +47,7 @@ public class GiusaWalk : StateMachineBehaviour
                     break;
             }
         }
-        else if (boss.health < boss.data.maxHealth / 2)
+        else if (boss.health < boss.data.maxHealth * (2.0f / 3.0f)) // Se la vita è inferiore a 2/3
         {
             switch (Random.Range(0,2))
             {

@@ -2,6 +2,8 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.EventSystems;
+using System;
+using UnityEngine.InputSystem;
 
 public enum InputType
 {
@@ -11,25 +13,32 @@ public enum InputType
 
 public class MainMenuController : MonoBehaviour
 {
-    // Input type
+    [Header("Input")]
     public InputType inputType = InputType.Mouse;
-    // EventSystem
+    [Header("Event System")]
     public GameObject eventSystemObj;
     private bool eventSys;
-    // Error popup
+    [Header("Error Popup")]
     public GameObject errorPopup;
-    // Fade panels
-    public GameObject fadeInPanel;
-    public GameObject fadeOutPanel;
-    // Selected buttons
+    [Header("Buttons")]
     public GameObject firstSelectedButton;
     public GameObject lastSelectedButton;
 
-    // Options menu
+    [Header("Options")]
     public GameObject optionsMenu;
     public GameObject optionsFirstSelectedButton;
     public GameObject optionsButton;
     private bool optionsOpen;
+
+    [Header("Difficulty")]
+    public GameObject newGameButton;
+    public GameObject difficultyMenu;
+    public GameObject difficultyFirstSelectedButton;
+    bool difficultyOpen;
+
+    // Input Actions
+    Action<InputAction.CallbackContext> reselectAction;
+    Action<InputAction.CallbackContext> cancelAction;
 
     void Awake()
     {
@@ -37,28 +46,15 @@ public class MainMenuController : MonoBehaviour
         Cursor.visible = true;
         errorPopup.SetActive(false);
         eventSys = EventSystem.current.enabled;
-        InputManager.Instance.inputController.UI.Disable();
     }
 
     void Start()
     {
-        InputManager.Instance.inputController.UI.ReSelect.performed += ctx => Reselect();
-        InputManager.Instance.inputController.UI.Cancel.performed += ctx => CloseOptionsMenu();
+        reselectAction = ctx => Reselect();
+        cancelAction = ctx => CloseMenu();
+        InputManager.Instance.inputController.UI.ReSelect.performed += reselectAction;
+        InputManager.Instance.inputController.UI.Cancel.performed += cancelAction;
         lastSelectedButton = firstSelectedButton;
-
-        if (fadeInPanel != null)
-        {
-            GameObject panel = Instantiate(fadeInPanel, Vector3.zero, Quaternion.identity);
-            StartCoroutine(ActivateFirstInput(panel));
-            Destroy(panel, 1);
-        }
-    }
-
-    IEnumerator ActivateFirstInput(GameObject panel)
-    {
-        while (panel != null)
-            yield return null;
-        InputManager.Instance.inputController.UI.Enable();
     }
 
     public void NewGame()
@@ -66,7 +62,32 @@ public class MainMenuController : MonoBehaviour
         DataManager.Instance.DeleteData();
         DataManager.Instance.ResetIndexes();
         DataManager.Instance.InitializeIndexes();
-        LevelManager.Instance.MenuStart(fadeOutPanel);
+
+        SelectDifficulty();
+    }
+
+    void SelectDifficulty()
+    {
+        difficultyOpen = true;
+        difficultyMenu.SetActive(true);
+        if (inputType == InputType.Controller)
+            EventSystem.current.SetSelectedGameObject(difficultyFirstSelectedButton);
+        else
+            lastSelectedButton = difficultyFirstSelectedButton;
+    }
+
+    public void SetDifficulty(int difficulty)
+    {
+        DataManager.Instance.gameStatus.difficulty = difficulty;
+
+        InputManager.Instance.inputController.UI.ReSelect.performed -= reselectAction;
+        InputManager.Instance.inputController.UI.Cancel.performed -= cancelAction;
+        LevelManager.Instance.MenuStart();
+    }
+
+    public void NullFunction()
+    {
+        // Null function per correzione bug
     }
 
     public void LoadGame(GameStatus gameStatus)
@@ -86,7 +107,11 @@ public class MainMenuController : MonoBehaviour
             StartCoroutine(CloseErrorPopup());
         }
         else
-            LevelManager.Instance.MenuStart(gameStatus);
+        {
+            InputManager.Instance.inputController.UI.ReSelect.performed -= reselectAction;
+            InputManager.Instance.inputController.UI.Cancel.performed -= cancelAction;
+            LevelManager.Instance.MenuLoad(gameStatus);
+        }
     }
 
     IEnumerator CloseErrorPopup()
@@ -142,12 +167,20 @@ public class MainMenuController : MonoBehaviour
             lastSelectedButton = optionsFirstSelectedButton;
     }
 
-    public void CloseOptionsMenu()
+    public void CloseMenu()
     {
-        optionsMenu.SetActive(false);
         if (optionsOpen)
+        {
+            optionsMenu.SetActive(false);
             EventSystem.current.SetSelectedGameObject(optionsButton);
-        optionsOpen = false;
+            optionsOpen = false;
+        }
+        else if (difficultyOpen)
+        {
+            difficultyMenu.SetActive(false);
+            EventSystem.current.SetSelectedGameObject(newGameButton);
+            difficultyOpen = false;
+        }
     }
 
     void Update()

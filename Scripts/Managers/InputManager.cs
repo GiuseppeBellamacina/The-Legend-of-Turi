@@ -45,4 +45,14 @@ public class InputManager : MonoBehaviour
             _isInitialized = true;
         }
     }
+
+    public void EnableInput()
+    {
+        inputController.Enable();
+    }
+
+    public void DisableInput()
+    {
+        inputController.Disable();
+    }
 }

@@ -84,7 +84,7 @@ public class Giusa : Enemy, IResettable
         {
             animator.SetTrigger("veryStagger");
         }
-        else if (health < data.maxHealth / 2)
+        else if (health < data.maxHealth * (2.0f / 3.0f))
         {
             switch (Random.Range(0, 2))
             {

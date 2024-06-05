@@ -11,6 +11,8 @@ public class SettingsMenu : MonoBehaviour
     public TMP_Text resLabel;
     public TMP_Text volumeLabel, musicLabel, sfxLabel;
     public Slider volumeSlider, musicSlider, sfxSlider;
+    public GameObject muteButton;
+    public Sprite muteSprite, unmuteSprite;
     int selectedResIndex;
 
     void Start(){
@@ -39,33 +41,19 @@ public class SettingsMenu : MonoBehaviour
             UpdateResLabel();
         }
 
-        // Qui setto i valori dei volumi in base a quelli salvati in PlayerPrefs
-        float vol = 0f;
-        vol = PlayerPrefs.GetFloat("MasterVol");
-        vol = vol == 0 ? -25 : vol;
-        volumeSlider.value = vol;
-        volumeLabel.text = InterpolateVolume(vol);
-
-        vol = PlayerPrefs.GetFloat("MusicVol");
-        vol = vol == 0 ? -25 : vol;
-        musicSlider.value = vol;
-        musicLabel.text = InterpolateVolume(vol);
-
-        vol = PlayerPrefs.GetFloat("SFXVol");
-        vol = vol == 0 ? -25 : vol;
-        sfxSlider.value = vol;
-        sfxLabel.text = InterpolateVolume(vol);
-
-        EventSystem.current.SetSelectedGameObject(null);
-        EventSystem.current.SetSelectedGameObject(fullscreenToggle.gameObject);
-    }
-
-    string InterpolateVolume(float value){
-        if (value < -25){
-            value = -25;
+        if (!AudioManager.Instance.data.mute)
+            muteButton.GetComponent<Image>().sprite = muteSprite;
+        else
+        {
+            volumeSlider.value = AudioManager.Instance.PercentizeVolume(AudioManager.Instance.data.currentMasterVolume);
+            musicSlider.value = AudioManager.Instance.PercentizeVolume(AudioManager.Instance.data.currentMusicVolume);
+            sfxSlider.value = AudioManager.Instance.PercentizeVolume(AudioManager.Instance.data.currentSFXVolume);
+    
+            volumeLabel.text = volumeSlider.value.ToString("0");
+            musicLabel.text = musicSlider.value.ToString("0");
+            sfxLabel.text = sfxSlider.value.ToString("0");
+            muteButton.GetComponent<Image>().sprite = unmuteSprite;
         }
-        float tmp = (value + 25) / 45;
-        return (tmp * 100).ToString("0");
     }
 
     public void UpdateResLabel(){
@@ -94,24 +82,49 @@ public class SettingsMenu : MonoBehaviour
         ScreenManager.Instance.SetResolution(selectedResIndex, fullScreen, vsync);
     }
 
-    public void SetMasterVolume(){   
-        volumeLabel.text = InterpolateVolume(volumeSlider.value);
-        float to_set = volumeSlider.value == -25 ? -80 : volumeSlider.value;
-        AudioManager.Instance.audioMixer.SetFloat("Master", to_set);
-        PlayerPrefs.SetFloat("Master", to_set);
+    public void SetMasterVolume(){
+        float volume = volumeSlider.value;
+        volumeLabel.text = volume.ToString("0");
+        AudioManager.Instance.SetVolume("Master", volume);
     }
 
     public void SetMusicVolume(){
-        musicLabel.text = InterpolateVolume(musicSlider.value);
-        float to_set = musicSlider.value == -25 ? -80 : musicSlider.value;
-        AudioManager.Instance.audioMixer.SetFloat("Music", to_set);
-        PlayerPrefs.SetFloat("Music", to_set);
+        float volume = musicSlider.value;
+        musicLabel.text = volume.ToString("0");
+        AudioManager.Instance.SetVolume("Music", volume);
     }
 
     public void SetSFXVolume(){
-        sfxLabel.text = InterpolateVolume(sfxSlider.value);
-        float to_set = sfxSlider.value == -25 ? -80 : sfxSlider.value;
-        AudioManager.Instance.audioMixer.SetFloat("SFX", to_set);
-        PlayerPrefs.SetFloat("SFX", to_set);
+        float volume = sfxSlider.value;
+        sfxLabel.text = volume.ToString("0");
+        AudioManager.Instance.SetVolume("SFX", volume);
+    }
+
+    public void Mute()
+    {
+        AudioManager.Instance.onValueChange = false;
+        AudioManager.Instance.MuteOrUnMuterVolume();
+
+        if (!AudioManager.Instance.data.mute)
+        {
+            volumeSlider.value = AudioManager.Instance.PercentizeVolume(AudioManager.Instance.data.currentMasterVolume);
+            musicSlider.value = AudioManager.Instance.PercentizeVolume(AudioManager.Instance.data.currentMusicVolume);
+            sfxSlider.value = AudioManager.Instance.PercentizeVolume(AudioManager.Instance.data.currentSFXVolume);
+            volumeLabel.text = volumeSlider.value.ToString("0");
+            musicLabel.text = musicSlider.value.ToString("0");
+            sfxLabel.text = sfxSlider.value.ToString("0");
+            muteButton.GetComponent<Image>().sprite = muteSprite;
+        }
+        else
+        {
+            volumeSlider.value = 0;
+            musicSlider.value = 0;
+            sfxSlider.value = 0;
+            volumeLabel.text = "0";
+            musicLabel.text = "0";
+            sfxLabel.text = "0";
+            muteButton.GetComponent<Image>().sprite = unmuteSprite;
+        }
+        AudioManager.Instance.onValueChange = true;
     }
 }

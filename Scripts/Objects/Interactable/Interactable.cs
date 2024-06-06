@@ -29,6 +29,7 @@ public class Interactable : MonoBehaviour
     protected virtual void Awake()
     {
         canvas = GameObject.FindWithTag("Canvas");
+        canvas = canvas.transform.Find("PlayerUI").gameObject;
         suggestionBox = canvas.transform.Find("Suggestion Box").gameObject;
         suggestionText = suggestionBox.GetComponent<TMP_Text>();
         dialogBox = canvas.transform.Find("Dialog Box").gameObject;

@@ -3,6 +3,7 @@ using UnityEngine;
 public class CanvasSingleton : MonoBehaviour
 {
     private static CanvasSingleton _instance;
+    public GameObject[] toDeactivate;
 
     public static CanvasSingleton Instance
     {
@@ -30,6 +31,14 @@ public class CanvasSingleton : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+    }
+
+    void Start()
+    {
+        foreach (GameObject obj in toDeactivate)
+        {
+            obj.SetActive(false);
         }
     }
 }

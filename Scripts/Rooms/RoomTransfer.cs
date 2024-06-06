@@ -37,6 +37,7 @@ public class RoomTransfer : MonoBehaviour
         minPosObject = nextRoom.transform.Find("minPos").gameObject;
         maxPosObject = nextRoom.transform.Find("maxPos").gameObject;
         canvas = GameObject.FindWithTag("Canvas");
+        canvas = canvas.transform.Find("PlayerUI").gameObject;
         text = canvas.transform.Find("Place Text").gameObject;
         placeText = text.GetComponent<TMP_Text>();
     }

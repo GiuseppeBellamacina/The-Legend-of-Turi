@@ -132,7 +132,12 @@ public class MainMenuController : MonoBehaviour
         if (EventSystem.current.currentSelectedGameObject == null)
         {
             inputType = InputType.Controller;
-            EventSystem.current.SetSelectedGameObject(lastSelectedButton);
+            if (optionsOpen && lastSelectedButton.transform.parent != optionsMenu.transform)
+                EventSystem.current.SetSelectedGameObject(optionsFirstSelectedButton);
+            else if (difficultyOpen && lastSelectedButton.transform.parent != difficultyMenu.transform)
+                EventSystem.current.SetSelectedGameObject(difficultyFirstSelectedButton);
+            else
+                EventSystem.current.SetSelectedGameObject(lastSelectedButton);
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }

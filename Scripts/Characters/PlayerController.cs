@@ -87,7 +87,7 @@ public class PlayerController : Character
         animator.SetFloat("moveY", -1);
 
         // Inizializzo i parametri
-        data.health = data.maxHealth;
+        playerHealthSignal.Raise();
         speed = data.speed;
         damage = data.damage * damageMultiplier.value; // ha valore di default 1 che scende con la difficoltà
         attackReady = true; // viene gestito dalle animazioni
@@ -99,6 +99,16 @@ public class PlayerController : Character
             weapon.color = new Color(1, 1, 1, 0);
         else
             CreateAttack();
+    }
+
+    public void RemoveActions()
+    {
+        InputManager.Instance.inputController.Player.Interact.performed -= interactAction;
+        InputManager.Instance.inputController.Player.StopInteraction.performed -= stopInteractionAction;
+        InputManager.Instance.inputController.Player.Run.performed -= runAction;
+        InputManager.Instance.inputController.Player.Run.canceled -= stopRunAction;
+        InputManager.Instance.inputController.Player.ChangeWeapon.performed -= changeWeaponAction;
+        InputManager.Instance.inputController.Player.Attack.performed -= attackAction;
     }
 
     public void CreateAttack()
@@ -277,16 +287,17 @@ public class PlayerController : Character
         GameObject[] obj = RoomLocator.Instance.currentRoom.GetComponent<Room>().objectsToSpawn;
         foreach (GameObject character in obj)
         {
-            Enemy e = character.GetComponent<Enemy>();
+            Character c = character.GetComponent<Character>();
             Npc n = character.GetComponent<Npc>();
             DamagePlayer d = character.GetComponent<DamagePlayer>();
 
             if (character == toInteract)
                 continue;
-            else if (e != null){
-                e.rb.velocity = Vector2.zero;
+                
+            else if (c != null){
+                c.rb.velocity = Vector2.zero;
                 character.GetComponent<Animator>().enabled = false;
-                e.enabled = false;
+                c.enabled = false;
             }
             else if (n != null){
                 if (n.rb.bodyType != RigidbodyType2D.Static)
@@ -310,12 +321,12 @@ public class PlayerController : Character
         GameObject[] obj = RoomLocator.Instance.currentRoom.GetComponent<Room>().objectsToSpawn;
         foreach (GameObject character in obj)
         {
-            Enemy e = character.GetComponent<Enemy>();
+            Character c = character.GetComponent<Character>();
             Npc n = character.GetComponent<Npc>();
             DamagePlayer d = character.GetComponent<DamagePlayer>();
 
-            if (e != null){
-                e.enabled = true;
+            if (c != null){
+                c.enabled = true;
                 character.GetComponent<Animator>().enabled = true;
             }
             else if (n != null){

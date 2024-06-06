@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -30,6 +31,14 @@ public class PlayerController : Character
     public Image weapon;
     public GameObject arrowText;
 
+    // Actions
+    Action<InputAction.CallbackContext> interactAction;
+    Action<InputAction.CallbackContext> stopInteractionAction;
+    Action<InputAction.CallbackContext> runAction;
+    Action<InputAction.CallbackContext> stopRunAction;
+    Action<InputAction.CallbackContext> changeWeaponAction;
+    Action<InputAction.CallbackContext> attackAction;
+
     public static PlayerController Instance
     {
         get
@@ -60,11 +69,18 @@ public class PlayerController : Character
     void Start()
     {
         // Abbino i metodi ai controlli
-        InputManager.Instance.inputController.Player.Interact.performed += _ => Interact();
-        InputManager.Instance.inputController.Player.StopInteraction.performed += _ => StopInteraction();
-        InputManager.Instance.inputController.Player.Run.performed += _ => Run();
-        InputManager.Instance.inputController.Player.Run.canceled += _ => StopRun();
-        InputManager.Instance.inputController.Player.ChangeWeapon.performed += _ => ChangeWeapon();
+        interactAction = ctx => Interact();
+        stopInteractionAction = ctx => StopInteraction();
+        runAction = ctx => Run();
+        stopRunAction = ctx => StopRun();
+        changeWeaponAction = ctx => ChangeWeapon();
+
+        // Aggiungo i metodi ai controlli
+        InputManager.Instance.inputController.Player.Interact.performed += interactAction;
+        InputManager.Instance.inputController.Player.StopInteraction.performed += stopInteractionAction;
+        InputManager.Instance.inputController.Player.Run.performed += runAction;
+        InputManager.Instance.inputController.Player.Run.canceled += stopRunAction;
+        InputManager.Instance.inputController.Player.ChangeWeapon.performed += changeWeaponAction;
 
         // Setto la direzione di default
         animator.SetFloat("moveX", 0);
@@ -87,7 +103,8 @@ public class PlayerController : Character
 
     public void CreateAttack()
     {
-        InputManager.Instance.inputController.Player.Attack.performed += _ => Attack();
+        attackAction = ctx => Attack();
+        InputManager.Instance.inputController.Player.Attack.performed += attackAction;
         EnableAttack();
     }
 

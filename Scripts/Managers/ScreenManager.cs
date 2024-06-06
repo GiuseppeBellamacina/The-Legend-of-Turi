@@ -13,9 +13,10 @@ public class ScreenManager : MonoBehaviour
 
     public List<ResItem> resolutions = new List<ResItem>
     {
-        new ResItem { width = 800, height = 600 },
-        new ResItem { width = 1024, height = 768 },
+        new ResItem { width = 640, height = 360 },
+        new ResItem { width = 1024, height = 576 },
         new ResItem { width = 1280, height = 720 },
+        new ResItem { width = 1600, height = 900 },
         new ResItem { width = 1920, height = 1080 },
         new ResItem { width = 2560, height = 1440 },
         new ResItem { width = 3840, height = 2160 }

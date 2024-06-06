@@ -37,12 +37,15 @@ public class AudioManager : MonoBehaviour
     void Start()
     {
         //data.Reset();
-        if(!data.mute)
+        if(data.mute)
         {
-            audioMixer.SetFloat("Master", data.currentMasterVolume);
-            audioMixer.SetFloat("Music", data.currentMusicVolume);
-            audioMixer.SetFloat("SFX", data.currentSFXVolume);
+            MuteVolume();
         }
+        else
+        {
+            UnMuteVolume();
+        }
+        onValueChange = true; // serve per evitare che vengano eliminati i dati salvati se metto il volume a 0
     }
 
     public IEnumerator FadeVolumeCo(float duration, float targetVolume = -80)
@@ -88,25 +91,12 @@ public class AudioManager : MonoBehaviour
     public void SetVolume(string parameter, float inValue)
     {
         // Posso inserire il volume come un valore da 0 a 100
-
-        // Se il volume è a 0 e non è mutato, lo muta
-        if (inValue == 0 && !data.mute)
-        {
-            MuteVolume();
-            return;
-        }
-        // Se il volume è diverso da 0 e mutato, lo smuta
-        else if (inValue != 0 && data.mute && parameter == "Master")
-        {
-            UnmuteVolume();
-        }
-
         float value = ConvertToVolume(inValue);
         audioMixer.SetFloat(parameter, value);
 
         if (!onValueChange)
             return;
-        
+
         switch (parameter)
         {
             case "Master":
@@ -123,10 +113,10 @@ public class AudioManager : MonoBehaviour
 
     public void MuteOrUnMuterVolume()
     {
-        if (!data.mute)
-            MuteVolume();
+        if (data.mute)
+            UnMuteVolume();
         else
-            UnmuteVolume();
+            MuteVolume();
     }
 
     void MuteVolume()
@@ -141,7 +131,7 @@ public class AudioManager : MonoBehaviour
         data.mute = true;
     }
 
-    void UnmuteVolume()
+    void UnMuteVolume()
     {
         audioMixer.SetFloat("Master", data.currentMasterVolume);
         audioMixer.SetFloat("Music", data.currentMusicVolume);

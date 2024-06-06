@@ -25,7 +25,7 @@ public class Well : Interactable
 
     IEnumerator LuckCo()
     {
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(3f);
         if (Random.Range(0, 100) < 30)
             PlayerController.Instance.Heal(3);
     }

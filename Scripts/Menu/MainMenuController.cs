@@ -52,8 +52,10 @@ public class MainMenuController : MonoBehaviour
     {
         reselectAction = ctx => Reselect();
         cancelAction = ctx => CloseMenu();
+
         InputManager.Instance.inputController.UI.ReSelect.performed += reselectAction;
         InputManager.Instance.inputController.UI.Cancel.performed += cancelAction;
+        
         lastSelectedButton = firstSelectedButton;
     }
 
@@ -85,18 +87,13 @@ public class MainMenuController : MonoBehaviour
         LevelManager.Instance.MenuStart();
     }
 
-    public void NullFunction()
-    {
-        // Null function per correzione bug
-    }
-
     public void LoadGame(GameStatus gameStatus)
     {
         if (!DataManager.Instance.LoadData())
         {
             StopAllCoroutines();
             errorPopup.SetActive(true);
-            errorPopup.GetComponentInChildren<TextMeshProUGUI>().text = "Errore:\nnessun salvataggio trovato.";
+            errorPopup.GetComponentInChildren<TextMeshProUGUI>().text = "Errore:\nnessun salvataggio trovato";
             lastSelectedButton = EventSystem.current.currentSelectedGameObject;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;

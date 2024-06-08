@@ -129,18 +129,26 @@ public class MainMenuController : MonoBehaviour
 
     void Reselect() // Per riprendere il controllo con il controller o la tastiera
     {
-        if (EventSystem.current.currentSelectedGameObject == null)
+        inputType = InputType.Controller;
+        if (optionsOpen && EventSystem.current.currentSelectedGameObject != null &&  !CheckParent(lastSelectedButton, optionsMenu, 3))
+            EventSystem.current.SetSelectedGameObject(optionsFirstSelectedButton);
+        else if (EventSystem.current.currentSelectedGameObject == null)
         {
-            inputType = InputType.Controller;
-            if (optionsOpen && lastSelectedButton.transform.parent != optionsMenu.transform)
+            EventSystem.current.SetSelectedGameObject(lastSelectedButton);
+            if (optionsOpen && EventSystem.current.currentSelectedGameObject != null &&  !CheckParent(lastSelectedButton, optionsMenu, 3))
                 EventSystem.current.SetSelectedGameObject(optionsFirstSelectedButton);
-            else if (difficultyOpen && lastSelectedButton.transform.parent != difficultyMenu.transform)
-                EventSystem.current.SetSelectedGameObject(difficultyFirstSelectedButton);
-            else
-                EventSystem.current.SetSelectedGameObject(lastSelectedButton);
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
         }
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    bool CheckParent(GameObject obj, GameObject parent, int depth)
+    {
+        if (depth == 0)
+            return false;
+        if (obj.transform.parent == parent.transform)
+            return true;
+        return CheckParent(obj.transform.parent.gameObject, parent, depth - 1);
     }
 
     void CursorMoved() // Per far apparire il cursore quando si muove il mouse

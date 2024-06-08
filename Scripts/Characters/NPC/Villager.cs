@@ -6,7 +6,7 @@ public class Villager : Npc
 
     string RandomDialog()
     {
-        return dialog.sentences[Random.Range(0, dialog.sentences.Length)];
+        return dialog.GetSentence(Random.Range(0, dialog.sentences.Length));
     }
 
     public override void Interact()

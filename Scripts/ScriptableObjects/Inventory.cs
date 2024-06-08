@@ -13,7 +13,7 @@ public class Inventory : Data
     public int numberOfKeys;
     public int numberOfCoins;
     public int numberOfArrows;
-    public bool hasSword;
+    public bool hasSword, hasBow;
 
     public bool IsAwaible(string itemName)
     {
@@ -176,6 +176,7 @@ public class Inventory : Data
         numberOfArrows = 0;
         Arrow.quantity = numberOfArrows;
         hasSword = false;
+        hasBow = false;
     }
 
     public new void Save()
@@ -197,6 +198,7 @@ public class Inventory : Data
             numberOfArrows = data.numberOfArrows;
             Arrow.quantity = numberOfArrows;
             hasSword = data.hasSword;
+            hasBow = data.hasBow;
         }
     }
 }

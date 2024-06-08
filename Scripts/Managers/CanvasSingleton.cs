@@ -32,10 +32,7 @@ public class CanvasSingleton : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
 
-    void Start()
-    {
         foreach (GameObject obj in toDeactivate)
         {
             obj.SetActive(false);

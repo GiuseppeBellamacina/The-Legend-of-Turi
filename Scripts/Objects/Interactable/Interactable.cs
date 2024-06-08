@@ -14,6 +14,7 @@ public class Interactable : MonoBehaviour
     public virtual void Interact()
     {
         interactionEnded = false;
+        canvas.transform.Find("Place Text").gameObject.SetActive(false);
     }
     public virtual void StopInteraction(){
         PlayerController.Instance.SetState(State.none);

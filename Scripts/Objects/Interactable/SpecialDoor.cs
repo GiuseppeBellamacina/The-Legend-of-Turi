@@ -12,7 +12,7 @@ public class SpecialDoor : Door
         {
             if (!willOpen.value)
             {
-                dialogText.text = "La porta <b><color=#FF0000FF>non si muove</color></b>, una scritta in rilievo dice:\n<i>\"Se <b><color=#FF0000FF>Il Senza Confronti</color></b> vuoi incontrare, con la sua amata devi parlare\"</i>";
+                dialogText.text = "La porta <b><color=#FF0000FF>non si muove</color></b>, una scritta in rilievo dice:\n<i>\"Se con <b><color=#FF0000FF>Il Senza Confronti</color></b> ti vuoi confrontare, con la sua amata devi parlare\"</i>";
             }
             else
             {

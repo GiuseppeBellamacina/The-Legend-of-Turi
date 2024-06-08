@@ -164,7 +164,7 @@ public class PlayerController : Character
 
     void ChangeWeapon()
     {
-        if (inventory.IsAwaible("Arco"))
+        if (inventory.hasBow)
         {
             if (firstWeapon)
             {
@@ -279,9 +279,9 @@ public class PlayerController : Character
             SetState(State.idle);
     }
 
-    public void LockCharacters()
+    public void LockCharacters(bool notLock = false)
     {
-        if (RoomLocator.Instance.currentRoom == null)
+        if (RoomLocator.Instance.currentRoom == null || notLock)
             return;
 
         GameObject[] obj = RoomLocator.Instance.currentRoom.GetComponent<Room>().objectsToSpawn;
@@ -295,7 +295,8 @@ public class PlayerController : Character
                 continue;
                 
             else if (c != null){
-                c.rb.velocity = Vector2.zero;
+                if (c.rb.bodyType != RigidbodyType2D.Static)
+                    c.rb.velocity = Vector2.zero;
                 character.GetComponent<Animator>().enabled = false;
                 c.enabled = false;
             }
@@ -341,12 +342,10 @@ public class PlayerController : Character
         }
     }
 
-    void Interact()
+    public void Interact(bool notLock = false)
     {
         if (toInteract == null)
             return;
-
-        LockCharacters();
 
         if (currentState != State.interact)
         {
@@ -355,6 +354,7 @@ public class PlayerController : Character
             rb.velocity = Vector2.zero;
             toInteract.GetComponent<Interactable>().Interact();
             rb.velocity = Vector2.zero;
+            LockCharacters(notLock);
         }
         else
         {
@@ -437,6 +437,9 @@ public class PlayerController : Character
             return;
 
         SetState(State.walk);
+
+        if (Cursor.visible)
+            Cursor.visible = false;
     }
 
     void FixedUpdate()

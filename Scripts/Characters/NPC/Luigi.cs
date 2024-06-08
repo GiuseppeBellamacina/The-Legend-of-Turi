@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Luigi : Npc
@@ -56,7 +57,7 @@ public class Luigi : Npc
     {
         if (!PlayerController.Instance.inventory.hasSword && !quest.status.isCompleted)
         {
-            if (quest.status.dialog.HasReadDialogUntilCheckPoint(1))
+            if (quest.status.dialog.HasReadDialogUntilCheckPoint(1) && speechEnded)
             {
                 dialogText.text = sword.description;
                 PlayerController.Instance.ObtainItem(sword);

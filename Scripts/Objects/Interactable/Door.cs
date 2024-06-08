@@ -7,6 +7,7 @@ public enum DoorType
     Button,
     Enemies,
     Special,
+    Boss,
     Blocked
 }
 

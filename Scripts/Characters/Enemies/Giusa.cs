@@ -3,7 +3,6 @@ using System.Collections;
 
 public class Giusa : Enemy, IResettable
 {
-    public bool hasPresented; // Se si è presentato, parte il combattimento
     public bool attackReady; // Gestito dagli stati
     public bool isInvulnerable; // Gestito dagli stati
     public float attackCooldown;
@@ -15,7 +14,6 @@ public class Giusa : Enemy, IResettable
     protected override void Start()
     {
         base.Start();
-        hasPresented = false;
         attackReady = true;
         isInvulnerable = false;
         dialogBox.SetActive(false);

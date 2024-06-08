@@ -81,7 +81,7 @@ public class Knight : Npc
 
     string RandomDialog()
     {
-        return dialog.sentences[Random.Range(0, dialog.sentences.Length)];
+        return dialog.GetSentence(Random.Range(0, dialog.sentences.Length));
     }
 
     public override void Interact()
@@ -94,7 +94,7 @@ public class Knight : Npc
         }
         else
             base.Interact();
-        StopAllCoroutines();
+        StopCoroutine(WaitAndPatrol());
     }
 
     public override void ContinueInteraction()
@@ -121,7 +121,7 @@ public class Knight : Npc
             if (isContextClue)
                 contextOn.Raise();
             isPatrolling = false;
-            StopAllCoroutines();
+            StopCoroutine(WaitAndPatrol());
             playerInRange = true;
         }
     }

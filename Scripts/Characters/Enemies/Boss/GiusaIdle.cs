@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 public class GiusaIdle : StateMachineBehaviour
 {
     Giusa boss;
-    public float time;
-    float elapsedTime;
+    public BoolValue hasPresented;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -19,7 +19,6 @@ public class GiusaIdle : StateMachineBehaviour
         if (boss.rb.bodyType != RigidbodyType2D.Static)
             boss.rb.velocity = Vector2.zero;
         boss.rb.bodyType = RigidbodyType2D.Static;
-        elapsedTime = 0f;
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -27,9 +26,9 @@ public class GiusaIdle : StateMachineBehaviour
         if (boss.isDead.value)
             return;
 
-        elapsedTime += Time.deltaTime;
-        if (elapsedTime >= time)
+        if (hasPresented.value)
         {
+            boss.spriteRenderer.flipX = !boss.spriteRenderer.flipX;
             animator.SetTrigger("chase");
         }
     }
@@ -39,7 +38,6 @@ public class GiusaIdle : StateMachineBehaviour
         if (boss.isDead.value)
             return;
             
-        boss.hasPresented = true;
         boss.rb.bodyType = RigidbodyType2D.Dynamic;
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using UnityEditor;
 
 public class MenuController : MonoBehaviour
 {
@@ -34,6 +35,12 @@ public class MenuController : MonoBehaviour
     public GameObject disclaimerButton;
     public GameObject buttonGroup;
     private bool disclaimerOpen;
+    [Header("Tutorial Menu")]
+    public BoolValue tutorialDone;
+    public GameObject tutorialMenu;
+    public GameObject tutorialFirstSelectedButton;
+    public GameObject tutorialButton;
+    private bool tutorialOpen;
 
     // Input Actions
     Action<InputAction.CallbackContext> reselectAction;
@@ -46,10 +53,7 @@ public class MenuController : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-    }
 
-    void Start()
-    {
         menuInteractionAction = ctx => MenuInteraction();
         reselectAction = ctx => Reselect();
         backAction = ctx => CloseMenu();
@@ -61,10 +65,27 @@ public class MenuController : MonoBehaviour
         pauseMenu.SetActive(false);
         settingsMenu.SetActive(false);
         disclaimerMenu.SetActive(false);
+        tutorialMenu.SetActive(false);
         savePopup.SetActive(false);
 
         lastSelectedButton = firstSelectedButton;
         InputManager.Instance.inputController.UI.Disable();
+        Tutorial();
+    }
+
+    void Tutorial()
+    {
+        if (!tutorialDone.value)
+        {
+            InputManager.Instance.inputController.UI.Enable();
+            InputManager.Instance.inputController.Player.Disable();
+            playerUI.SetActive(false);
+            pauseMenu.SetActive(true);
+            tutorialMenu.SetActive(true);
+            tutorialOpen = true;
+            pauseOpen = true;
+            EventSystem.current.SetSelectedGameObject(tutorialFirstSelectedButton);
+        }
     }
 
     void FindEventSystem()
@@ -79,25 +100,27 @@ public class MenuController : MonoBehaviour
     public void MenuInteraction()
     {
         FindEventSystem();
-        
-        Time.timeScale = Time.timeScale == 0 ? 1 : 0;
 
         if (pauseOpen)
         {
+            Time.timeScale = 1;
             InputManager.Instance.inputController.UI.Disable();
             InputManager.Instance.inputController.Player.Enable();
             pauseMenu.SetActive(false);
             settingsMenu.SetActive(false);
             disclaimerMenu.SetActive(false);
+            tutorialMenu.SetActive(false);
             pauseOpen = false;
             settingsOpen = false;
             disclaimerOpen = false;
+            tutorialOpen = false;
             playerUI.SetActive(true);
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
         else
         {
+            Time.timeScale = 0;
             playerUI.SetActive(false);
             InputManager.Instance.inputController.Player.Disable();
             InputManager.Instance.inputController.UI.Enable();
@@ -110,18 +133,34 @@ public class MenuController : MonoBehaviour
 
     void Reselect() // Per riprendere il controllo con il controller o la tastiera
     {
-        if (EventSystem.current.currentSelectedGameObject == null)
+        inputType = InputType.Controller;
+        if (disclaimerOpen && EventSystem.current.currentSelectedGameObject != null && !CheckParent(lastSelectedButton, disclaimerMenu, 3))
+            EventSystem.current.SetSelectedGameObject(disclaimerFirstSelectedButton);
+        else if (settingsOpen && EventSystem.current.currentSelectedGameObject != null &&  !CheckParent(lastSelectedButton, settingsMenu, 3))
+            EventSystem.current.SetSelectedGameObject(settingsFirstSelectedButton);
+        else if (tutorialOpen && EventSystem.current.currentSelectedGameObject != null && !CheckParent(lastSelectedButton, tutorialMenu, 3))
+            EventSystem.current.SetSelectedGameObject(tutorialFirstSelectedButton);
+        else if (EventSystem.current.currentSelectedGameObject == null)
         {
-            inputType = InputType.Controller;
-            if (disclaimerOpen && lastSelectedButton.transform.parent != disclaimerMenu.transform)
+            EventSystem.current.SetSelectedGameObject(lastSelectedButton);
+            if (disclaimerOpen && EventSystem.current.currentSelectedGameObject != null && !CheckParent(lastSelectedButton, disclaimerMenu, 3))
                 EventSystem.current.SetSelectedGameObject(disclaimerFirstSelectedButton);
-            else if (settingsOpen && lastSelectedButton.transform.parent != settingsMenu.transform)
+            else if (settingsOpen && EventSystem.current.currentSelectedGameObject != null &&  !CheckParent(lastSelectedButton, settingsMenu, 3))
                 EventSystem.current.SetSelectedGameObject(settingsFirstSelectedButton);
-            else
-                EventSystem.current.SetSelectedGameObject(lastSelectedButton);
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            else if (tutorialOpen && EventSystem.current.currentSelectedGameObject != null && !CheckParent(lastSelectedButton, tutorialMenu, 3))
+                EventSystem.current.SetSelectedGameObject(tutorialFirstSelectedButton);
         }
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    bool CheckParent(GameObject obj, GameObject parent, int depth)
+    {
+        if (depth == 0)
+            return false;
+        if (obj.transform.parent == parent.transform)
+            return true;
+        return CheckParent(obj.transform.parent.gameObject, parent, depth - 1);
     }
 
     void CursorMoved() // Per far apparire il cursore quando si muove il mouse
@@ -186,6 +225,13 @@ public class MenuController : MonoBehaviour
 
     public void CloseMenu()
     {
+        if (!tutorialDone.value)
+        {
+            MenuInteraction();
+            tutorialDone.value = true;
+            return;
+        }
+
         if (disclaimerOpen)
         {
             disclaimerMenu.SetActive(false);
@@ -200,6 +246,12 @@ public class MenuController : MonoBehaviour
             settingsMenu.SetActive(false);
             EventSystem.current.SetSelectedGameObject(settingsButton);
             settingsOpen = false;
+        }
+        else if (tutorialOpen)
+        {
+            tutorialMenu.SetActive(false);
+            EventSystem.current.SetSelectedGameObject(tutorialButton);
+            tutorialOpen = false;
         }
         else if (pauseOpen)
         {
@@ -223,6 +275,16 @@ public class MenuController : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(disclaimerFirstSelectedButton);
         else
             lastSelectedButton = disclaimerFirstSelectedButton;
+    }
+
+    public void OpenTutorial()
+    {
+        tutorialMenu.SetActive(true);
+        tutorialOpen = true;
+        if (inputType == InputType.Controller)
+            EventSystem.current.SetSelectedGameObject(tutorialFirstSelectedButton);
+        else
+            lastSelectedButton = tutorialFirstSelectedButton;
     }
 
     public void SaveAndQuit()

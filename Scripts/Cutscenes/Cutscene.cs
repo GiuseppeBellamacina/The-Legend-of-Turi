@@ -1,27 +1,34 @@
 using System.Collections;
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 
-public class Npc : Interactable
+public class Cutscene : Interactable
 {
-    protected SpriteRenderer spriteRenderer;
-    public Animator animator;
-    public Rigidbody2D rb;
-    protected bool flipped;
-    [Header("Dialog")]
     public Dialog dialog;
-    public Color titleColor;
-    protected int dialogIndex;
-    protected bool speechEnded;
+    public BoolValue cutsceneEnded;
+    public Color otherTitleColor;
+    public bool playOnStart;
+    public bool notLock;
+    private int dialogIndex;
+    private bool speechEnded;
 
     protected override void Awake()
     {
+        if (cutsceneEnded.value)
+            Destroy(gameObject);
+
         base.Awake();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        animator = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody2D>();
-        flipped = spriteRenderer.flipX;
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+
         speechEnded = true;
+
+        if (playOnStart)
+            PlayerController.Instance.Interact(notLock);
     }
 
     protected void TextDisplacer(string text)
@@ -33,7 +40,7 @@ public class Npc : Interactable
         if (title == "Turi")
             title = "<b><color=#0059FDFF>" + title + "</color></b>";
         else
-            title = "<b><color=#" + ColorUtility.ToHtmlStringRGBA(titleColor) + ">" + title + "</color></b>";
+            title = "<b><color=#" + ColorUtility.ToHtmlStringRGBA(otherTitleColor) + ">" + title + "</color></b>";
         string dialog = text.Split(':')[1];
         dialogText.text = title + ": ";
         dialogBox.SetActive(true);
@@ -76,9 +83,8 @@ public class Npc : Interactable
     public override void Interact()
     {
         base.Interact();
-        
-        suggestionBox.SetActive(false);
-        contextOff.Raise();
+
+        dialogBox.SetActive(true);
         TextDisplacer(dialog.GetFirstSentence());
         dialogIndex = dialog.dialogIndex;
     }
@@ -94,9 +100,6 @@ public class Npc : Interactable
         string sentence = dialog.GetNextSentence();
         if (sentence != null)
         {
-            suggestionBox.SetActive(false);
-            contextOff.Raise();
-            dialogBox.SetActive(true);
             TextDisplacer(sentence);
             dialogIndex = dialog.dialogIndex;
         }
@@ -108,36 +111,29 @@ public class Npc : Interactable
 
     public override void StopInteraction()
     {
-        base.StopInteraction();
-        
+        if (dialogIndex < dialog.sentences.Length - 1 || !speechEnded)
+            return;
+
+        PlayerController.Instance.SetState(State.none);
+        PlayerController.Instance.toInteract = null;
+        playerInRange = false;
+        interactionEnded = true;
         dialogBox.SetActive(false);
-        suggestionBox.SetActive(true);
-        contextOn.Raise();
+        cutsceneEnded.value = true;
+        PlayerController.Instance.UnlockCharacters();
+        Destroy(gameObject);
     }
 
-    protected virtual void FixRenderLayer()
+    protected override void OnTriggerEnter2D(Collider2D other)
     {
-        if (PlayerController.Instance.transform.position.y > transform.position.y)
-            spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() + 1;
-        else
-            spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() - 1;
+        if (other.CompareTag("Player") && !other.isTrigger)
+        {
+            PlayerController.Instance.SetState(State.none);
+            PlayerController.Instance.toInteract = gameObject;
+            playerInRange = true;
+            PlayerController.Instance.Interact(notLock);
+        }
     }
 
-    protected void LookAtPlayer()
-    {
-        if (PlayerController.Instance.transform.position.x > transform.position.x)
-            spriteRenderer.flipX = false;
-        else
-            spriteRenderer.flipX = true;
-    }
-
-    protected virtual void FixedUpdate()
-    {
-        FixRenderLayer();
-
-        if (playerInRange)
-            LookAtPlayer();
-        else
-            spriteRenderer.flipX = flipped;
-    }
+    protected override void OnTriggerExit2D(Collider2D other){}
 }

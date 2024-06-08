@@ -32,6 +32,15 @@ public class Dialog : Data
         return null;
     }
 
+    public string GetSentence(int index)
+    {
+        if (index < sentences.Length)
+        {
+            return sentences[index];
+        }
+        return null;
+    }
+
     public void SetNextCheckpoint()
     {
         if (checkPointIndex + 1 < dialogCheckpoints.Length)

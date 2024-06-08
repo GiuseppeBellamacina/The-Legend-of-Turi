@@ -29,8 +29,6 @@ public class GameController : MonoBehaviour
         }
         else
             Destroy(gameObject);
-        
-        Cursor.visible = false;
     }
 
     void Start()
@@ -38,6 +36,7 @@ public class GameController : MonoBehaviour
         PlayerController.Instance.SetState(State.none);
         startingPosition.value = PlayerController.Instance.transform.position;
         SetMultipliers();
+        Cursor.visible = false;
     }
 
     void SetMultipliers()

@@ -102,8 +102,13 @@ public class SettingsMenu : MonoBehaviour
             return;
 
         float volume = volumeSlider.value;
-        if (volume == 0 || (AudioManager.Instance.data.mute && volume > 0))
+        if (volume == 0 || (AudioManager.Instance.data.mute && volume >= 0))
+        {
             Mute();
+            AudioManager.Instance.onValueChange = false;
+            volumeSlider.value = volume;
+            AudioManager.Instance.onValueChange = true;
+        }
         volumeLabel.text = volume.ToString("0");
         AudioManager.Instance.SetVolume("Master", volume);
     }

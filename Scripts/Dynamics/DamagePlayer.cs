@@ -31,6 +31,9 @@ public class DamagePlayer : MonoBehaviour
 
     void FixRenderLayer()
     {
+        if (PlayerController.Instance == null)
+            return;
+            
         if (PlayerController.Instance.transform.position.y > transform.position.y)
             spriteRenderer.sortingOrder = PlayerController.Instance.GetRenderLayer() + 1;
         else

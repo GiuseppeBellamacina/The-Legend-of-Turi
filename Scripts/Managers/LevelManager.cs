@@ -68,6 +68,7 @@ public class LevelManager : MonoBehaviour
         if (fadeOut != FadeType.NullFade)
             Instantiate(fadePanels[(int)fadeOut], Vector3.zero, Quaternion.identity);
         yield return new WaitForSeconds(fadeWait);
+
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
         asyncOperation.allowSceneActivation = false; // Impedisce l'attivazione della scena fino a quando non è esplicitamente permesso
 
@@ -101,6 +102,18 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    public void RespawnPlayer(bool withData)
+    {
+        if (withData)
+        {
+            StartCoroutine(InitialFadeCo(DataManager.Instance.gameStatus.currentScene, true, FadeType.FromColor, FadeType.NeroVerde, true, DataManager.Instance.gameStatus.playerPosition));
+        }
+        else
+        {
+            StartCoroutine(InitialFadeCo("Regno di Librino", true, FadeType.FromColor, FadeType.NeroVerde, true, GameController.Instance.startingPositionAbsolute));
+        }
+    }
+
 
     public void MenuStart()
     {
@@ -108,7 +121,7 @@ public class LevelManager : MonoBehaviour
         StartCoroutine(InitialFadeCo("Intro", false, FadeType.NullFade, FadeType.ToBlack));
     }
 
-    public void MenuLoad(GameStatus gameStatus)
+    public void LoadGame(GameStatus gameStatus)
     {
         // Questa serva a caricare il gioco da un salvataggio
         string sceneName = gameStatus.currentScene;
@@ -123,7 +136,7 @@ public class LevelManager : MonoBehaviour
         StartCoroutine(InitialFadeCo("MainMenu", false, FadeType.FromColor, FadeType.ToColor));
     }
 
-    public void StartGameScene()
+    public void StartGame()
     {
         // Questa serve a iniziare il gioco dal video introduttivo
         StartCoroutine(InitialFadeCo("Regno di Librino", true, FadeType.FromColor, FadeType.NeroVerde));

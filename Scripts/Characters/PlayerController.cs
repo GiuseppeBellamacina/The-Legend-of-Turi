@@ -66,7 +66,7 @@ public class PlayerController : Character
             Destroy(gameObject);
     }
 
-    void Start()
+    public void Start()
     {
         // Abbino i metodi ai controlli
         interactAction = ctx => Interact();
@@ -399,7 +399,8 @@ public class PlayerController : Character
 
     protected override void Die()
     {
-        gameObject.SetActive(false);
+        LockCharacters();
+        RespawnManager.Instance.Respawn();
     }
 
     public override void TakeDamage(float damage)

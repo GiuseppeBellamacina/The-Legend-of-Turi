@@ -47,7 +47,7 @@ public class MenuController : MonoBehaviour
     Action<InputAction.CallbackContext> backAction;
     Action<InputAction.CallbackContext> menuInteractionAction;
 
-    void Awake()
+    public void Awake()
     {
         FindEventSystem();
 
@@ -71,6 +71,13 @@ public class MenuController : MonoBehaviour
         lastSelectedButton = firstSelectedButton;
         InputManager.Instance.inputController.UI.Disable();
         Tutorial();
+    }
+
+    public void RemoveActions()
+    {
+        InputManager.Instance.inputController.Menu.MenuInteraction.performed -= menuInteractionAction;
+        InputManager.Instance.inputController.UI.ReSelect.performed -= reselectAction;
+        InputManager.Instance.inputController.UI.Back.performed -= backAction;
     }
 
     void Tutorial()

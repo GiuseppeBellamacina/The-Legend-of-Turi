@@ -36,6 +36,9 @@ public class Collectable : MonoBehaviour
 
     protected virtual void FixRenderLayer()
     {
+        if (owner == null && PlayerController.Instance == null)
+            return;
+            
         if (owner != null)
         {
             spriteRenderer.sortingOrder = owner.GetComponent<SpriteRenderer>().sortingOrder + 1;

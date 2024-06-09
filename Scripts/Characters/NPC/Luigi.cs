@@ -4,7 +4,7 @@ using UnityEngine;
 public class Luigi : Npc
 {
     public FirstQuest quest;
-    public Item sword;
+    public Item sword, bow;
     public GameObject house;
     public BoolValue houseStatus;
     public Status queenStatus;
@@ -55,10 +55,11 @@ public class Luigi : Npc
 
     public override void ContinueInteraction()
     {
-        if (!PlayerController.Instance.inventory.hasSword && !quest.status.isCompleted)
+        if (quest.status.dialog.HasReadDialogUntilCheckPoint(1) && speechEnded)
         {
-            if (quest.status.dialog.HasReadDialogUntilCheckPoint(1) && speechEnded)
+            if (!PlayerController.Instance.inventory.hasSword)
             {
+                // Sblocco la spada
                 dialogText.text = sword.description;
                 PlayerController.Instance.ObtainItem(sword);
                 PlayerController.Instance.inventory.hasSword = true;
@@ -67,13 +68,23 @@ public class Luigi : Npc
             else
                 base.ContinueInteraction();
         }
-        else if (quest.status.dialog.HasReadDialogUntilCheckPoint(3))
+        else if (quest.status.dialog.HasReadDialogUntilCheckPoint(3) && speechEnded)
         {
-            // Sblocco la casa di Luigi
-            house.SetActive(true);
-            houseStatus.value = true;
-            quest.CompleteQuest();
-            base.ContinueInteraction();
+            if (!PlayerController.Instance.inventory.hasBow)
+            {
+                // Sblocco la casa di Luigi
+                house.SetActive(true);
+                houseStatus.value = true;
+
+                // Sblocco l'arco
+                dialogText.text = bow.description;
+                PlayerController.Instance.ObtainItem(bow);
+                PlayerController.Instance.inventory.hasBow = true;
+
+                quest.CompleteQuest();
+            }
+            else
+                base.ContinueInteraction();
         }
         else
             base.ContinueInteraction();

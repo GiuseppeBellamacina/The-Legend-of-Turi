@@ -95,7 +95,7 @@ public class RoomTransfer : MonoBehaviour
         int currentTransfer = numberOfTransfers;
         text.SetActive(true);
         placeText.text = nextRoomName;
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(2f);
         if (myTransferIndex == transferIndex.value && currentTransfer == numberOfTransfers)
             text.SetActive(false);
     }

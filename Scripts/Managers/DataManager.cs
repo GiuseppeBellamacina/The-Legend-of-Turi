@@ -181,7 +181,7 @@ public class DataManager : MonoBehaviour
         inventory.items.Clear();
     }
 
-    bool IsDataSaved()
+    public bool IsDataSaved()
     {
         string path = SaveSystem.path;
         return Directory.Exists(path);

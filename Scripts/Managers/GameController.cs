@@ -3,6 +3,7 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
     private static GameController _instance;
+    public Vector2 startingPositionAbsolute;
     public VectorValue startingPosition, lastPosition;
     public FloatValue healthMultiplier, damageMultiplier;
     public GameStatus gameStatus;
@@ -35,6 +36,7 @@ public class GameController : MonoBehaviour
     {
         PlayerController.Instance.SetState(State.none);
         startingPosition.value = PlayerController.Instance.transform.position;
+        startingPositionAbsolute = startingPosition.value;
         SetMultipliers();
         Cursor.visible = false;
     }

@@ -25,12 +25,12 @@ public class IntroManager : MonoBehaviour
     IEnumerator EndOfSound()
     {
         yield return new WaitForSeconds(audioSource.clip.length);
-        LevelManager.Instance.StartGameScene();
+        LevelManager.Instance.StartGame();
     }
 
     void Update()
     {
         if (Input.anyKeyDown)
-            LevelManager.Instance.StartGameScene();
+            LevelManager.Instance.StartGame();
     }
 }

@@ -107,7 +107,7 @@ public class MainMenuController : MonoBehaviour
         {
             InputManager.Instance.inputController.UI.ReSelect.performed -= reselectAction;
             InputManager.Instance.inputController.UI.Cancel.performed -= cancelAction;
-            LevelManager.Instance.MenuLoad(gameStatus);
+            LevelManager.Instance.LoadGame(gameStatus);
         }
     }
 

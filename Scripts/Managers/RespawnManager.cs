@@ -42,15 +42,16 @@ public class RespawnManager : MonoBehaviour
 
     IEnumerator RespawnFromDataCo()
     {
+        // Tolgo le azioni al menu e al giocatore
+        CanvasSingleton.Instance.transform.Find("Menu").GetComponent<MenuController>().RemoveActions();
+        PlayerController.Instance.RemoveActions();
         // Death effect
         yield return new WaitForSeconds(0.1f);
         GameObject effect = Instantiate(deathEffectPrefab, Vector3.zero, Quaternion.identity);
         effect.GetComponentInChildren<TMP_Text>().text = GetRandomDeathMessage();
         yield return new WaitForSeconds(3f);
-        // Tolgo le azioni al menu e al giocatore
-        CanvasSingleton.Instance.transform.Find("Menu").GetComponent<MenuController>().RemoveActions();
+        // Distruggo gli oggetti che voglio ricreare
         Destroy(CanvasSingleton.Instance.gameObject);
-        PlayerController.Instance.RemoveActions();
         Destroy(PlayerController.Instance.gameObject);
         Destroy(CameraMovement.Instance.gameObject);
         Destroy(RoomLocator.Instance.gameObject);
@@ -63,15 +64,16 @@ public class RespawnManager : MonoBehaviour
 
     IEnumerator RespawnFromBeginningCo()
     {
+        // Tolgo le azioni al menu e al giocatore
+        CanvasSingleton.Instance.transform.Find("Menu").GetComponent<MenuController>().RemoveActions();
+        PlayerController.Instance.RemoveActions();
         // Death effect
         yield return new WaitForSeconds(0.1f);
         GameObject effect = Instantiate(deathEffectPrefab, Vector3.zero, Quaternion.identity);
         effect.GetComponentInChildren<TMP_Text>().text = GetRandomDeathMessage();
         yield return new WaitForSeconds(3f);
-        // Tolgo le azioni al menu e al giocatore
-        CanvasSingleton.Instance.transform.Find("Menu").GetComponent<MenuController>().RemoveActions();
+        // Distruggo gli oggetti che voglio ricreare
         Destroy(CanvasSingleton.Instance.gameObject);
-        PlayerController.Instance.RemoveActions();
         Destroy(PlayerController.Instance.gameObject);
         Destroy(CameraMovement.Instance.gameObject);
         Destroy(RoomLocator.Instance.gameObject);
@@ -97,6 +99,7 @@ public class RespawnManager : MonoBehaviour
             "Avaia",
             "Mbare..."
         };
+        
         return messages[Random.Range(0, messages.Length)];
     }
 }

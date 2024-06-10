@@ -59,6 +59,8 @@ public class LevelManager : MonoBehaviour
         Destroy(panel, 1);
         // Riabilito l'input
         InputManager.Instance.EnableInput();
+        CanvasSingleton.Instance.transform.Find("Menu").GetComponent<MenuController>().AssignActions();
+        PlayerController.Instance.AssignActions();
     }
 
     public IEnumerator InitialFadeCo(string sceneName, bool willBeBounded, FadeType fadeIn, FadeType fadeOut, bool load = false, Vector2 position = default(Vector2))
@@ -80,13 +82,6 @@ public class LevelManager : MonoBehaviour
                 asyncOperation.allowSceneActivation = true;
                 yield return null;
 
-                if (load)
-                {
-                    PlayerController.Instance.transform.position = position;
-                    CameraMovement.Instance.isBounded = willBeBounded;
-                    CameraMovement.Instance.SetInstantPosition();
-                }
-
                 AudioManager.Instance.FadeVolume(0.5f, AudioManager.Instance.data.currentMasterVolume);
                 if (fadeIn != FadeType.NullFade)
                 {
@@ -100,6 +95,23 @@ public class LevelManager : MonoBehaviour
             }
             yield return null;
         }
+
+        if (load)
+        {
+            StartCoroutine(WaitAndSet(position, willBeBounded));
+        }
+    }
+
+    IEnumerator WaitAndSet(Vector2 position, bool willBeBounded)
+    {
+        while (PlayerController.Instance == null)
+            yield return null;
+        PlayerController.Instance.transform.position = position;
+
+        while (CameraMovement.Instance == null)
+            yield return null;
+        CameraMovement.Instance.isBounded = willBeBounded;
+        CameraMovement.Instance.SetInstantPosition();
     }
 
     public void RespawnPlayer(bool withData)

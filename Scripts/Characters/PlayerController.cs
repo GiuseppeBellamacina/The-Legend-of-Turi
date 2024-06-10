@@ -68,19 +68,7 @@ public class PlayerController : Character
 
     public void Start()
     {
-        // Abbino i metodi ai controlli
-        interactAction = ctx => Interact();
-        stopInteractionAction = ctx => StopInteraction();
-        runAction = ctx => Run();
-        stopRunAction = ctx => StopRun();
-        changeWeaponAction = ctx => ChangeWeapon();
-
-        // Aggiungo i metodi ai controlli
-        InputManager.Instance.inputController.Player.Interact.performed += interactAction;
-        InputManager.Instance.inputController.Player.StopInteraction.performed += stopInteractionAction;
-        InputManager.Instance.inputController.Player.Run.performed += runAction;
-        InputManager.Instance.inputController.Player.Run.canceled += stopRunAction;
-        InputManager.Instance.inputController.Player.ChangeWeapon.performed += changeWeaponAction;
+        AssignActions();
 
         // Setto la direzione di default
         animator.SetFloat("moveX", 0);
@@ -109,6 +97,27 @@ public class PlayerController : Character
         InputManager.Instance.inputController.Player.Run.canceled -= stopRunAction;
         InputManager.Instance.inputController.Player.ChangeWeapon.performed -= changeWeaponAction;
         InputManager.Instance.inputController.Player.Attack.performed -= attackAction;
+
+        InputManager.Instance.inputController.Player.Disable();
+    }
+
+    public void AssignActions()
+    {
+        // Abbino i metodi ai controlli
+        interactAction = ctx => Interact();
+        stopInteractionAction = ctx => StopInteraction();
+        runAction = ctx => Run();
+        stopRunAction = ctx => StopRun();
+        changeWeaponAction = ctx => ChangeWeapon();
+
+        // Aggiungo i metodi ai controlli
+        InputManager.Instance.inputController.Player.Interact.performed += interactAction;
+        InputManager.Instance.inputController.Player.StopInteraction.performed += stopInteractionAction;
+        InputManager.Instance.inputController.Player.Run.performed += runAction;
+        InputManager.Instance.inputController.Player.Run.canceled += stopRunAction;
+        InputManager.Instance.inputController.Player.ChangeWeapon.performed += changeWeaponAction;
+
+        InputManager.Instance.inputController.Player.Enable();
     }
 
     public void CreateAttack()

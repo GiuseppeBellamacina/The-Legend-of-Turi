@@ -54,13 +54,7 @@ public class MenuController : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        menuInteractionAction = ctx => MenuInteraction();
-        reselectAction = ctx => Reselect();
-        backAction = ctx => CloseMenu();
-
-        InputManager.Instance.inputController.Menu.MenuInteraction.performed += menuInteractionAction;
-        InputManager.Instance.inputController.UI.ReSelect.performed += reselectAction;
-        InputManager.Instance.inputController.UI.Back.performed += backAction;
+        AssignActions();
 
         pauseMenu.SetActive(false);
         settingsMenu.SetActive(false);
@@ -78,6 +72,23 @@ public class MenuController : MonoBehaviour
         InputManager.Instance.inputController.Menu.MenuInteraction.performed -= menuInteractionAction;
         InputManager.Instance.inputController.UI.ReSelect.performed -= reselectAction;
         InputManager.Instance.inputController.UI.Back.performed -= backAction;
+
+        InputManager.Instance.inputController.UI.Disable();
+        InputManager.Instance.inputController.Menu.Disable();
+    }
+
+    public void AssignActions()
+    {
+        menuInteractionAction = ctx => MenuInteraction();
+        reselectAction = ctx => Reselect();
+        backAction = ctx => CloseMenu();
+
+        InputManager.Instance.inputController.Menu.MenuInteraction.performed += menuInteractionAction;
+        InputManager.Instance.inputController.UI.ReSelect.performed += reselectAction;
+        InputManager.Instance.inputController.UI.Back.performed += backAction;
+
+        InputManager.Instance.inputController.UI.Enable();
+        InputManager.Instance.inputController.Menu.Enable();
     }
 
     void Tutorial()
@@ -113,25 +124,32 @@ public class MenuController : MonoBehaviour
             Time.timeScale = 1;
             InputManager.Instance.inputController.UI.Disable();
             InputManager.Instance.inputController.Player.Enable();
-            pauseMenu.SetActive(false);
-            settingsMenu.SetActive(false);
-            disclaimerMenu.SetActive(false);
-            tutorialMenu.SetActive(false);
+            if (pauseMenu != null)
+                pauseMenu.SetActive(false);
+            if (settingsMenu != null)
+                settingsMenu.SetActive(false);
+            if (disclaimerMenu != null)
+                disclaimerMenu.SetActive(false);
+            if (tutorialMenu != null)
+                tutorialMenu.SetActive(false);
             pauseOpen = false;
             settingsOpen = false;
             disclaimerOpen = false;
             tutorialOpen = false;
-            playerUI.SetActive(true);
+            if (playerUI != null)
+                playerUI.SetActive(true);
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
         else
         {
             Time.timeScale = 0;
-            playerUI.SetActive(false);
+            if (playerUI != null)
+                playerUI.SetActive(false);
             InputManager.Instance.inputController.Player.Disable();
             InputManager.Instance.inputController.UI.Enable();
-            pauseMenu.SetActive(true);
+            if (pauseMenu != null)
+                pauseMenu.SetActive(true);
             pauseOpen = true;
             lastSelectedButton = firstSelectedButton;
             EventSystem.current.SetSelectedGameObject(firstSelectedButton);

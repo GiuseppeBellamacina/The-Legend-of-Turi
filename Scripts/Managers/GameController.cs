@@ -68,6 +68,8 @@ public class GameController : MonoBehaviour
     public void LoadScene(string sceneName, bool willBeBounded)
     {
         lastPosition.value = PlayerController.Instance.transform.position;
+        CanvasSingleton.Instance.transform.Find("Menu").GetComponent<MenuController>().RemoveActions();
+        PlayerController.Instance.RemoveActions();
         StartCoroutine(LevelManager.Instance.FadeCo(sceneName, willBeBounded));
         PlayerController.Instance.SetState(State.none);
     }

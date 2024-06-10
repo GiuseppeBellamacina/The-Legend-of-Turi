@@ -40,8 +40,8 @@ public class Giusa : Enemy, IResettable
 
     string Talk()
     {
-        if (Random.Range(0, Mathf.RoundToInt(health / 5.0f)) == 0)
-            return dialog.sentences[dialogIndex++ % dialog.sentences.Length];
+        if (Random.Range(0, Mathf.RoundToInt(health / 3.0f)) == 0)
+            return dialog.GetSentence(dialogIndex++ % dialog.sentences.Length);
         else
             return null;
     }

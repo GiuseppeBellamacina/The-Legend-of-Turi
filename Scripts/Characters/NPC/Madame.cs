@@ -55,6 +55,13 @@ public class Madame : Npc
             else
                 base.ContinueInteraction();
         }
+        else if (quest.status.dialog.HasReadDialogUntilCheckPoint(3))
+        {
+            if (speechEnded)
+                LevelManager.Instance.CreditsScene();
+            else
+                base.ContinueInteraction();
+        }
         else
             base.ContinueInteraction();
     }

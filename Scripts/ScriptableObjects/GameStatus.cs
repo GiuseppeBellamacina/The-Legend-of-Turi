@@ -5,7 +5,6 @@ using UnityEngine;
 public class GameStatus : Data
 {
     public int difficulty;
-    public bool swordUnlocked;
     public Vector2 playerPosition;
     public string currentScene;
     public bool isBounded;
@@ -13,7 +12,6 @@ public class GameStatus : Data
     public new void Reset()
     {
         difficulty = 0;
-        swordUnlocked = false;
         playerPosition = Vector2.zero;
         currentScene = "";
         isBounded = false;
@@ -34,7 +32,6 @@ public class GameStatus : Data
         {
             dataIndex = data.dataIndex;
             difficulty = data.difficulty;
-            swordUnlocked = data.swordUnlocked;
             playerPosition = new Vector2(data.playerPosition[0], data.playerPosition[1]);
             currentScene = data.currentScene;
             isBounded = data.isBounded;

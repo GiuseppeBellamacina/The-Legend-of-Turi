@@ -83,7 +83,7 @@ public class PlayerController : Character
         firstWeapon = true;
         toInteract = null;
         weapon.sprite = sword;
-        if (!GameController.Instance.gameStatus.swordUnlocked)
+        if (!inventory.hasSword)
             weapon.color = new Color(1, 1, 1, 0);
         else
             CreateAttack();
@@ -117,6 +117,9 @@ public class PlayerController : Character
         InputManager.Instance.inputController.Player.Run.canceled += stopRunAction;
         InputManager.Instance.inputController.Player.ChangeWeapon.performed += changeWeaponAction;
 
+        if (inventory.hasSword)
+            CreateAttack();
+
         InputManager.Instance.inputController.Player.Enable();
     }
 
@@ -149,6 +152,12 @@ public class PlayerController : Character
 
     void Run()
     {
+        if (IsState(State.interact))
+        {
+            animator.SetBool("isMoving", false);
+            return;
+        }
+
         SetState(State.run);
         animator.speed = speedMultiplier.value;
         speed = data.speed * speedMultiplier.value;
@@ -157,6 +166,12 @@ public class PlayerController : Character
 
     void StopRun()
     {
+        if (IsState(State.interact))
+        {
+            animator.SetBool("isMoving", false);
+            return;
+        }
+        
         animator.speed = 1f;
         speed = data.speed;
         EnableAttack();

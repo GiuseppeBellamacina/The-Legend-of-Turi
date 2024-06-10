@@ -62,6 +62,7 @@ public class MainMenuController : MonoBehaviour
     public void NewGame()
     {
         DataManager.Instance.DeleteData();
+        DataManager.Instance.Reset();
         DataManager.Instance.ResetIndexes();
         DataManager.Instance.InitializeIndexes();
 
@@ -89,6 +90,7 @@ public class MainMenuController : MonoBehaviour
 
     public void LoadGame(GameStatus gameStatus)
     {
+        DataManager.Instance.Reset();
         if (!DataManager.Instance.LoadData())
         {
             StopAllCoroutines();

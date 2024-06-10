@@ -17,7 +17,7 @@ public class ArrowIntro : MonoBehaviour
         for (int i = 0; i < numArrows; i++)
         {
             Vector3 position = transform.position + new Vector3(offset * i, -offset * i, 0);
-            arrows[i] = Instantiate(arrow, position, Quaternion.identity);
+            arrows[i] = Instantiate(arrow, position, Quaternion.Euler(Random.Range(0, 360), 0, 0));
         }
         signals.Raise();
         StartCoroutine(Timer());
@@ -27,7 +27,7 @@ public class ArrowIntro : MonoBehaviour
     {
         for (int i = 0; i < numArrows; i++)
         {
-            arrows[i].transform.Rotate(1, 0, 0);
+            arrows[i].transform.Rotate(3, 0, 0);
             arrows[i].transform.position += new Vector3(speed * Time.deltaTime, Mathf.Sin(Time.time), 0) * 0.01f;
         }
     }

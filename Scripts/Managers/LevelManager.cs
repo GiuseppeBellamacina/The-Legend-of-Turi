@@ -3,7 +3,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public enum FadeType { NullFade, FromColor, ToColor, FromBlack, ToBlack , NeroVerde}
+public enum FadeType { NullFade, FromColor, ToColor, FromBlack, ToBlack , NeroVerde, Final}
 
 public class LevelManager : MonoBehaviour
 {
@@ -114,6 +114,49 @@ public class LevelManager : MonoBehaviour
         CameraMovement.Instance.SetInstantPosition();
     }
 
+    public IEnumerator FinalFadeCo()
+    {
+        CanvasSingleton.Instance.transform.Find("Menu").GetComponent<MenuController>().RemoveActions();
+        PlayerController.Instance.RemoveActions();
+        InputManager.Instance.DisableInput();
+        AudioManager.Instance.FadeVolume(0.5f);
+        Instantiate(fadePanels[(int)FadeType.Final], Vector3.zero, Quaternion.identity);
+        yield return new WaitForSeconds(fadeWait);
+
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync("Credits");
+        asyncOperation.allowSceneActivation = false;
+
+        while (!asyncOperation.isDone)
+        {
+            if (asyncOperation.progress >= 0.9f)
+            {
+                DeleteGameManagers();
+                
+                yield return null;
+                asyncOperation.allowSceneActivation = true;
+                yield return null;
+
+                AudioManager.Instance.FadeVolume(0.5f, AudioManager.Instance.data.currentMasterVolume);
+                GameObject panel = Instantiate(fadePanels[(int)FadeType.FromBlack], Vector3.zero, Quaternion.identity);
+                Destroy(panel, 1);
+
+                break;
+            }
+            yield return null;
+        }
+    }
+
+    public void DeleteGameManagers()
+    {
+        Destroy(GameController.Instance.gameObject);
+        Destroy(RoomLocator.Instance.gameObject);
+        Destroy(CameraMovement.Instance.gameObject);
+        Destroy(PlayerController.Instance.gameObject);
+        Destroy(CanvasSingleton.Instance.gameObject);
+        Destroy(RespawnManager.Instance.gameObject);
+        Destroy(DataManager.Instance.gameObject);
+    }
+
     public void RespawnPlayer(bool withData)
     {
         if (withData)
@@ -125,7 +168,6 @@ public class LevelManager : MonoBehaviour
             StartCoroutine(InitialFadeCo("Regno di Librino", true, FadeType.FromColor, FadeType.NeroVerde, true, GameController.Instance.startingPositionAbsolute));
         }
     }
-
 
     public void MenuStart()
     {
@@ -152,6 +194,12 @@ public class LevelManager : MonoBehaviour
     {
         // Questa serve a iniziare il gioco dal video introduttivo
         StartCoroutine(InitialFadeCo("Regno di Librino", true, FadeType.FromColor, FadeType.NeroVerde));
+    }
+
+    public void CreditsScene()
+    {
+        // Questa serve a vedere i crediti
+        StartCoroutine(FinalFadeCo());
     }
 
     public void QuitGame()

@@ -10,6 +10,7 @@ public class Giusa : Enemy, IResettable
     public Dialog dialog;
     public GameObject dialogBox;
     public GameObject soundtrack;
+    public AudioClip dungeonMusic;
     int dialogIndex;
 
     protected override void Start()
@@ -103,6 +104,12 @@ public class Giusa : Enemy, IResettable
 
     protected override void Die()
     {
+        if (soundtrack.GetComponent<AudioSource>().clip != dungeonMusic)
+        {
+            soundtrack.GetComponent<AudioSource>().clip = dungeonMusic;
+            soundtrack.GetComponent<AudioSource>().Play();
+        }
+        
         isDead.value = true;
         animator.SetTrigger("die");
         if (rb.bodyType != RigidbodyType2D.Static)

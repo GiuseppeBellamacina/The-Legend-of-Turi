@@ -1,5 +1,5 @@
 public interface ISaveLoad
 {
     void Save();
-    void Load();
+    void Load(int index);
 }

@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Npc : Interactable
 {
@@ -110,6 +109,8 @@ public class Npc : Interactable
     {
         base.StopInteraction();
         
+        speechEnded = true;
+        StopAllCoroutines();
         dialogBox.SetActive(false);
         suggestionBox.SetActive(true);
         contextOn.Raise();

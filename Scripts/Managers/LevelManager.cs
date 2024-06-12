@@ -54,7 +54,7 @@ public class LevelManager : MonoBehaviour
         CameraMovement.Instance.isBounded = willBeBounded;
         CameraMovement.Instance.SetInstantPosition();
         // Avvio il fade in
-        AudioManager.Instance.FadeVolume(0.5f, AudioManager.Instance.data.currentMasterVolume);
+        AudioManager.Instance.FadeVolume(0.5f, "Master", AudioManager.Instance.data.currentMasterVolume);
         GameObject panel = Instantiate(fadePanels[(int)FadeType.FromColor], Vector3.zero, Quaternion.identity);
         Destroy(panel, 1);
         // Riabilito l'input
@@ -82,7 +82,7 @@ public class LevelManager : MonoBehaviour
                 asyncOperation.allowSceneActivation = true;
                 yield return null;
 
-                AudioManager.Instance.FadeVolume(0.5f, AudioManager.Instance.data.currentMasterVolume);
+                AudioManager.Instance.FadeVolume(0.5f, "Master", AudioManager.Instance.data.currentMasterVolume);
                 if (fadeIn != FadeType.NullFade)
                 {
                     GameObject panel = Instantiate(fadePanels[(int)fadeIn], Vector3.zero, Quaternion.identity);
@@ -136,7 +136,7 @@ public class LevelManager : MonoBehaviour
                 asyncOperation.allowSceneActivation = true;
                 yield return null;
 
-                AudioManager.Instance.FadeVolume(0.5f, AudioManager.Instance.data.currentMasterVolume);
+                AudioManager.Instance.FadeVolume(0.5f, "Master", AudioManager.Instance.data.currentMasterVolume);
                 GameObject panel = Instantiate(fadePanels[(int)FadeType.FromBlack], Vector3.zero, Quaternion.identity);
                 Destroy(panel, 1);
 

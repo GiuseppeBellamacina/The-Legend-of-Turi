@@ -41,6 +41,11 @@ public class MenuController : MonoBehaviour
     public GameObject tutorialFirstSelectedButton;
     public GameObject tutorialButton;
     private bool tutorialOpen;
+    [Header("Audio")]
+    public AudioClip buttonSound;
+    public AudioClip selectSound;
+    public AudioClip backSound;
+    public AudioClip openSound;
 
     // Input Actions
     Action<InputAction.CallbackContext> reselectAction;
@@ -95,7 +100,6 @@ public class MenuController : MonoBehaviour
     {
         if (!tutorialDone.value)
         {
-            InputManager.Instance.inputController.UI.Enable();
             InputManager.Instance.inputController.Player.Disable();
             playerUI.SetActive(false);
             pauseMenu.SetActive(true);
@@ -103,6 +107,7 @@ public class MenuController : MonoBehaviour
             tutorialOpen = true;
             pauseOpen = true;
             EventSystem.current.SetSelectedGameObject(tutorialFirstSelectedButton);
+            InputManager.Instance.inputController.UI.Enable();
         }
     }
 
@@ -118,12 +123,14 @@ public class MenuController : MonoBehaviour
     public void MenuInteraction()
     {
         FindEventSystem();
-
+        
+        // Chiudo il menu se è aperto
         if (pauseOpen)
         {
-            Time.timeScale = 1;
+            AudioManager.Instance.sfxSource.PlayOneShot(backSound);
+            AudioManager.Instance.IncreaseMusic(0.5f);
             InputManager.Instance.inputController.UI.Disable();
-            InputManager.Instance.inputController.Player.Enable();
+            Time.timeScale = 1;
             if (pauseMenu != null)
                 pauseMenu.SetActive(false);
             if (settingsMenu != null)
@@ -138,21 +145,25 @@ public class MenuController : MonoBehaviour
             tutorialOpen = false;
             if (playerUI != null)
                 playerUI.SetActive(true);
+            InputManager.Instance.inputController.Player.Enable();
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
+        // Apro il menu se è chiuso
         else
         {
+            AudioManager.Instance.sfxSource.PlayOneShot(openSound);
+            AudioManager.Instance.DecreaseMusic(0.5f);
+            InputManager.Instance.inputController.Player.Disable();
             Time.timeScale = 0;
             if (playerUI != null)
                 playerUI.SetActive(false);
-            InputManager.Instance.inputController.Player.Disable();
-            InputManager.Instance.inputController.UI.Enable();
             if (pauseMenu != null)
                 pauseMenu.SetActive(true);
             pauseOpen = true;
             lastSelectedButton = firstSelectedButton;
             EventSystem.current.SetSelectedGameObject(firstSelectedButton);
+            InputManager.Instance.inputController.UI.Enable();
         }
     }
 
@@ -280,14 +291,16 @@ public class MenuController : MonoBehaviour
         }
         else if (pauseOpen)
         {
-            Time.timeScale = 1;
+            AudioManager.Instance.sfxSource.PlayOneShot(backSound);
+            AudioManager.Instance.IncreaseMusic(0.5f);
             InputManager.Instance.inputController.UI.Disable();
-            InputManager.Instance.inputController.Player.Enable();
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            Time.timeScale = 1;
             pauseMenu.SetActive(false);
             pauseOpen = false;
             playerUI.SetActive(true);
+            InputManager.Instance.inputController.Player.Enable();
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
     }
 

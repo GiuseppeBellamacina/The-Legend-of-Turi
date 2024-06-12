@@ -5,12 +5,19 @@ using UnityEngine;
 public class GiusaWalk : StateMachineBehaviour
 {
     Giusa boss;
+    public AudioClip giusaFight;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         boss = animator.gameObject.GetComponent<Giusa>();
         boss.rb.bodyType = RigidbodyType2D.Dynamic;
         boss.SetState(State.chase);
+
+        if (boss.soundtrack.GetComponent<AudioSource>().clip != giusaFight)
+        {
+            boss.soundtrack.GetComponent<AudioSource>().clip = giusaFight;
+            boss.soundtrack.GetComponent<AudioSource>().Play();
+        }
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

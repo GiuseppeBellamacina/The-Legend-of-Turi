@@ -57,35 +57,14 @@ public class Inventory : Data
 
     public void AddArrow(int quantity)
     {
-        if (numberOfArrows == 0){
-            AddItem(Arrow);
-        }
-        
-        foreach (Item item in items)
-        {
-            if (item.itemName == "Frecce")
-            {
-                item.quantity += quantity;
-                numberOfArrows = item.quantity;
-                return;
-            }
-        }
+        numberOfArrows += quantity;
+        arrowSignal.Raise();
     }
 
     public void UseArrow()
     {
-        foreach (Item item in items)
-        {
-            if (item.itemName == "Frecce")
-            {
-                item.quantity--;
-                numberOfArrows = item.quantity;
-                arrowSignal.Raise();
-                if (item.quantity <= 0)
-                    items.Remove(item);
-                return;
-            }
-        }
+        numberOfArrows--;
+        arrowSignal.Raise();
     }
 
     public void AddItem(Item item)
@@ -99,8 +78,7 @@ public class Inventory : Data
         }
         else if (item.isArrow)
         {
-            numberOfArrows += item.quantity;
-            arrowSignal.Raise();
+            AddArrow(item.quantity);
         }
         else if (item.isHearth)
         {
@@ -186,9 +164,9 @@ public class Inventory : Data
         SaveSystem.Save(data, path);
     }
 
-    public new void Load()
+    public new void Load(int index)
     {
-        string path = dataIndex.ToString() + ".save";
+        string path = index.ToString() + ".save";
         InventoryData data = SaveSystem.Load<InventoryData>(path);
         if (data != null)
         {

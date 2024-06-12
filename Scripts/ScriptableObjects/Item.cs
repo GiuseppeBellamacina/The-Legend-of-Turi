@@ -23,9 +23,9 @@ public class Item : Data
         SaveSystem.Save(data, path);
     }
 
-    public new void Load()
+    public new void Load(int index)
     {
-        string path = dataIndex.ToString() + ".save";
+        string path = index.ToString() + ".save";
         ItemData data = SaveSystem.Load<ItemData>(path);
         if (data != null)
         {

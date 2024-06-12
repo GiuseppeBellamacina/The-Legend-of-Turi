@@ -14,6 +14,7 @@ public class Knight : Npc
     Vector2 direction;
     public bool patrolTroop, isPatrolling;
     public float speed;
+    string lastSentence;
 
     protected override void Awake()
     {
@@ -21,7 +22,7 @@ public class Knight : Npc
         rb.bodyType = RigidbodyType2D.Static;
         if (patrolTroop){
             isPatrolling = true;
-            rb.bodyType = RigidbodyType2D.Dynamic;
+            rb.bodyType = RigidbodyType2D.Kinematic;
             iterList = new GameObject[iter.transform.childCount];
             for (int i = 0; i < iter.transform.childCount; i++)
             {
@@ -64,7 +65,7 @@ public class Knight : Npc
         }
 
         direction = (iterList[iterIndex].transform.position - transform.position).normalized;
-        rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.bodyType = RigidbodyType2D.Kinematic;
         rb.MovePosition((Vector2)transform.position + speed * Time.fixedDeltaTime * direction);
     }
 
@@ -75,13 +76,14 @@ public class Knight : Npc
         rb.bodyType = RigidbodyType2D.Static;
         spriteRenderer.flipX = !spriteRenderer.flipX;
         yield return new WaitForSeconds(1f);
-        rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.bodyType = RigidbodyType2D.Kinematic;
         isPatrolling = true;
     }
 
     string RandomDialog()
     {
-        return dialog.GetSentence(Random.Range(0, dialog.sentences.Length));
+        lastSentence = dialog.GetSentence(Random.Range(0, dialog.sentences.Length));
+        return lastSentence;
     }
 
     public override void Interact()
@@ -101,17 +103,31 @@ public class Knight : Npc
     {
         if (randomDialog)
         {
-            base.StopInteraction();
+            if (!speechEnded)
+            {
+                TextDisplacer(lastSentence);
+                return;
+            }
+            else
+                base.StopInteraction();
         }
         else
-            base.ContinueInteraction();
+        {
+            if (!speechEnded)
+            {
+                TextDisplacer(dialog.GetSentence(dialogIndex - 1));
+                return;
+            }
+            else
+                base.ContinueInteraction();
+        }
     }
 
     protected override void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player") && !other.isTrigger)
         {
-            if (rb.bodyType == RigidbodyType2D.Dynamic)
+            if (rb.bodyType == RigidbodyType2D.Kinematic)
                 rb.velocity = Vector2.zero;
             rb.bodyType = RigidbodyType2D.Static;
             PlayerController.Instance.SetState(State.none);
@@ -130,7 +146,7 @@ public class Knight : Npc
     {
         if (other.CompareTag("Player"))
         {
-            rb.bodyType = RigidbodyType2D.Dynamic;
+            rb.bodyType = RigidbodyType2D.Kinematic;
             PlayerController.Instance.toInteract = null;
             if (suggestionBox != null)
                 suggestionBox.SetActive(false);

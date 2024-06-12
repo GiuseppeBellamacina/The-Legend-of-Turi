@@ -16,6 +16,7 @@ public class PlayerController : Character
     public bool secondAttackReady;
     [Header("Interactions")]
     public GameObject toInteract;
+    GameObject toInteractAux;
     public Signals playerHealthSignal;
     [Header("Extra Data")]
     public FloatValue speedMultiplier;
@@ -183,7 +184,7 @@ public class PlayerController : Character
 
     public void SetArrowText()
     {
-        arrowText.GetComponent<TextMeshProUGUI>().text = inventory.GetQuantity("Frecce").ToString();
+        arrowText.GetComponent<TextMeshProUGUI>().text = inventory.numberOfArrows.ToString();
     }
 
     void ChangeWeapon()
@@ -377,6 +378,7 @@ public class PlayerController : Character
             animator.SetBool("isMoving", false);
             rb.velocity = Vector2.zero;
             toInteract.GetComponent<Interactable>().Interact();
+            toInteractAux = toInteract;
             rb.velocity = Vector2.zero;
             LockCharacters(notLock);
         }
@@ -390,11 +392,14 @@ public class PlayerController : Character
 
     void StopInteraction()
     {
-        if (toInteract == null)
+        if (toInteract == null && toInteractAux != null)
+            toInteract = toInteractAux;
+        else if (toInteract == null)
             return;
         
         UnlockCharacters();
         toInteract.GetComponent<Interactable>().StopInteraction();
+        toInteractAux = null;
     }
 
     public IEnumerator RaiseItemCo()

@@ -25,11 +25,34 @@ public class BossDoor : Door
             if (bossDefeated.value)
             {
                 dialogText.text = "La porta si è <b><color=#FF0000FF>aperta</color></b> e un <b><color=#CF6B08FF>altare</color></b> si è acceso più sotto.";
-                Open();
-                altar.SetActive(true);
+                isOpen.value = true;
             }
             else
                 dialogText.text = "La porta è <b><color=#FF0000FF>bloccata</color></b>.";
         }
+    }
+
+    public override void StopInteraction()
+    {
+        base.StopInteraction();
+
+        dialogBox.SetActive(false);
+        if (isOpen.value)
+        {
+            Open();
+            altar.SetActive(true);
+            PlayerController.Instance.UnlockCharacters();
+        }
+        else
+        {
+            suggestionBox.SetActive(true);
+            if (isContextClue)
+                contextOn.Raise();
+        }
+    }
+
+    public override void ContinueInteraction()
+    {
+        StopInteraction();
     }
 }

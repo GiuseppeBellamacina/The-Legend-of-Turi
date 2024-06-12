@@ -61,11 +61,6 @@ public class MainMenuController : MonoBehaviour
 
     public void NewGame()
     {
-        DataManager.Instance.DeleteData();
-        DataManager.Instance.Reset();
-        DataManager.Instance.ResetIndexes();
-        DataManager.Instance.InitializeIndexes();
-
         SelectDifficulty();
     }
 
@@ -81,6 +76,11 @@ public class MainMenuController : MonoBehaviour
 
     public void SetDifficulty(int difficulty)
     {
+        DataManager.Instance.DeleteData();
+        DataManager.Instance.Reset();
+        DataManager.Instance.ResetIndexes();
+        DataManager.Instance.InitializeIndexes();
+        
         DataManager.Instance.gameStatus.difficulty = difficulty;
 
         InputManager.Instance.inputController.UI.ReSelect.performed -= reselectAction;

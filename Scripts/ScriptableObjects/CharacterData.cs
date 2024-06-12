@@ -24,9 +24,9 @@ public class CharacterData : Data
         SaveSystem.Save(data, path);
     }
 
-    public new void Load()
+    public new void Load(int index)
     {
-        string path = dataIndex.ToString() + ".save";
+        string path = index.ToString() + ".save";
         CharacterDataData data = SaveSystem.Load<CharacterDataData>(path);
         if (data != null)
         {

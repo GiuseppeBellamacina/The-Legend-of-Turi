@@ -9,6 +9,7 @@ public class Giusa : Enemy, IResettable
     public BoolValue isDead;
     public Dialog dialog;
     public GameObject dialogBox;
+    public GameObject soundtrack;
     int dialogIndex;
 
     protected override void Start()
@@ -18,6 +19,8 @@ public class Giusa : Enemy, IResettable
         isInvulnerable = false;
         dialogBox.SetActive(false);
         dialogIndex = 0;
+
+        soundtrack.GetComponent<AudioSource>().Stop();
     }
 
     public new void Reset()
@@ -40,7 +43,7 @@ public class Giusa : Enemy, IResettable
 
     string Talk()
     {
-        if (Random.Range(0, Mathf.RoundToInt(health / 3.0f)) == 0)
+        if (Random.Range(0, Mathf.RoundToInt(health)) == 0)
             return dialog.GetSentence(dialogIndex++ % dialog.sentences.Length);
         else
             return null;

@@ -8,6 +8,9 @@ public class AudioManager : MonoBehaviour
     public AudioMixer audioMixer;
     public AudioSettings data;
     public bool onValueChange;
+    public AudioSource musicSource;
+    public AudioSource sfxSource;
+    public bool decreased;
 
     public static AudioManager Instance
     {
@@ -46,25 +49,53 @@ public class AudioManager : MonoBehaviour
             UnMuteVolume();
         }
         onValueChange = true; // serve per evitare che vengano eliminati i dati salvati se metto il volume a 0
+
+        musicSource = GetComponents<AudioSource>()[0];
+        sfxSource = GetComponents<AudioSource>()[1];
+
+        musicSource.outputAudioMixerGroup = audioMixer.FindMatchingGroups("Music")[0];
+        sfxSource.outputAudioMixerGroup = audioMixer.FindMatchingGroups("SFX")[0];
     }
 
-    public IEnumerator FadeVolumeCo(float duration, float targetVolume = -80)
+    public IEnumerator FadeVolumeCo(float duration, string parameter, float targetVolume = -80)
     {
-        audioMixer.GetFloat("Master", out float startVolume);
+        audioMixer.GetFloat(parameter, out float startVolume);
         float endVolume = targetVolume;
         float currentTime = 0;
         while (currentTime < duration)
         {
-            currentTime += Time.deltaTime;
+            currentTime += Time.unscaledDeltaTime;
             float newVolume = Mathf.Lerp(startVolume, endVolume, currentTime / duration);
-            audioMixer.SetFloat("Master", newVolume);
+            audioMixer.SetFloat(parameter, newVolume);
             yield return null;
         }
     }
 
-    public void FadeVolume(float duration, float targetVolume = -80)
+    public void FadeVolume(float duration, string parameter = "Master", float targetVolume = -80)
     {
-        StartCoroutine(FadeVolumeCo(duration, targetVolume));
+        StartCoroutine(FadeVolumeCo(duration, parameter, targetVolume));
+    }
+
+    public void DecreaseMusic(float time)
+    {
+        if (decreased)
+            return;
+
+        float volume = PercentizeVolume(data.currentMusicVolume);
+        volume *= 0.75f;
+        volume = ConvertToVolume(volume);
+
+        FadeVolume(time, "Music", volume);
+        decreased = true;
+    }
+
+    public void IncreaseMusic(float time)
+    {
+        if (!decreased)
+            return;
+
+        FadeVolume(time, "Music", data.currentMusicVolume);
+        decreased = false;
     }
 
     public float PercentizeVolume(float value)

@@ -43,9 +43,9 @@ public class Status : Data
         SaveSystem.Save(data, path);
     }
 
-    public new void Load()
+    public new void Load(int index)
     {
-        string path = dataIndex.ToString() + ".save";
+        string path = index.ToString() + ".save";
         StatusData data = SaveSystem.Load<StatusData>(path);
         if (data != null)
         {

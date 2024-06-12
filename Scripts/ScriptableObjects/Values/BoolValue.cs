@@ -19,9 +19,9 @@ public class BoolValue : Data
         SaveSystem.Save(data, path);
     }
 
-    public new void Load()
+    public new void Load(int index)
     {
-        string path = dataIndex.ToString() + ".save";
+        string path = index.ToString() + ".save";
         BoolData data = SaveSystem.Load<BoolData>(path);
         if (data != null)
         {

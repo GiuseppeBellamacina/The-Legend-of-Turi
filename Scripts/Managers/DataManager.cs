@@ -75,9 +75,6 @@ public class DataManager : MonoBehaviour
 
     public void InitializeIndexes()
     {
-        if (bools[0].dataIndex != 0)
-            return;
-
         _index = 1;
 
         foreach (BoolValue b in bools)
@@ -149,24 +146,26 @@ public class DataManager : MonoBehaviour
         if (!IsDataSaved())
             return false;
         
+        _index = 1;
+        
         foreach (BoolValue b in bools)
-            b.Load();
+            b.Load(_index++);
         foreach (IntValue i in ints)
-            i.Load();
+            i.Load(_index++);
         foreach (FloatValue f in floats)
-            f.Load();
+            f.Load(_index++);
         foreach (VectorValue v in vectors)
-            v.Load();
+            v.Load(_index++);
         foreach (CharacterData c in characters)
-            c.Load();
+            c.Load(_index++);
         foreach (Dialog d in dialogs)
-            d.Load();
+            d.Load(_index++);
         foreach (Status s in statuses)
-            s.Load();
+            s.Load(_index++);
         foreach (Item item in items)
-            item.Load();
-        inventory.Load();
-        gameStatus.Load();
+            item.Load(_index++);
+        inventory.Load(_index++);
+        gameStatus.Load(_index);
 
         return true;
     }

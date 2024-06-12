@@ -24,9 +24,9 @@ public class GameStatus : Data
         SaveSystem.Save(data, path);
     }
 
-    public new void Load()
+    public new void Load(int index)
     {
-        string path = dataIndex.ToString() + ".save";
+        string path = index.ToString() + ".save";
         GameStatusData data = SaveSystem.Load<GameStatusData>(path);
         if (data != null)
         {

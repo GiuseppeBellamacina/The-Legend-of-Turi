@@ -51,6 +51,7 @@ public class MenuController : MonoBehaviour
     Action<InputAction.CallbackContext> reselectAction;
     Action<InputAction.CallbackContext> backAction;
     Action<InputAction.CallbackContext> menuInteractionAction;
+    Action<InputAction.CallbackContext> submitAction;
 
     public void Awake()
     {
@@ -77,6 +78,7 @@ public class MenuController : MonoBehaviour
         InputManager.Instance.inputController.Menu.MenuInteraction.performed -= menuInteractionAction;
         InputManager.Instance.inputController.UI.ReSelect.performed -= reselectAction;
         InputManager.Instance.inputController.UI.Back.performed -= backAction;
+        InputManager.Instance.inputController.UI.Submit.performed -= submitAction;
 
         InputManager.Instance.inputController.UI.Disable();
         InputManager.Instance.inputController.Menu.Disable();
@@ -87,10 +89,12 @@ public class MenuController : MonoBehaviour
         menuInteractionAction = ctx => MenuInteraction();
         reselectAction = ctx => Reselect();
         backAction = ctx => CloseMenu();
+        submitAction = ctx => SelectSound();
 
         InputManager.Instance.inputController.Menu.MenuInteraction.performed += menuInteractionAction;
         InputManager.Instance.inputController.UI.ReSelect.performed += reselectAction;
         InputManager.Instance.inputController.UI.Back.performed += backAction;
+        InputManager.Instance.inputController.UI.Submit.performed += submitAction;
 
         InputManager.Instance.inputController.UI.Enable();
         InputManager.Instance.inputController.Menu.Enable();
@@ -169,6 +173,11 @@ public class MenuController : MonoBehaviour
 
     void Reselect() // Per riprendere il controllo con il controller o la tastiera
     {
+        if (!pauseOpen)
+            return;
+
+        if (!AudioManager.Instance.sfxSource.isPlaying)
+            OverSound();
         inputType = InputType.Controller;
         if (disclaimerOpen && EventSystem.current.currentSelectedGameObject != null && !CheckParent(lastSelectedButton, disclaimerMenu, 3))
             EventSystem.current.SetSelectedGameObject(disclaimerFirstSelectedButton);
@@ -196,11 +205,21 @@ public class MenuController : MonoBehaviour
             return false;
         if (obj.transform.parent == parent.transform)
             return true;
-        return CheckParent(obj.transform.parent.gameObject, parent, depth - 1);
+        if (obj.transform.parent == null)
+            return false;
+        else
+            return CheckParent(obj.transform.parent.gameObject, parent, depth - 1);
     }
 
     void CursorMoved() // Per far apparire il cursore quando si muove il mouse
     {
+        if (!pauseOpen)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            return;
+        }
+        
         if (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0)
         {
             inputType = InputType.Mouse;
@@ -263,6 +282,7 @@ public class MenuController : MonoBehaviour
     {
         if (!tutorialDone.value)
         {
+            SelectSound();
             MenuInteraction();
             tutorialDone.value = true;
             return;
@@ -270,6 +290,7 @@ public class MenuController : MonoBehaviour
 
         if (disclaimerOpen)
         {
+            SelectSound();
             disclaimerMenu.SetActive(false);
             buttonGroup.SetActive(true);
             EventSystem.current.SetSelectedGameObject(disclaimerButton);
@@ -279,18 +300,21 @@ public class MenuController : MonoBehaviour
         }
         else if (settingsOpen)
         {
+            SelectSound();
             settingsMenu.SetActive(false);
             EventSystem.current.SetSelectedGameObject(settingsButton);
             settingsOpen = false;
         }
         else if (tutorialOpen)
         {
+            SelectSound();
             tutorialMenu.SetActive(false);
             EventSystem.current.SetSelectedGameObject(tutorialButton);
             tutorialOpen = false;
         }
         else if (pauseOpen)
         {
+            SelectSound();
             AudioManager.Instance.sfxSource.PlayOneShot(backSound);
             AudioManager.Instance.IncreaseMusic(0.5f);
             InputManager.Instance.inputController.UI.Disable();
@@ -339,6 +363,20 @@ public class MenuController : MonoBehaviour
         }
         yield return new WaitForSecondsRealtime(0.5f);
         QuitGame();
+    }
+
+    public void OverSound()
+    {
+        if (AudioManager.Instance.sfxSource.isPlaying)
+            AudioManager.Instance.sfxSource.Stop();
+        AudioManager.Instance.sfxSource.PlayOneShot(buttonSound);
+    }
+
+    public void SelectSound()
+    {
+        if (AudioManager.Instance.sfxSource.isPlaying)
+            AudioManager.Instance.sfxSource.Stop();
+        AudioManager.Instance.sfxSource.PlayOneShot(selectSound);
     }
 
     void Update()

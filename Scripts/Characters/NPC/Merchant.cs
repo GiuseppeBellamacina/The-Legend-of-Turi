@@ -53,6 +53,7 @@ public class Merchant : Npc
         }
 
         lastSentence = dialog.GetSentence(dialog.currentCheckpoint);
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.continueInteraction);
 
         // Se non ci ho mai parlato
         if (dialog.currentCheckpoint == (int)ShopState.First)

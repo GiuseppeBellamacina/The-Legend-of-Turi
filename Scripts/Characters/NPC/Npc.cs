@@ -90,6 +90,8 @@ public class Npc : Interactable
             return;
         }
 
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.continueInteraction);
+
         string sentence = dialog.GetNextSentence();
         if (sentence != null)
         {

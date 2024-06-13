@@ -35,10 +35,14 @@ public class MainMenuController : MonoBehaviour
     public GameObject difficultyMenu;
     public GameObject difficultyFirstSelectedButton;
     bool difficultyOpen;
+    [Header("Audio")]
+    public AudioClip buttonOver;
+    public AudioClip buttonSelect;
 
     // Input Actions
     Action<InputAction.CallbackContext> reselectAction;
     Action<InputAction.CallbackContext> cancelAction;
+    Action<InputAction.CallbackContext> submitAction;
 
     void Awake()
     {
@@ -52,9 +56,13 @@ public class MainMenuController : MonoBehaviour
     {
         reselectAction = ctx => Reselect();
         cancelAction = ctx => CloseMenu();
+        submitAction = ctx => SelectSound();
 
         InputManager.Instance.inputController.UI.ReSelect.performed += reselectAction;
         InputManager.Instance.inputController.UI.Cancel.performed += cancelAction;
+        InputManager.Instance.inputController.UI.Submit.performed += submitAction;
+
+        InputManager.Instance.inputController.UI.Enable();
         
         lastSelectedButton = firstSelectedButton;
     }
@@ -85,6 +93,7 @@ public class MainMenuController : MonoBehaviour
 
         InputManager.Instance.inputController.UI.ReSelect.performed -= reselectAction;
         InputManager.Instance.inputController.UI.Cancel.performed -= cancelAction;
+        InputManager.Instance.inputController.UI.Submit.performed -= submitAction;
         LevelManager.Instance.MenuStart();
     }
 
@@ -109,6 +118,7 @@ public class MainMenuController : MonoBehaviour
         {
             InputManager.Instance.inputController.UI.ReSelect.performed -= reselectAction;
             InputManager.Instance.inputController.UI.Cancel.performed -= cancelAction;
+            InputManager.Instance.inputController.UI.Submit.performed -= submitAction;
             LevelManager.Instance.LoadGame(gameStatus);
         }
     }
@@ -131,14 +141,20 @@ public class MainMenuController : MonoBehaviour
 
     void Reselect() // Per riprendere il controllo con il controller o la tastiera
     {
+        if (!AudioManager.Instance.sfxSource.isPlaying)
+            OverSound();
         inputType = InputType.Controller;
         if (optionsOpen && EventSystem.current.currentSelectedGameObject != null &&  !CheckParent(lastSelectedButton, optionsMenu, 3))
             EventSystem.current.SetSelectedGameObject(optionsFirstSelectedButton);
+        else if (difficultyOpen && EventSystem.current.currentSelectedGameObject != null &&  !CheckParent(lastSelectedButton, difficultyMenu, 3))
+            EventSystem.current.SetSelectedGameObject(difficultyFirstSelectedButton);
         else if (EventSystem.current.currentSelectedGameObject == null)
         {
             EventSystem.current.SetSelectedGameObject(lastSelectedButton);
             if (optionsOpen && EventSystem.current.currentSelectedGameObject != null &&  !CheckParent(lastSelectedButton, optionsMenu, 3))
                 EventSystem.current.SetSelectedGameObject(optionsFirstSelectedButton);
+            else if (difficultyOpen && EventSystem.current.currentSelectedGameObject != null &&  !CheckParent(lastSelectedButton, difficultyMenu, 3))
+                EventSystem.current.SetSelectedGameObject(difficultyFirstSelectedButton);
         }
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -150,7 +166,10 @@ public class MainMenuController : MonoBehaviour
             return false;
         if (obj.transform.parent == parent.transform)
             return true;
-        return CheckParent(obj.transform.parent.gameObject, parent, depth - 1);
+        if (obj.transform.parent == null)
+            return false;
+        else
+            return CheckParent(obj.transform.parent.gameObject, parent, depth - 1);
     }
 
     void CursorMoved() // Per far apparire il cursore quando si muove il mouse
@@ -183,16 +202,32 @@ public class MainMenuController : MonoBehaviour
     {
         if (optionsOpen)
         {
+            SelectSound();
             optionsMenu.SetActive(false);
             EventSystem.current.SetSelectedGameObject(optionsButton);
             optionsOpen = false;
         }
         else if (difficultyOpen)
         {
+            SelectSound();
             difficultyMenu.SetActive(false);
             EventSystem.current.SetSelectedGameObject(newGameButton);
             difficultyOpen = false;
         }
+    }
+
+    public void OverSound()
+    {
+        if (AudioManager.Instance.sfxSource.isPlaying)
+            AudioManager.Instance.sfxSource.Stop();
+        AudioManager.Instance.sfxSource.PlayOneShot(buttonOver);
+    }
+
+    public void SelectSound()
+    {
+        if (AudioManager.Instance.sfxSource.isPlaying)
+            AudioManager.Instance.sfxSource.Stop();
+        AudioManager.Instance.sfxSource.PlayOneShot(buttonSelect);
     }
 
     void Update()

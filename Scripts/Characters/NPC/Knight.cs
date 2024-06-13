@@ -90,6 +90,8 @@ public class Knight : Npc
     {
         if (randomDialog)
         {
+            AudioManager.Instance.DecreaseMusic(0.5f);
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.interactionStart);
             suggestionBox.SetActive(false);
             contextOff.Raise();
             TextDisplacer(RandomDialog());

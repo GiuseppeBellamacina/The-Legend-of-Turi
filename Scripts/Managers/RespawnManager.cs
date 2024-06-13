@@ -6,6 +6,8 @@ public class RespawnManager : MonoBehaviour
 {
     private static RespawnManager _instance;
     public GameObject deathEffectPrefab;
+    public GameObject soundtrack;
+    public AudioClip deathSound;
 
     public static RespawnManager Instance
     {
@@ -30,10 +32,16 @@ public class RespawnManager : MonoBehaviour
         }
         else
             Destroy(gameObject);
+        
+        if (soundtrack == null)
+            soundtrack = GameObject.Find("SoundTrack");
     }
 
     public void Respawn()
     {
+        AudioManager.Instance.musicSource.Stop();
+        soundtrack.GetComponent<AudioSource>().Stop();
+        AudioManager.Instance.PlaySFX(deathSound);
         if (DataManager.Instance.LoadData())
             StartCoroutine(RespawnFromDataCo());
         else
@@ -49,7 +57,7 @@ public class RespawnManager : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         GameObject effect = Instantiate(deathEffectPrefab, Vector3.zero, Quaternion.identity);
         effect.GetComponentInChildren<TMP_Text>().text = GetRandomDeathMessage();
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(6f);
         // Distruggo gli oggetti che voglio ricreare
         Destroy(CanvasSingleton.Instance.gameObject);
         Destroy(PlayerController.Instance.gameObject);
@@ -71,7 +79,7 @@ public class RespawnManager : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         GameObject effect = Instantiate(deathEffectPrefab, Vector3.zero, Quaternion.identity);
         effect.GetComponentInChildren<TMP_Text>().text = GetRandomDeathMessage();
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(6f);
         // Distruggo gli oggetti che voglio ricreare
         Destroy(CanvasSingleton.Instance.gameObject);
         Destroy(PlayerController.Instance.gameObject);

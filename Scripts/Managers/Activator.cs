@@ -6,6 +6,8 @@ public class Activator : MonoBehaviour
     
     public void Enable()
     {
+        if (!AudioManager.Instance.sfxSource.isPlaying)
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.context);
         objectToActivate.SetActive(true);
     }
 

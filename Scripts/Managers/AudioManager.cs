@@ -4,6 +4,7 @@ using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
+    [Header("Audio Manager Settings")]
     private static AudioManager _instance;
     public AudioMixer audioMixer;
     public AudioSettings data;
@@ -11,6 +12,11 @@ public class AudioManager : MonoBehaviour
     public AudioSource musicSource;
     public AudioSource sfxSource;
     public bool decreased;
+    [Header("Interaction Clips")]
+    public AudioClip interactionStart;
+    public AudioClip continueInteraction;
+    public AudioClip interactionEnd;
+    public AudioClip context;
 
     public static AudioManager Instance
     {
@@ -169,5 +175,12 @@ public class AudioManager : MonoBehaviour
         audioMixer.SetFloat("SFX", data.currentSFXVolume);
 
         data.mute = false;
+    }
+
+    public void PlaySFX(AudioClip clip)
+    {
+        if (sfxSource.isPlaying)
+            sfxSource.Stop();
+        sfxSource.PlayOneShot(clip);
     }
 }

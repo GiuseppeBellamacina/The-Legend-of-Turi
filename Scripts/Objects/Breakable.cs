@@ -5,6 +5,7 @@ public class Breakable : MonoBehaviour
 {
     Animator animator;
     SpriteRenderer spriteRenderer;
+    public AudioClip smashSound;
     [Header("Loot")]
     public GameObject[] loot;
 
@@ -16,6 +17,7 @@ public class Breakable : MonoBehaviour
 
     public void Smash()
     {
+        AudioManager.Instance.PlaySFX(smashSound);
         animator.SetBool("isSmashed", true);
         DropLoot();
         StartCoroutine(Deactivate());

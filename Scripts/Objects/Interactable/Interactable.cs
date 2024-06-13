@@ -13,10 +13,15 @@ public class Interactable : MonoBehaviour
 
     public virtual void Interact()
     {
+        AudioManager.Instance.DecreaseMusic(0.5f);
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.interactionStart);
         interactionEnded = false;
         canvas.transform.Find("Place Text").gameObject.SetActive(false);
     }
-    public virtual void StopInteraction(){
+    public virtual void StopInteraction()
+    {
+        AudioManager.Instance.IncreaseMusic(0.5f);
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.interactionEnd);
         PlayerController.Instance.SetState(State.none);
         interactionEnded = true;
     }

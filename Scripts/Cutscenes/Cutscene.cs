@@ -82,8 +82,8 @@ public class Cutscene : Interactable
 
     public override void Interact()
     {
-        base.Interact();
-
+        AudioManager.Instance.DecreaseMusic(0.5f);
+        interactionEnded = false;
         dialogBox.SetActive(true);
         TextDisplacer(dialog.GetFirstSentence());
         dialogIndex = dialog.dialogIndex;
@@ -98,6 +98,7 @@ public class Cutscene : Interactable
         }
 
         string sentence = dialog.GetNextSentence();
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.continueInteraction);
         if (sentence != null)
         {
             TextDisplacer(sentence);
@@ -114,6 +115,8 @@ public class Cutscene : Interactable
         if (dialogIndex < dialog.sentences.Length - 1 || !speechEnded)
             return;
 
+        AudioManager.Instance.IncreaseMusic(0.5f);
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.interactionEnd);
         PlayerController.Instance.SetState(State.none);
         PlayerController.Instance.toInteract = null;
         playerInRange = false;

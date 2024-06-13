@@ -31,6 +31,12 @@ public class PlayerController : Character
     public SpriteRenderer receivedItemSprite;
     public Image weapon;
     public GameObject arrowText;
+    [Header("Audio")]
+    public AudioClip[] attackClips;
+    public AudioClip secondAttackClip;
+    public AudioClip treasureClip;
+    public AudioClip healClip;
+    public AudioClip[] damageClips;
 
     // Actions
     Action<InputAction.CallbackContext> interactAction;
@@ -276,6 +282,7 @@ public class PlayerController : Character
 
     IEnumerator AttackCo()
     {
+        AudioManager.Instance.PlaySFX(attackClips[UnityEngine.Random.Range(0, attackClips.Length)]);
         SetState(State.attack);
         animator.SetBool("isAttacking", true);
         yield return null;
@@ -289,6 +296,7 @@ public class PlayerController : Character
 
     IEnumerator SecondAttackCo()
     {
+        AudioManager.Instance.PlaySFX(secondAttackClip);
         SetState(State.attack);
         secondAttackReady = false;
         Vector2 attackDirection = new Vector2(animator.GetFloat("moveX"), animator.GetFloat("moveY"));
@@ -404,6 +412,7 @@ public class PlayerController : Character
 
     public IEnumerator RaiseItemCo()
     {
+        AudioManager.Instance.PlaySFX(treasureClip);
         // Il player è già in stato di interazione
         animator.SetBool("isReceiving", true);
         receivedItemSprite.sprite = inventory.currentItem.sprite;
@@ -412,6 +421,7 @@ public class PlayerController : Character
         animator.SetBool("isReceiving", false);
         receivedItemSprite.sprite = null;
         inventory.currentItem = null;
+        AudioManager.Instance.sfxSource.Stop();
     }
 
     public void RaiseItem()
@@ -439,6 +449,7 @@ public class PlayerController : Character
         if (data.health < 0)
             data.health = 0;
         playerHealthSignal.Raise();
+        AudioManager.Instance.PlaySFX(damageClips[UnityEngine.Random.Range(0, damageClips.Length)]);
         if (data.health <= 0)
             Die();
     }
@@ -449,6 +460,7 @@ public class PlayerController : Character
         if (data.health > data.maxHealth)
             data.health = data.maxHealth;
         playerHealthSignal.Raise();
+        AudioManager.Instance.PlaySFX(healClip);
     }
 
     public void IncreaseMaxHealth(float amount)
@@ -459,6 +471,7 @@ public class PlayerController : Character
             data.maxHealth += amount;
         data.health = data.maxHealth;
         playerHealthSignal.Raise();
+        AudioManager.Instance.PlaySFX(healClip);
     }
 
     void OnMove(InputValue value) // per risolvere il problema dello stato walk

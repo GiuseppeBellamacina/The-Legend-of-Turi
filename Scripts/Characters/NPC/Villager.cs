@@ -16,6 +16,7 @@ public class Villager : Npc
     {
         if (randomDialog)
         {
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.interactionStart);
             interactionEnded = false;
             suggestionBox.SetActive(false);
             contextOff.Raise();

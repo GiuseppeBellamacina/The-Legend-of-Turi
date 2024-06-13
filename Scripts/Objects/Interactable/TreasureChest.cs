@@ -68,7 +68,7 @@ public class TreasureChest : Interactable, IResettable
         inventory.currentItem = contents;
         raiseItem.Raise();
         contents.hasBeenPickedUp = true;
-        while (!PlayerController.Instance.IsState(State.interact)) // non lo toccare
+        while (!interactionEnded)
         {
             yield return null;
         }

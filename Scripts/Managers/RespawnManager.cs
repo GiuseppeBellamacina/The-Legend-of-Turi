@@ -39,6 +39,9 @@ public class RespawnManager : MonoBehaviour
 
     public void Respawn()
     {
+        if (soundtrack == null)
+            soundtrack = GameObject.Find("SoundTrack");
+            
         AudioManager.Instance.musicSource.Stop();
         soundtrack.GetComponent<AudioSource>().Stop();
         AudioManager.Instance.PlaySFX(deathSound);
@@ -54,13 +57,13 @@ public class RespawnManager : MonoBehaviour
         CanvasSingleton.Instance.transform.Find("Menu").GetComponent<MenuController>().RemoveActions();
         PlayerController.Instance.RemoveActions();
         // Death effect
-        yield return new WaitForSeconds(0.1f);
+        yield return null;
+        Destroy(PlayerController.Instance.gameObject);
         GameObject effect = Instantiate(deathEffectPrefab, Vector3.zero, Quaternion.identity);
         effect.GetComponentInChildren<TMP_Text>().text = GetRandomDeathMessage();
         yield return new WaitForSeconds(6f);
         // Distruggo gli oggetti che voglio ricreare
         Destroy(CanvasSingleton.Instance.gameObject);
-        Destroy(PlayerController.Instance.gameObject);
         Destroy(CameraMovement.Instance.gameObject);
         Destroy(RoomLocator.Instance.gameObject);
         // Ricarico i dati
@@ -76,13 +79,13 @@ public class RespawnManager : MonoBehaviour
         CanvasSingleton.Instance.transform.Find("Menu").GetComponent<MenuController>().RemoveActions();
         PlayerController.Instance.RemoveActions();
         // Death effect
-        yield return new WaitForSeconds(0.1f);
+        yield return null;
+        Destroy(PlayerController.Instance.gameObject);
         GameObject effect = Instantiate(deathEffectPrefab, Vector3.zero, Quaternion.identity);
         effect.GetComponentInChildren<TMP_Text>().text = GetRandomDeathMessage();
         yield return new WaitForSeconds(6f);
         // Distruggo gli oggetti che voglio ricreare
         Destroy(CanvasSingleton.Instance.gameObject);
-        Destroy(PlayerController.Instance.gameObject);
         Destroy(CameraMovement.Instance.gameObject);
         Destroy(RoomLocator.Instance.gameObject);
         // Cancello i dati

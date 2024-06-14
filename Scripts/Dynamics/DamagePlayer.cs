@@ -16,6 +16,9 @@ public class DamagePlayer : MonoBehaviour
 
     void FixedUpdate()
     {
+        //if (PlayerController.Instance == null)
+            //return;
+
         FixRenderLayer();
         timeSinceLastDamage += Time.deltaTime;
         if (canDamage)

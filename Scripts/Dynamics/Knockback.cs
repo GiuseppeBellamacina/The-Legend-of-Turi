@@ -116,6 +116,9 @@ public class Knockback : MonoBehaviour
 
     private void HandleKnockback(GameObject other)
     {
+        if (PlayerController.Instance == null)
+            return;
+
         GetState();
         GetOtherState(other);
         if (!isAttacking || isStaggered)

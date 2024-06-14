@@ -54,7 +54,7 @@ public class MainMenuController : MonoBehaviour
 
     void Start()
     {
-        reselectAction = ctx => Reselect();
+        reselectAction = ctx => Reselect(ctx);
         cancelAction = ctx => CloseMenu();
         submitAction = ctx => SelectSound();
 
@@ -139,8 +139,11 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
-    void Reselect() // Per riprendere il controllo con il controller o la tastiera
+    void Reselect(InputAction.CallbackContext context) // Per riprendere il controllo con il controller o la tastiera
     {
+        if (context.ReadValue<Vector2>() == Vector2.zero)
+            return;
+
         if (!AudioManager.Instance.sfxSource.isPlaying)
             OverSound();
         inputType = InputType.Controller;

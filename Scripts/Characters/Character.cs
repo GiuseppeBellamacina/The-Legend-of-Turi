@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum State
@@ -76,4 +77,42 @@ public class Character : MonoBehaviour
     }
 
     public virtual void TakeDamage(float damage){}
+
+    public virtual void SoundEffect(AudioClip clip)
+    {
+        if (gameObject == null || !gameObject.activeInHierarchy || clip == null)
+            return;
+
+        StartCoroutine(SoundEffectCo(clip));
+    }
+
+    public virtual void RandomSoundEffect(AudioClip[] clips)
+    {
+        if (gameObject == null || !gameObject.activeInHierarchy || clips == null)
+            return;
+
+        StartCoroutine(RandomSoundEffectCo(clips));
+    }
+
+    IEnumerator SoundEffectCo(AudioClip clip)
+    {
+        AudioSource source = gameObject.AddComponent<AudioSource>();
+        source.clip = null;
+        source.loop = false;
+        source.outputAudioMixerGroup = AudioManager.Instance.audioMixer.FindMatchingGroups("SFX")[0];
+        source.PlayOneShot(clip);
+        yield return new WaitForSeconds(clip.length);
+        Destroy(source);
+    }
+
+    IEnumerator RandomSoundEffectCo(AudioClip[] clips)
+    {
+        AudioSource source = gameObject.AddComponent<AudioSource>();
+        source.clip = null;
+        source.outputAudioMixerGroup = AudioManager.Instance.audioMixer.FindMatchingGroups("SFX")[0];
+        int rnd = Random.Range(0, clips.Length);
+        source.PlayOneShot(clips[rnd]);
+        yield return new WaitForSeconds(clips[rnd].length);
+        Destroy(source);
+    }
 }

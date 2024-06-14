@@ -5,6 +5,7 @@ using UnityEngine;
 public class GiusaVeryStagger : StateMachineBehaviour
 {
     Giusa boss;
+    public AudioClip[] giusaStagger;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -14,6 +15,7 @@ public class GiusaVeryStagger : StateMachineBehaviour
         boss.rb.bodyType = RigidbodyType2D.Static;
         boss.isInvulnerable = true;
         boss.TalkToPlayer();
+        boss.RandomSoundEffect(giusaStagger);
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

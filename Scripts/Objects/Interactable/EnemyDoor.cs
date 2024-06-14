@@ -5,6 +5,7 @@ public class EnemyDoor : Door
     public GameObject room;
     public GameObject[] otherDoors;
     public BoolValue hasBeenInteracted;
+    public AudioClip misterySolvedSound;
     DoorType[] oldDoorTypes;
     GameObject[] enemies;
 
@@ -70,6 +71,7 @@ public class EnemyDoor : Door
             int i = 0;
             foreach (GameObject otherDoor in otherDoors)
             {
+                AudioManager.Instance.PlaySFX(misterySolvedSound);
                 otherDoor.GetComponent<Door>().doorType = oldDoorTypes[i++];
                 otherDoor.GetComponent<Door>().Open();
             }

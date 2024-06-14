@@ -6,6 +6,7 @@ public class GiusaWalk : StateMachineBehaviour
 {
     Giusa boss;
     public AudioClip giusaFight;
+    public AudioClip giusaAttack;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -44,6 +45,7 @@ public class GiusaWalk : StateMachineBehaviour
             switch (Random.Range(0, 3))
             {
                 case 0:
+                    boss.SoundEffect(giusaAttack);
                     animator.SetTrigger("attack");
                     break;
                 case 1:
@@ -59,6 +61,7 @@ public class GiusaWalk : StateMachineBehaviour
             switch (Random.Range(0,2))
             {
                 case 0:
+                    boss.SoundEffect(giusaAttack);
                     animator.SetTrigger("attack");
                     break;
                 case 1:
@@ -68,6 +71,7 @@ public class GiusaWalk : StateMachineBehaviour
         }
         else
         {
+            boss.SoundEffect(giusaAttack);
             animator.SetTrigger("attack");
         }
     }

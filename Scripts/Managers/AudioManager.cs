@@ -56,10 +56,12 @@ public class AudioManager : MonoBehaviour
         }
         onValueChange = true; // serve per evitare che vengano eliminati i dati salvati se metto il volume a 0
 
-        musicSource = GetComponents<AudioSource>()[0];
-        sfxSource = GetComponents<AudioSource>()[1];
+        AudioSource[] sources = GetComponents<AudioSource>();
 
+        musicSource = sources[0];
         musicSource.outputAudioMixerGroup = audioMixer.FindMatchingGroups("Music")[0];
+
+        sfxSource = sources[1];
         sfxSource.outputAudioMixerGroup = audioMixer.FindMatchingGroups("SFX")[0];
     }
 
@@ -182,5 +184,12 @@ public class AudioManager : MonoBehaviour
         if (sfxSource.isPlaying)
             sfxSource.Stop();
         sfxSource.PlayOneShot(clip);
+    }
+
+    public void PlayRandomSFX(AudioClip[] clips)
+    {
+        if (sfxSource.isPlaying)
+            sfxSource.Stop();
+        sfxSource.PlayOneShot(clips[Random.Range(0, clips.Length)]);
     }
 }

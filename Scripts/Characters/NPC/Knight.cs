@@ -15,6 +15,8 @@ public class Knight : Npc
     public bool patrolTroop, isPatrolling;
     public float speed;
     string lastSentence;
+    [Header("Audio")]
+    public AudioClip attackSound;
 
     protected override void Awake()
     {
@@ -185,6 +187,7 @@ public class Knight : Npc
 
     IEnumerator AttackCo()
     {
+        AudioManager.Instance.PlaySFX(attackSound);
         animator.SetTrigger("attack");
         yield return new WaitForSeconds(0.5f);
         PlayerController.Instance.TakeDamage(1);

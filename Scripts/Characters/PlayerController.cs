@@ -37,6 +37,7 @@ public class PlayerController : Character
     public AudioClip treasureClip;
     public AudioClip healClip;
     public AudioClip[] damageClips;
+    public AudioSource runngingSource;
 
     // Actions
     Action<InputAction.CallbackContext> interactAction;
@@ -165,6 +166,7 @@ public class PlayerController : Character
             return;
         }
 
+        runngingSource.Play();
         SetState(State.run);
         animator.speed = speedMultiplier.value;
         speed = data.speed * speedMultiplier.value;
@@ -179,6 +181,7 @@ public class PlayerController : Character
             return;
         }
         
+        runngingSource.Stop();
         animator.speed = 1f;
         speed = data.speed;
         EnableAttack();
@@ -282,7 +285,7 @@ public class PlayerController : Character
 
     IEnumerator AttackCo()
     {
-        AudioManager.Instance.PlaySFX(attackClips[UnityEngine.Random.Range(0, attackClips.Length)]);
+        RandomSoundEffect(attackClips);
         SetState(State.attack);
         animator.SetBool("isAttacking", true);
         yield return null;
@@ -296,7 +299,7 @@ public class PlayerController : Character
 
     IEnumerator SecondAttackCo()
     {
-        AudioManager.Instance.PlaySFX(secondAttackClip);
+        SoundEffect(secondAttackClip);
         SetState(State.attack);
         secondAttackReady = false;
         Vector2 attackDirection = new Vector2(animator.GetFloat("moveX"), animator.GetFloat("moveY"));
@@ -449,7 +452,7 @@ public class PlayerController : Character
         if (data.health < 0)
             data.health = 0;
         playerHealthSignal.Raise();
-        AudioManager.Instance.PlaySFX(damageClips[UnityEngine.Random.Range(0, damageClips.Length)]);
+        RandomSoundEffect(damageClips);
         if (data.health <= 0)
             Die();
     }
@@ -460,7 +463,7 @@ public class PlayerController : Character
         if (data.health > data.maxHealth)
             data.health = data.maxHealth;
         playerHealthSignal.Raise();
-        AudioManager.Instance.PlaySFX(healClip);
+        SoundEffect(healClip);
     }
 
     public void IncreaseMaxHealth(float amount)
@@ -471,7 +474,7 @@ public class PlayerController : Character
             data.maxHealth += amount;
         data.health = data.maxHealth;
         playerHealthSignal.Raise();
-        AudioManager.Instance.PlaySFX(healClip);
+        SoundEffect(healClip);
     }
 
     void OnMove(InputValue value) // per risolvere il problema dello stato walk

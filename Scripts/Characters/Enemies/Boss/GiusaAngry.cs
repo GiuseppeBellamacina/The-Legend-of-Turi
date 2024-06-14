@@ -5,6 +5,8 @@ using UnityEngine;
 public class GiusaAngry : StateMachineBehaviour
 {
     Giusa boss;
+    public AudioClip rotateAttack;
+    public AudioClip heavyAttack;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -23,9 +25,11 @@ public class GiusaAngry : StateMachineBehaviour
             switch (Random.Range(0, 2))
             {
                 case 0:
+                    boss.SoundEffect(heavyAttack);
                     animator.SetTrigger("heavy");
                     break;
                 case 1:
+                    boss.SoundEffect(rotateAttack);
                     animator.SetTrigger("rotate");
                     break;
             }

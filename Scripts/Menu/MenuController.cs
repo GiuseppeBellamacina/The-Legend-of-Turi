@@ -68,6 +68,11 @@ public class MenuController : MonoBehaviour
         tutorialMenu.SetActive(false);
         savePopup.SetActive(false);
 
+        pauseOpen = false;
+        settingsOpen = false;
+        disclaimerOpen = false;
+        tutorialOpen = false;
+
         lastSelectedButton = firstSelectedButton;
         InputManager.Instance.inputController.UI.Disable();
         Tutorial();
@@ -173,8 +178,10 @@ public class MenuController : MonoBehaviour
 
     void Reselect() // Per riprendere il controllo con il controller o la tastiera
     {
+        Debug.Log("Reselect");
         if (!pauseOpen)
             return;
+        Debug.LogWarning("Reselect2" + pauseOpen);
 
         if (!AudioManager.Instance.sfxSource.isPlaying)
             OverSound();

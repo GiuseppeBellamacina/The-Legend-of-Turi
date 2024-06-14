@@ -4,6 +4,7 @@ using UnityEngine;
 public class RockProjectile : Projectile
 {
     bool deflected;
+    public AudioClip rockDeflect;
     void OnTriggerEnter2D(Collider2D collision)
     {
         // Se collide con il proprietario, non fare nulla
@@ -44,6 +45,7 @@ public class RockProjectile : Projectile
 
     void Deflect()
     {
+        AudioManager.Instance.PlaySFX(rockDeflect);
         // Cambia il proprietario del proiettile ed il layer
         SetOwner(PlayerController.Instance.gameObject);
         gameObject.layer = LayerMask.NameToLayer("Arrow");

@@ -6,6 +6,7 @@ public class Orge : Enemy, IResettable
     [Header("Orge Settings")]
     public float patrolDuration;
     public bool attackReady; // viene gestito dalle animazioni
+    public AudioClip orgeAttack;
     float patrolTimer = 0f;
     Vector2 currentTarget;
     bool patrolEnd = true;
@@ -106,6 +107,7 @@ public class Orge : Enemy, IResettable
 
     IEnumerator AttackCo()
     {
+        SoundEffect(orgeAttack);
         SetState(State.attack);
         animator.SetBool("attack", true);
         yield return null;

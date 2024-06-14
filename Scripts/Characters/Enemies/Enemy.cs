@@ -12,6 +12,9 @@ public class Enemy : Character, IResettable
     public GameObject[] loot;
     protected Vector2 homePosition;
     public SpriteRenderer surpriseItem;
+    [Header("Audio")]
+    public AudioClip deathSound;
+    public AudioClip staggerSound;
 
     protected override void Awake()
     {
@@ -76,6 +79,7 @@ public class Enemy : Character, IResettable
 
     public override void TakeDamage(float damage)
     {
+        SoundEffect(staggerSound);
         health -= damage;
         if (health <= 0)
             Die();
@@ -95,6 +99,8 @@ public class Enemy : Character, IResettable
     {
         base.Die();
         
+        SoundEffect(deathSound);
+
         DropLoot();
     }
 

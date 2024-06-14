@@ -58,9 +58,9 @@ public class LevelManager : MonoBehaviour
         GameObject panel = Instantiate(fadePanels[(int)FadeType.FromColor], Vector3.zero, Quaternion.identity);
         Destroy(panel, 1);
         // Riabilito l'input
-        InputManager.Instance.EnableInput();
         CanvasSingleton.Instance.transform.Find("Menu").GetComponent<MenuController>().AssignActions();
         PlayerController.Instance.AssignActions();
+        InputManager.Instance.inputController.UI.Disable();
     }
 
     public IEnumerator InitialFadeCo(string sceneName, bool willBeBounded, FadeType fadeIn, FadeType fadeOut, bool load = false, Vector2 position = default(Vector2))

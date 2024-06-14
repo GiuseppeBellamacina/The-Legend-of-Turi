@@ -5,6 +5,7 @@ public class Button : Interactable, IResettable
     public BoolValue isPressed;
     public Sprite pressedSprite;
     public Signals doorSignal;
+    public AudioClip misterySolvedSound;
     SpriteRenderer spriteRenderer;
 
     protected override void Start()
@@ -36,6 +37,7 @@ public class Button : Interactable, IResettable
 
     public void PressButton()
     {
+        AudioManager.Instance.PlaySFX(misterySolvedSound);
         isPressed.value = true;
         spriteRenderer.sprite = pressedSprite;
         doorSignal.Raise();

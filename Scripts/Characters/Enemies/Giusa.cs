@@ -110,6 +110,9 @@ public class Giusa : Enemy, IResettable
             soundtrack.GetComponent<AudioSource>().Play();
         }
         
+        if (!isDead.value)
+            SoundEffect(deathSound);
+
         isDead.value = true;
         animator.SetTrigger("die");
         if (rb.bodyType != RigidbodyType2D.Static)

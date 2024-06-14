@@ -39,6 +39,7 @@ public class Status : Data
     public new void Save()
     {
         string path = dataIndex.ToString() + ".save";
+        fileName = name;
         StatusData data = new StatusData(this);
         SaveSystem.Save(data, path);
     }
@@ -50,6 +51,7 @@ public class Status : Data
         if (data != null)
         {
             dataIndex = data.dataIndex;
+            fileName = data.fileName;
             isActive = data.isActive;
             condition = data.condition;
             isCompleted = data.isCompleted;

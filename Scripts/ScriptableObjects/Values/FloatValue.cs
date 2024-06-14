@@ -15,6 +15,7 @@ public class FloatValue : Data
     public new void Save()
     {
         string path = dataIndex.ToString() + ".save";
+        fileName = name;
         FloatData data = new FloatData(this);
         SaveSystem.Save(data, path);
     }
@@ -26,6 +27,7 @@ public class FloatValue : Data
         if (data != null)
         {
             dataIndex = data.dataIndex;
+            fileName = data.fileName;
             value = data.value;
             initialValue = data.initialValue;
         }

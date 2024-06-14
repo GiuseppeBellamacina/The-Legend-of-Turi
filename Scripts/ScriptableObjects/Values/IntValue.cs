@@ -15,6 +15,7 @@ public class IntValue : Data
     public new void Save()
     {
         string path = dataIndex.ToString() + ".save";
+        fileName = name;
         IntData data = new IntData(this);
         SaveSystem.Save(data, path);
     }
@@ -26,6 +27,7 @@ public class IntValue : Data
         if (data != null)
         {
             dataIndex = data.dataIndex;
+            fileName = data.fileName;
             value = data.value;
             initialValue = data.initialValue;
         }

@@ -11,6 +11,7 @@ public class VectorValue : Data
     public new void Save()
     {
         string path = dataIndex.ToString() + ".save";
+        fileName = name;
         VectorData data = new VectorData(this);
         SaveSystem.Save(data, path);
     }
@@ -22,6 +23,7 @@ public class VectorValue : Data
         if (data != null)
         {
             dataIndex = data.dataIndex;
+            fileName = data.fileName;
             value.x = data.values[0];
             value.y = data.values[1];
         }

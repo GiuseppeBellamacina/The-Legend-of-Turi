@@ -90,6 +90,9 @@ public class LevelManager : MonoBehaviour
                 }
 
                 InputManager.Instance.EnableInput();
+                
+                if (sceneName != "MainMenu")
+                    InputManager.Instance.inputController.UI.Disable();
 
                 break;
             }

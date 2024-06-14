@@ -20,6 +20,7 @@ public class CharacterData : Data
     public new void Save()
     {
         string path = dataIndex.ToString() + ".save";
+        fileName = name;
         CharacterDataData data = new CharacterDataData(this);
         SaveSystem.Save(data, path);
     }
@@ -31,6 +32,7 @@ public class CharacterData : Data
         if (data != null)
         {
             dataIndex = data.dataIndex;
+            fileName = data.fileName;
             health = data.health;
             maxHealth = data.maxHealth;
             initialMaxHealth = data.initialMaxHealth;

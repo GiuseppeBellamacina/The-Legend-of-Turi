@@ -160,6 +160,7 @@ public class Inventory : Data
     public new void Save()
     {
         string path = dataIndex.ToString() + ".save";
+        fileName = name;
         InventoryData data = new InventoryData(this);
         SaveSystem.Save(data, path);
     }
@@ -171,6 +172,7 @@ public class Inventory : Data
         if (data != null)
         {
             dataIndex = data.dataIndex;
+            fileName = data.fileName;
             numberOfKeys = data.numberOfKeys;
             numberOfCoins = data.numberOfCoins;
             numberOfArrows = data.numberOfArrows;

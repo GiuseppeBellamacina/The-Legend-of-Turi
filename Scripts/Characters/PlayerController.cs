@@ -494,6 +494,12 @@ public class PlayerController : Character
             return;
 
         moveDirection = InputManager.Instance.inputController.Player.Move.ReadValue<Vector2>();
+
+        if (moveDirection != Vector2.zero)
+            runngingSource.volume = 1;
+        else
+            runngingSource.volume = 0;
+            
         Move(moveDirection);
     }
 }

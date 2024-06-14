@@ -6,9 +6,12 @@ using System.Text;
 
 public static class SaveSystem
 {
+    // Questo è il percorso dove verranno salvati i file
     public static string path = Application.persistentDataPath + "/Saves/";
 
+    // Queste due variabili servono per la crittografia
     private static readonly string encryptionKey = "babbuino";
+    private static readonly bool encrypt = true;
 
     public static void Save<T>(T data, string fileName)
     {
@@ -19,8 +22,8 @@ public static class SaveSystem
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
         }
 
-        string json = JsonUtility.ToJson(data);
-        string encryptedJson = Encrypt(json, encryptionKey);
+        string json = JsonUtility.ToJson(data, true);
+        string encryptedJson = encrypt ? Encrypt(json, encryptionKey) : json;
         File.WriteAllText(fullPath, encryptedJson);
     }
 
@@ -31,7 +34,7 @@ public static class SaveSystem
         if (File.Exists(fullPath))
         {
             string encryptedJson = File.ReadAllText(fullPath);
-            string json = Decrypt(encryptedJson, encryptionKey);
+            string json = encrypt ? Decrypt(encryptedJson, encryptionKey) : encryptedJson;
             T data = JsonUtility.FromJson<T>(json);
             return data;
         }

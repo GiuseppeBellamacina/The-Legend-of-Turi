@@ -15,6 +15,7 @@ public class BoolValue : Data
     public new void Save()
     {
         string path = dataIndex.ToString() + ".save";
+        fileName = name;
         BoolData data = new BoolData(this);
         SaveSystem.Save(data, path);
     }
@@ -26,6 +27,7 @@ public class BoolValue : Data
         if (data != null)
         {
             dataIndex = data.dataIndex;
+            fileName = data.fileName;
             value = data.value;
             initialValue = data.initialValue;
         }

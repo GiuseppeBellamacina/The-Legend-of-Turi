@@ -180,9 +180,14 @@ public class DataManager : MonoBehaviour
         inventory.items.Clear();
     }
 
+    int TotalData()
+    {
+        return bools.Length + ints.Length + floats.Length + vectors.Length + characters.Length + dialogs.Length + statuses.Length + items.Length + 2;
+    }
+
     public bool IsDataSaved()
     {
         string path = SaveSystem.path;
-        return Directory.Exists(path);
+        return Directory.Exists(path) && Directory.GetFiles(path).Length == TotalData() + 1; // 1 file è il file di configurazione audio
     }
 }

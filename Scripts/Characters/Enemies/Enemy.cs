@@ -96,11 +96,9 @@ public class Enemy : Character, IResettable
     }
 
     protected override void Die()
-    {
-        base.Die();
-        
+    {   
         SoundEffect(deathSound);
-
+        base.Die();
         DropLoot();
     }
 

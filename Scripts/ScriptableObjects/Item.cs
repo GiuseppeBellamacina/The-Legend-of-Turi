@@ -19,6 +19,7 @@ public class Item : Data
     public new void Save()
     {
         string path = dataIndex.ToString() + ".save";
+        fileName = name;
         ItemData data = new ItemData(this);
         SaveSystem.Save(data, path);
     }
@@ -30,6 +31,7 @@ public class Item : Data
         if (data != null)
         {
             dataIndex = data.dataIndex;
+            fileName = data.fileName;
             hasBeenPickedUp = data.hasBeenPickedUp;
         }
     }

@@ -78,6 +78,7 @@ public class Dialog : Data
     public new void Save()
     {
         string path = dataIndex.ToString() + ".save";
+        fileName = name;
         DialogData data = new DialogData(this);
         SaveSystem.Save(data, path);
     }
@@ -89,6 +90,7 @@ public class Dialog : Data
         if (data != null)
         {
             dataIndex = data.dataIndex;
+            fileName = data.fileName;
             dialogIndex = data.dialogIndex;
             currentCheckpoint = data.currentCheckpoint;
             dialogCheckpoints = data.dialogCheckpoints;

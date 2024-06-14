@@ -20,6 +20,7 @@ public class GameStatus : Data
     public new void Save()
     {
         string path = dataIndex.ToString() + ".save";
+        fileName = name;
         GameStatusData data = new GameStatusData(this);
         SaveSystem.Save(data, path);
     }
@@ -31,6 +32,7 @@ public class GameStatus : Data
         if (data != null)
         {
             dataIndex = data.dataIndex;
+            fileName = data.fileName;
             difficulty = data.difficulty;
             playerPosition = new Vector2(data.playerPosition[0], data.playerPosition[1]);
             currentScene = data.currentScene;

@@ -3,6 +3,8 @@ using UnityEngine;
 public class SpecialDoor : Door
 {
     public BoolValue willOpen;
+    public AudioClip misteryVoice;
+    public AudioClip misterySound;
 
     public override void Interact()
     {
@@ -12,10 +14,12 @@ public class SpecialDoor : Door
         {
             if (!willOpen.value)
             {
+                AudioManager.Instance.PlaySFX(misteryVoice);
                 dialogText.text = "La porta <b><color=#FF0000FF>non si muove</color></b>, una scritta in rilievo dice:\n<i>\"Se con <b><color=#FF0000FF>Il Senza Confronti</color></b> ti vuoi confrontare, con la sua amata devi parlare\"</i>";
             }
             else
             {
+                AudioManager.Instance.PlaySFX(misterySound);
                 dialogText.text = "La porta si è <b><color=#26663BFF>aperta magicamente</color></b>.\nMentre si apriva hai sentivo una voce dire:\n<i>\"<b><color=#FF0000FF>Vieni a cercarmi</color></b>\"</i>";
                 isOpen.value = true;
             }

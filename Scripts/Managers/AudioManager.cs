@@ -45,7 +45,8 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
-        //data.Reset();
+        data.Load(0); // 0 è l'indice solo per l'audio
+
         if(data.mute)
         {
             MuteVolume();
@@ -54,6 +55,7 @@ public class AudioManager : MonoBehaviour
         {
             UnMuteVolume();
         }
+
         onValueChange = true; // serve per evitare che vengano eliminati i dati salvati se metto il volume a 0
 
         AudioSource[] sources = GetComponents<AudioSource>();
@@ -148,6 +150,8 @@ public class AudioManager : MonoBehaviour
                 data.currentSFXVolume = value;
                 break;
         }
+        
+        data.Save();
     }
 
     public void MuteOrUnMuterVolume()
@@ -168,6 +172,7 @@ public class AudioManager : MonoBehaviour
         audioMixer.SetFloat("SFX", value);
 
         data.mute = true;
+        data.Save();
     }
 
     void UnMuteVolume()
@@ -177,6 +182,7 @@ public class AudioManager : MonoBehaviour
         audioMixer.SetFloat("SFX", data.currentSFXVolume);
 
         data.mute = false;
+        data.Save();
     }
 
     public void PlaySFX(AudioClip clip)

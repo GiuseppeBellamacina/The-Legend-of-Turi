@@ -6,6 +6,7 @@ public class Madame : Npc
     public QueenQuest quest;
     public SceneTransfer sceneTransfer;
     public BoolValue dungeonUnlocked;
+    public AudioClip alertSound;
 
     protected override void Awake()
     {
@@ -78,6 +79,7 @@ public class Madame : Npc
 
         if (playerInRange && PlayerController.Instance.IsState(State.attack))
         {
+            AudioManager.Instance.PlaySFX(alertSound);
             PlayerController.Instance.SetState(State.none);
             string sentence = "Regina:\nGuardie! Buttate fuori questo viddanazzo!";
             suggestionBox.SetActive(false);

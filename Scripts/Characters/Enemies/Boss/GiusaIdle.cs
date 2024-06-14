@@ -35,7 +35,7 @@ public class GiusaIdle : StateMachineBehaviour
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (boss.isDead.value)
+        if (boss != null && boss.isDead.value)
             return;
             
         boss.rb.bodyType = RigidbodyType2D.Dynamic;

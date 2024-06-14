@@ -11,6 +11,8 @@ public class Slime : Enemy, IResettable
     public float maxDistance;
     float moveTimerCounter, coolDownCounter;
     bool hasAttacked;
+    [Header("Audio")]
+    public AudioClip attackSound;
 
     protected override void Start()
     {
@@ -57,6 +59,7 @@ public class Slime : Enemy, IResettable
         if (IsState(State.attack))
             return;
 
+        SoundEffect(attackSound);
         StartCoroutine(AttackCo());
     }
 

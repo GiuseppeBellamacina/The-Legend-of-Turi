@@ -178,10 +178,8 @@ public class MenuController : MonoBehaviour
 
     void Reselect() // Per riprendere il controllo con il controller o la tastiera
     {
-        Debug.Log("Reselect");
         if (!pauseOpen)
             return;
-        Debug.LogWarning("Reselect2" + pauseOpen);
 
         if (!AudioManager.Instance.sfxSource.isPlaying)
             OverSound();

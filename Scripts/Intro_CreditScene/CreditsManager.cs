@@ -8,6 +8,7 @@ public class CreditsManager : MonoBehaviour
     public GameObject title;
     public AudioSource audioSource;
     public float speed;
+    public float limit;
 
     void Awake()
     {
@@ -27,7 +28,7 @@ public class CreditsManager : MonoBehaviour
             LevelManager.Instance.MainMenuScene();
         
         credits.transform.position += new Vector3(0, speed, 0);
-        if (credits.transform.position.y > 9400)
+        if (credits.transform.position.y > limit)
             title.SetActive(true);
     }
 }

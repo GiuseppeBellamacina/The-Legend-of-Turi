@@ -178,6 +178,7 @@ public class DataManager : MonoBehaviour
         
         inventory.currentItem = null;
         inventory.items.Clear();
+        AudioManager.Instance.data.Save();
     }
 
     int TotalData()

@@ -385,6 +385,7 @@ public class PlayerController : Character
 
         if (currentState != State.interact)
         {
+            StopRun();
             SetState(State.interact);
             animator.SetBool("isMoving", false);
             rb.velocity = Vector2.zero;

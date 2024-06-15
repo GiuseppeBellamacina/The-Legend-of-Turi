@@ -41,12 +41,12 @@ public class AudioManager : MonoBehaviour
         }
         else
             Destroy(gameObject);
+        
+        data.Load(0); // 0 è l'indice solo per l'audio
     }
 
     void Start()
     {
-        data.Load(0); // 0 è l'indice solo per l'audio
-
         if(data.mute)
         {
             MuteVolume();

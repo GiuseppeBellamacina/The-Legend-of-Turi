@@ -29,6 +29,9 @@ public class Arrow : Projectile
 
         if (collision.CompareTag("Enemy"))
         {
+            if (collision.GetComponent<Enemy>().health <= 0)
+                return;
+                
             collision.GetComponent<Enemy>().TakeDamage(newDamage);
             StartCoroutine(Hitted(collision));
         }

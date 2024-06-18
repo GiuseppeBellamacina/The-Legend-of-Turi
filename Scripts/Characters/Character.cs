@@ -45,7 +45,7 @@ public class Character : MonoBehaviour
         return currentState == state;
     }
 
-    public void Knock(float knockTime)
+    public virtual void Knock(float knockTime)
     {
         if (gameObject.activeInHierarchy)
             StartCoroutine(KnockCo(knockTime));

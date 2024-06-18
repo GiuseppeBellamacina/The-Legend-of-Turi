@@ -80,6 +80,15 @@ public class Giusa : Enemy, IResettable
             Die();
     }
 
+    public override void Knock(float knockTime)
+    {
+        if (isInvulnerable)
+            return;
+            
+        if (gameObject.activeInHierarchy)
+            StartCoroutine(KnockCo(knockTime));
+    }
+
     void ChooseStagger()
     {
         if (health < data.maxHealth * (1.0f / 3.0f))

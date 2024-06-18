@@ -24,7 +24,7 @@ public class Arrow : Projectile
     void OnTriggerEnter2D(Collider2D collision)
     {
         // Se collide con il proprietario, non fare nulla
-        if (collision.gameObject == owner)
+        if (collision.gameObject == owner || collision == null)
             return;
 
         if (collision.CompareTag("Enemy"))
